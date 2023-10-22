@@ -1,4 +1,6 @@
-from src.process_form import process_form
+import sys
+sys.path.append('src')
+from process_form import process_form
 
 
 def test_process_register_form():

@@ -1,7 +1,7 @@
 import email
 import imaplib
 
-from src.mail import COMPANY_MAIL, PASSWORD
+from mail import COMPANY_MAIL, PASSWORD
 
 
 def read_mail() -> dict:

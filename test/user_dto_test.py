@@ -1,4 +1,6 @@
-from src.user_dto import UserDto, Gender
+import sys
+sys.path.append('src')
+from user_dto import UserDto, Gender
 
 
 def test_user_creation():
