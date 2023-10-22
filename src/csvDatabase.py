@@ -8,20 +8,30 @@ from typing import Callable
 
 
 class CSVDatabase:
-    def __init__(self, filename: str, fields: List[str]) -> None:
-        if "id" not in fields:
-            raise KeyError("Field \"id\" is required.")
-
+    def __init__(self, filename: str, fields: List[str] = None) -> None:
         self._filename = filename
         self._fields = fields
 
-        if not os.path.isfile(self._filename):
-            self._initialize_filename()
+        if self._fields is None:
+            if not os.path.isfile(self._filename):
+                raise ValueError("CSV fields must be provided when first creating the file.")
+            self._read_headers()
 
-    def _initialize_filename(self) -> None:
+        if "id" not in self._fields:
+            raise KeyError("Field \"id\" is required.")
+
+        if not os.path.isfile(self._filename):
+            self._initialize_file()
+
+    def _initialize_file(self) -> None:
         with open(self._filename, 'w', newline='') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=self._fields)
             writer.writeheader()
+
+    def _read_headers(self):
+        with open(self._filename, 'r', newline='') as csvfile:
+            reader = csv.DictReader(csvfile)
+            self._fields = reader.fieldnames
 
     def add_client(self, client_data: Dict) -> None:
         if self.get_client(client_data["id"]):

@@ -9,6 +9,11 @@ def test_create_db_with_wrong_columns():
         CSVDatabase("dbtest.csv", columns_without_id)
 
 
+def test_create_db_without_providing_columns():
+    with pytest.raises(ValueError):
+        CSVDatabase("dbtest.csv")
+
+
 def test_add_client_with_wrong_columns():
     columns = ["id", "subscription"]
     client = {"id": "01", "name": "John", "subscription": "gold"}
@@ -156,3 +161,16 @@ def test_get_clients_with_predicate():
     assert client3 in clients
 
     db.drop_database()
+
+
+def test_use_existing_csv_file_with_auto_columns():
+    columns = ["id", "subscription"]
+    client = {"id": "01", "subscription": "gold"}
+
+    db1 = CSVDatabase("dbtest.csv", columns)
+    db1.add_client(client)
+
+    db2 = CSVDatabase("dbtest.csv")
+    assert db2.get_client("01") == client
+
+    db1.drop_database()
