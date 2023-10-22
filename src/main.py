@@ -2,6 +2,8 @@ from flask import Flask, render_template, redirect, url_for
 from forms import RegisterForm, OrderSubscriptionForm
 from flask_wtf import CSRFProtect
 
+from user_dto import UserDto, Gender
+from forms import RegisterForm, OrderSubscriptionForm
 from process_form import process_form
 
 app = Flask(__name__)
@@ -19,12 +21,13 @@ def index():
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
-        # example how to get data from wtforms
-        process_form(username=form.username.data,
-                     name=form.name.data,
-                     surname=form.surname.data,
-                     email=form.email.data,
-                     gender=form.gender.data)
+
+        user = UserDto(form.username.data,
+                       form.name.data,
+                       form.surname.data,
+                       form.email.data,
+                       Gender(form.gender.data))
+
         return redirect(url_for('index'))
     return render_template("register.html", form=form, the_title="Register - Paint Drying")
 
