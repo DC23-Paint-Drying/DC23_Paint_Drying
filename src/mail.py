@@ -18,7 +18,7 @@ if PASSWORD == "":
     print("Environmental variable SERVER_GMAIL_PASSWORD not set. Sending mail won't function!")
 
 
-def SendMail(receiver: str, subject: str, content: str, files: List[str]):
+def SendMail(receiver: str, subject: str, content: str, files: List[str]) -> None:
     """
     function which sends mail to appropriate address
     :param receiver: mail to whom the mail is sent. With domain!
@@ -54,11 +54,11 @@ def SendMail(receiver: str, subject: str, content: str, files: List[str]):
         server.sendmail(COMPANY_MAIL, receiver, msg.as_string())
 
 
-def ReadMail():
+def ReadMail() -> dict:
     """
     function used for automatic testing
     however it doesn't correctly check attachments
-    :return:
+    :return: dictionary: 'subject', 'content', 'sender', 'attachments'
     """
     mail = imaplib.IMAP4_SSL('imap.gmail.com')
     mail.login(COMPANY_MAIL, PASSWORD)
