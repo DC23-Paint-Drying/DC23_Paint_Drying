@@ -1,18 +1,24 @@
 import email
 import imaplib
-import smtplib, ssl
+import os
+import smtplib
+import ssl
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from os.path import basename
-
 from typing import List
 
-COMPANY_MAIL = "kubaprojektyinicinnego@gmail.com"
-PASSWORD = "cdcm wrfh nbix unvc"
+COMPANY_MAIL = os.environ.get("COMPANY_MAIL", "")
+PASSWORD = os.environ.get("PASSWORD", "")
+
+if COMPANY_MAIL == "":
+    print("Environmental variable SERVER_GMAIL not set. Sending mail won't function!")
+if PASSWORD == "":
+    print("Environmental variable SERVER_GMAIL_PASSWORD not set. Sending mail won't function!")
 
 
-def SendMail(receiver: str, subject:str, content: str, files: List[str]):
+def SendMail(receiver: str, subject: str, content: str, files: List[str]):
     """
     function which sends mail to appropriate address
     :param receiver: mail to whom the mail is sent. With domain!
@@ -30,7 +36,7 @@ def SendMail(receiver: str, subject:str, content: str, files: List[str]):
 
     msg.attach(MIMEText(content))
 
-    #attach files
+    # attach files
     for f in files or []:
         with open(f, "rb") as fil:
             part = MIMEApplication(
@@ -41,11 +47,12 @@ def SendMail(receiver: str, subject:str, content: str, files: List[str]):
         part['Content-Disposition'] = 'attachment; filename="%s"' % basename(f)
         msg.attach(part)
 
-    #send mail
+    # send mail
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
         server.login(COMPANY_MAIL, PASSWORD)
         server.sendmail(COMPANY_MAIL, receiver, msg.as_string())
+
 
 def ReadMail():
     """
@@ -61,16 +68,11 @@ def ReadMail():
     mail_ids = data[0]
 
     id_list = mail_ids.split()
-    first_email_id = int(id_list[0])
     latest_email_id = int(id_list[-1])
 
     result, data = mail.fetch(str(latest_email_id), '(RFC822)')
 
-    otp = {}
-    otp['subject']= ''
-    otp['content']= ''
-    otp['sender']= ''
-    otp['attachments']= ''
+    otp = {'subject': '', 'content': '', 'sender': '', 'attachments': ''}
 
     for response_part in data:
         if isinstance(response_part, tuple):
@@ -81,5 +83,5 @@ def ReadMail():
             otp['content'] = msg.get_payload()[0].get_payload()
             otp['attachments'] = msg.get_payload()[1].get_payload()
             otp['sender'] = msg['from']
-            #otp['attachments'] = ''
+            # otp['attachments'] = ''
     return otp

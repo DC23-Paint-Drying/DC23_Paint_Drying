@@ -1,4 +1,4 @@
-import src.Mail
+import src.mail
 
 """
 Test by sending mail to self
@@ -8,10 +8,10 @@ Test by sending mail to self
 def test_send_mail():
     subject = "Subject abcd"
     content = "Some text"
-    receiver = "kubaprojektyinicinnego@gmail.com"  # send to self
+    receiver = src.mail.COMPANY_MAIL  # send to self
 
-    src.Mail.SendMail(receiver, subject, content, ['attachment.txt'])
-    response = src.Mail.ReadMail()
+    src.mail.SendMail(receiver, subject, content, ['attachment.txt'])
+    response = src.mail.ReadMail()
 
     assert response['subject'] == subject
     assert response['content'] == content
