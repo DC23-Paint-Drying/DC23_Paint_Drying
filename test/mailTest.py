@@ -10,8 +10,8 @@ def test_send_mail():
     content = "Some text"
     receiver = src.mail.COMPANY_MAIL  # send to self
 
-    src.mail.SendMail(receiver, subject, content, ['attachment.txt'])
-    response = src.mail.ReadMail()
+    src.mail.send_mail(receiver, subject, content, ['attachment.txt'])
+    response = src.mail.read_mail()
 
     assert response['subject'] == subject
     assert response['content'] == content

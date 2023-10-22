@@ -7,7 +7,7 @@ from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from os.path import basename
-from typing import List
+from typing import List, Dict
 
 COMPANY_MAIL = os.environ.get("COMPANY_MAIL", "")
 PASSWORD = os.environ.get("PASSWORD", "")
@@ -18,9 +18,10 @@ if PASSWORD == "":
     print("Environmental variable SERVER_GMAIL_PASSWORD not set. Sending mail won't function!")
 
 
-def SendMail(receiver: str, subject: str, content: str, files: List[str]) -> None:
+def send_mail(receiver: str, subject: str, content: str, files: List[str]) -> None:
     """
     function which sends mail to appropriate address
+
     :param receiver: mail to whom the mail is sent. With domain!
     :param subject: title of the mail
     :param content: the text content of a mail
@@ -38,9 +39,9 @@ def SendMail(receiver: str, subject: str, content: str, files: List[str]) -> Non
 
     # attach files
     for f in files or []:
-        with open(f, "rb") as fil:
+        with open(f, "rb") as file:
             part = MIMEApplication(
-                fil.read(),
+                file.read(),
                 Name=basename(f)
             )
         # After the file is closed
@@ -54,10 +55,11 @@ def SendMail(receiver: str, subject: str, content: str, files: List[str]) -> Non
         server.sendmail(COMPANY_MAIL, receiver, msg.as_string())
 
 
-def ReadMail() -> dict:
+def read_mail() -> Dict:
     """
-    function used for automatic testing
-    however it doesn't correctly check attachments
+    function used for automatic testing.
+    for attachments field it returns only single attached file name
+
     :return: dictionary: 'subject', 'content', 'sender', 'attachments'
     """
     mail = imaplib.IMAP4_SSL('imap.gmail.com')
@@ -72,16 +74,15 @@ def ReadMail() -> dict:
 
     result, data = mail.fetch(str(latest_email_id), '(RFC822)')
 
-    otp = {'subject': '', 'content': '', 'sender': '', 'attachments': ''}
+    output = {'subject': '', 'content': '', 'sender': '', 'attachments': ''}
 
     for response_part in data:
         if isinstance(response_part, tuple):
             # from_bytes, not from_string
 
             msg = email.message_from_bytes(response_part[1])
-            otp['subject'] = msg['Subject']
-            otp['content'] = msg.get_payload()[0].get_payload()
-            otp['attachments'] = msg.get_payload()[1].get_payload()
-            otp['sender'] = msg['from']
-            # otp['attachments'] = ''
-    return otp
+            output['subject'] = msg['Subject']
+            output['content'] = msg.get_payload()[0].get_payload()
+            output['attachments'] = msg.get_payload()[1].get_payload()
+            output['sender'] = msg['from']
+    return output
