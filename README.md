@@ -21,7 +21,13 @@ flask --app src/main run
 
 # Running tests
 ```bash
-pytest test/
+python -m pytest test/
+```
+
+# Running tests with coverage
+```bash
+coverage run -m pytest test/ -v -s 
+coverage report -m
 ```
 
 
