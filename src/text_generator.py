@@ -11,7 +11,7 @@ def replace_keywords(text: str, userID: int, database) -> str:
     -{$notSubscribedServices}
     :param text: text to be modified
     :param userID: id of user, to whom the mail is sent
-    :param database: instance of database object
+    :param database: the database object - at the moment mock object
     :return:
     """
 
@@ -81,6 +81,12 @@ def replace_keywords(text: str, userID: int, database) -> str:
 
 
 def get_propose_mail_text(userID: int, database) -> str:
+    """
+    function for creating mail text procedurally
+    :param userID:
+    :param database: the database object - at the moment mock object
+    :return: mail text
+    """
     mail_text = ('{$greeting}\n'
                  '\n'
                  '{$proposeNewService}\n'
@@ -94,6 +100,13 @@ def get_propose_mail_text(userID: int, database) -> str:
 
 
 def get_invoice_mail_text(userID: int, invoice, database) -> str:
+    """
+    function for creating mail text (for sending invoices) procedurally
+    :param userID:
+    :param invoice: the invoice object - at the moment mock object
+    :param database: the database object - at the moment mock object
+    :return:
+    """
     products = ''
     for product in invoice.products:
         products += "-" + product + "\n"
