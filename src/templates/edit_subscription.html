@@ -10,20 +10,20 @@
     <form method="post">
         {{form.hidden_tag()}}
         <fieldset>
-            <legend>
-                Change Your Subscription Plan
-            </legend>
-            <div class="form-group">
-                {{form.subscription_level.label(class="form-control-label")}}
-                {%if form.subscription_level.errors%}
-                    {{form.subscription_level(class="form-control form-control-lg is-invalid")}}
-                    {%for error in form.subscription_level.errors%}
-                        <span>{{error}}</span>
-                    {%endfor%}
-                {%else%}
-                    {{form.subscription_level(class="form-control form-control-lg")}}
-                {%endif%}
-            </div>
+        <legend>
+            Change Your Subscription Plan
+        </legend>
+        <div class="form-group">
+            {{form.subscription_level.label(class="form-control-label")}}
+            {%if form.subscription_level.errors%}
+                {{form.subscription_level(class="form-control form-control-lg is-invalid")}}
+            {%for error in form.subscription_level.errors%}
+                <span>{{error}}</span>
+            {%endfor%}
+            {%else%}
+                {{form.subscription_level(class="form-control form-control-lg")}}
+            {%endif%}
+        </div>
         </fieldset>
         <div class="field-group">
             {{form.submit(class='btn btn-online-info')}}
