@@ -1,3 +1,6 @@
+import sys
+sys.path.append('src')
+
 import unittest
 from unittest.mock import MagicMock
 import src.text_generator as text_gen
@@ -112,14 +115,14 @@ class TestProposeMailText(unittest.TestCase):
                                                                'Dear Mr Wierzba\n'
                                                                '\n'
                                                                'It seems, you are very interested in service abba. '
-                                                               'You should also check these'
+                                                               'You should also check these '
                                                                'services: d, e!\n'
                                                                '\n'
                                                                'The subscription for abba will soon expire! Quick! '
                                                                'Renew the subscription!\n'
                                                                '\n'
                                                                'We are glad, you are interested in our services. For '
-                                                               'more information, we'
+                                                               'more information, we '
                                                                'suggest visiting our website to check new products we '
                                                                'offer!\n'
                                                                '\n'
@@ -141,7 +144,7 @@ class TestProposeMailText(unittest.TestCase):
                                                                '\n'
                                                                '\n'
                                                                'We are glad, you are interested in our services. For '
-                                                               'more information, we'
+                                                               'more information, we '
                                                                'suggest visiting our website to check new products we '
                                                                'offer!\n'
                                                                '\n'
@@ -164,7 +167,7 @@ class TestProposeMailText(unittest.TestCase):
                                                                'Renew the subscription!\n'
                                                                '\n'
                                                                'We are glad, you are interested in our services. For '
-                                                               'more information, we'
+                                                               'more information, we '
                                                                'suggest visiting our website to check new products we '
                                                                'offer!\n'
                                                                '\n'

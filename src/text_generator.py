@@ -54,7 +54,7 @@ def replace_keywords(text: str, userID: int, database) -> str:
         subscribed_services = database.get_subscribed_services()
         if len(subscribed_services) > 0:
             text = text.replace('{$proposeLengtheningSubscription}',
-                                'The subscription for ' + subscribed_services[0] + 'will soon expire! Quick! Renew the '
+                                'The subscription for ' + subscribed_services[0] + ' will soon expire! Quick! Renew the '
                                                                                    'subscription!')
         else:
             # delete mark, because there is nothing to propose
