@@ -1,14 +1,26 @@
+import inspect
+from dataclasses import asdict
+
 from flask import Flask, render_template, redirect, url_for
 from flask_wtf import CSRFProtect
 
 from forms import RegisterForm, OrderSubscriptionForm, EditProfileForm, EditSubscriptionForm
 from process_form import process_form
-from user_dto import UserDto, Gender
+from csvDatabase import CSVDatabase
+from user_dto import UserDto
 
 app = Flask(__name__)
 app.secret_key = 'tO$&!|0wkamvVia0?n$NqIRVWOG'
 
 csrf = CSRFProtect(app)
+
+db = CSVDatabase("db.csv", [param for param in inspect.signature(UserDto).parameters])
+
+"""
+Note: Currently we consider the most recently registered user as the one "signed in".
+This is a temporary solution and will be updated once a sign-in form is implemented.
+"""
+current_user_email = None
 
 
 @app.route("/")
@@ -18,14 +30,24 @@ def index():
 
 @app.route("/register", methods=['POST', 'GET'])
 def register():
+    global current_user_email
+
     form = RegisterForm()
     if form.validate_on_submit():
+        user = db.get_client_by_mail(form.email.data)
+
+        if user:
+            raise Exception('User with given email already exists')
 
         user = UserDto(form.username.data,
                        form.name.data,
                        form.surname.data,
+                       form.age.data,
                        form.email.data,
-                       Gender(form.gender.data))
+                       form.gender.data)
+        current_user_email = form.email.data
+
+        db.add_client(asdict(user))
 
         return redirect(url_for('index'))
     return render_template("register.html", form=form, the_title="Register - Paint Drying")
@@ -44,9 +66,20 @@ def order_subscription():
 
 @app.route("/edit-profile", methods=['POST', 'GET'])
 def edit_profile():
+    if not current_user_email:
+        raise Exception('User needs to be logged in to edit profile')
+
     form = EditProfileForm()
     if form.validate_on_submit():
-        # place for change user personal data
+
+        user = db.get_client_by_mail(current_user_email)
+        user['username'] = form.username.data
+        user['name'] = form.name.data
+        user['surname'] = form.surname.data
+        user['age'] = form.age.data
+        user['gender'] = form.gender.data
+
+        db.update_client(user)
 
         return redirect(url_for('index'))
     return render_template("edit_profile.html", form=form, the_title="Edit Profile - Paint Drying")
