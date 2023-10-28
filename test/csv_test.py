@@ -50,6 +50,19 @@ def test_add_and_get_client():
     db.drop_database()
 
 
+def test_add_and_get_client_by_email():
+    columns = ["id", "email", "subscription"]
+    client1 = {"id": "01", "email": "mail@example.com", "subscription": "bronze"}
+    db = CSVDatabase("dbtest.csv", columns)
+
+    db.add_client(client1)
+
+    assert db.get_client_by_mail("mail@example.com") == client1
+    assert db.get_client_by_mail("mail1@example.com") is None
+
+    db.drop_database()
+
+
 def test_add_duplicated_client():
     columns = ["id", "subscription"]
     client = {"id": "01", "subscription": "bronze"}
