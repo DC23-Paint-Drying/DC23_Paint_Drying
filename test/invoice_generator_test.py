@@ -19,20 +19,20 @@ def test_generate_invoice():
 
     tree = ET.parse(filename)
 
-    assert tree.find("/invoice-number").text == invoice_number
-    assert tree.find("/date").text == str(invoice_date)
+    assert tree.find("./invoice-number").text == invoice_number
+    assert tree.find("./date").text == str(invoice_date)
 
     # todo test company data when it is standardized (written in a constants file for example)
 
-    assert tree.find("/client/name").text == "John"
-    assert tree.find("/client/surname").text == "Smith"
+    assert tree.find("./client/name").text == "John"
+    assert tree.find("./client/surname").text == "Smith"
 
-    assert tree.find("/client/name").text == "John"
-    assert tree.find("/client/surname").text == "Smith"
-    assert tree.find("/client/mail").text == "john@smi.th"
-    assert tree.find("/client/subscriptions").text == "bronze"
+    assert tree.find("./client/name").text == "John"
+    assert tree.find("./client/surname").text == "Smith"
+    assert tree.find("./client/mail").text == "john@smi.th"
+    assert tree.find("./client/subscriptions").text == "bronze"
 
     # todo test payment amount when subscriptions' cost is added
-    assert tree.find("/payment/due").text == "2023-11-01"
+    assert tree.find("./payment/due").text == "2023-11-01"
 
     os.remove(filename)
