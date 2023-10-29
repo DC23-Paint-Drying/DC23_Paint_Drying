@@ -3,7 +3,7 @@
 {% block content %}
 
 <h1>DC Paint Drying</h1>
-<p>Register to our system</p>
+<p>Change Your Subscription Plan</p>
 <a href="{{ url_for('index') }}">Main Page</a>
 
 <div class="container w-50">
@@ -11,19 +11,8 @@
 		{{form.hidden_tag()}}
 	<fieldset>
 	<legend>
-		Join now
+		Change Your Subscription Plan
 	</legend>
-	<div class="form-group">
-		{{form.email.label(class="form-control-label")}}
-		{%if form.email.errors%}
-			{{form.email(class="form-control form-control-lg is-invalid")}}
-		{%for error in form.email.errors%}
-			<span>{{error}}</span>
-		{%endfor%}
-		{%else%}
-			{{form.email(class="form-control form-control-lg")}}
-		{%endif%}
-	</div>
 	<div class="form-group">
 		{{form.subscription_level.label(class="form-control-label")}}
 		{%if form.subscription_level.errors%}
@@ -36,9 +25,9 @@
 		{%endif%}
 	</div>
 	</fieldset>
-	<div class="field-group">
-		{{form.submit(class='btn btn-online-info')}}
-	</div>
+		<div class="field-group">
+			{{form.submit(class='btn btn-online-info')}}
+		</div>
 	</form>
 </div>
 
