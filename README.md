@@ -30,5 +30,8 @@ coverage run -m pytest test/ -v -s
 coverage report -m
 ```
 
-
+# Generating monthly report
+```bash
+python src/report/report_generate.py [DIRECTORY](optional)
+```
 
