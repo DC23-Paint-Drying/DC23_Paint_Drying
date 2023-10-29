@@ -11,7 +11,6 @@ app.secret_key = 'tO$&!|0wkamvVia0?n$NqIRVWOG'
 csrf = CSRFProtect(app)
 
 
-
 @app.route("/")
 def index():
     return render_template("index.html", the_title="Paint Drying")
