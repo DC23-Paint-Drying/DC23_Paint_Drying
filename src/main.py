@@ -4,10 +4,10 @@ from dataclasses import asdict
 from flask import Flask, render_template, redirect, url_for
 from flask_wtf import CSRFProtect
 
-from forms import RegisterForm, OrderSubscriptionForm, EditProfileForm, EditSubscriptionForm
-from process_form import process_form
-from csvDatabase import CSVDatabase
-from user_dto import UserDto
+from .forms import RegisterForm, OrderSubscriptionForm, EditProfileForm, EditSubscriptionForm
+from .process_form import process_form
+from .csvDatabase import CSVDatabase
+from .user_dto import UserDto
 
 app = Flask(__name__)
 app.secret_key = 'tO$&!|0wkamvVia0?n$NqIRVWOG'
