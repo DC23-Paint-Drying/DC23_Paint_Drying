@@ -47,6 +47,15 @@ class CSVDatabase:
             reader = csv.DictReader(csvfile)
             self._fields = reader.fieldnames
 
+    def get_entry_by_field(self, key: str, value: str) -> list[dict]:
+        with open(self._filename, 'r', newline='') as csvfile:
+            reader = csv.DictReader(csvfile, fieldnames=self._fields)
+            output = []
+            for data in reader:
+                if data[key] == value:
+                    output.append(data)
+        return output
+
     def add_client(self, client_data: Dict) -> None:
         """
         Adds new client data to the database. Raises KeyError if client with that id already exists
