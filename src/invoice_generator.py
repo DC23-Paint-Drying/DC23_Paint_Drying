@@ -33,6 +33,7 @@ def generate_invoice_xml(client_data: Dict, date: datetime.date | None = None, i
     ET.SubElement(company, "address").text = "Paintburg, Paint Street 54/6"
     ET.SubElement(company, "NIP").text = "123-456-78-90"
     ET.SubElement(company, "bank-account-number").text = "12 3456 7890 0000 0000 1234 5678"
+    # todo maybe get these from a constants file?
 
     client = ET.SubElement(invoice, "client")
     ET.SubElement(client, "name").text = client_data["name"]
@@ -42,6 +43,7 @@ def generate_invoice_xml(client_data: Dict, date: datetime.date | None = None, i
 
     payment = ET.SubElement(invoice, "payment")
     ET.SubElement(payment, "amount").text = "29.99"
+    # todo subscriptions cost isn't currently specified
     ET.SubElement(payment, "due").text = str(datetime.date(year=date.year, month=date.month+1, day=1))
 
     tree = ET.ElementTree(invoice)
