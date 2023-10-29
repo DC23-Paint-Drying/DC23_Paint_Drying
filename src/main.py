@@ -2,6 +2,7 @@ from flask import Flask, render_template, redirect, url_for
 from flask_wtf import CSRFProtect
 
 from forms import RegisterForm, OrderSubscriptionForm
+from gdrive_manager import GdriveManager
 from process_form import process_form
 from user_dto import UserDto, Gender
 
@@ -9,6 +10,8 @@ app = Flask(__name__)
 app.secret_key = 'tO$&!|0wkamvVia0?n$NqIRVWOG'
 
 csrf = CSRFProtect(app)
+
+gdrive = GdriveManager()
 
 
 @app.route("/")
