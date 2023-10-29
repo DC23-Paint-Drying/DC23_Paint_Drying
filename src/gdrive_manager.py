@@ -10,7 +10,6 @@ class GdriveManager:
         self.logger = logging.getLogger(__name__)
         logging.basicConfig(format="%(levelname)s:%(asctime)s: %(message)s", level=logging.INFO)
         self.drive = GoogleDrive(self.login_with_service_account())
-        self.root_dir_id = self.search_for_id('DC23_Paint_Drying')
 
     def login_with_service_account(self) -> GoogleAuth:
         """
@@ -21,7 +20,7 @@ class GdriveManager:
         settings = {
             "client_config_backend": "service",
             "service_config": {
-                "client_json_file_path": "service-secrets.json",
+                "client_json_file_path": os.getenv('CONFIG_FILE_PATH'),
             }
         }
         gauth = GoogleAuth(settings=settings)
@@ -29,24 +28,41 @@ class GdriveManager:
         return gauth
 
     def search_for_id(self, name: str, parent_id: str = 'root') -> str:
-        file_list = self.drive.ListFile({'q': f"'{parent_id}' in parents and trashed=false"}).GetList()
-        for file in file_list:
-            if file['title'] == name:
-                return file['id']
+        """
+        Finds a file or directory and if it exists then returns its id
+        :param name: name of a searched file or directory
+        :param parent_id: id of a parent directory
+        """
+        if name != '':
+            file_list = self.drive.ListFile({'q': f"'{parent_id}' in parents and trashed=false"}).GetList()
+            for file in file_list:
+                if file['title'] == name:
+                    return file['id']
         return ''
 
-    def read_file(self, filename: str, path: str) -> dict:
+    def read_file(self, filename: str, directory_name: str = '') -> str:
         """
         Reads file from Google Drive.
         :param filename: name of a file
-        :param path: path to a directory with file
+        :param directory_name: name of a directory with file
         """
-        return {}
+        dir_id = self.search_for_id(name=directory_name)
+        if dir_id == '':
+            self.logger.info(f"Directory {directory_name} doesn't exist. Using root id")
+            dir_id = 'root'
+        file_id = self.search_for_id(filename, parent_id=dir_id)
+        file = self.drive.CreateFile({'id': file_id})
+        file.GetContentFile(filename)
+        return filename
 
     def create_directory(self, directory_name: str) -> str:
+        """
+        Creates new directory.
+        :param directory_name: name of a directory to create
+        """
         file_metadata = {
             'title': directory_name,
-            'parents': [{'id': self.root_dir_id}],
+            'parents': [{'id': 'root'}],
             'mimeType': 'application/vnd.google-apps.folder'
         }
         directory = self.drive.CreateFile(file_metadata)
@@ -56,16 +72,25 @@ class GdriveManager:
         return directory['id']
 
     def upload_file(self, filename: str, directory_name: str) -> None:
+        """
+        Uploads new file to Google Drive
+        :param filename: name of a file to upload
+        :param directory_name: name of a directory where file will be stored
+        """
         dir_id = self.search_for_id(name=directory_name)
         if dir_id == '':
             self.logger.info(f"Directory {directory_name} doesn't exist. Creating directory")
             dir_id = self.create_directory(directory_name=directory_name)
-        file = self.drive.CreateFile({'title': filename,
-                                      'parents': [{'id': dir_id}]})
+        file = self.drive.CreateFile({'title': filename, 'parents': [{'id': dir_id}]})
         file.SetContentFile(filename)
         file.Upload()
 
     def update_file(self, filename: str, directory_name: str = '') -> None:
+        """
+        Updates file if it exists, else creates new file
+        :param filename: name of an updated file
+        :param directory_name: name of a directory with a file
+        """
         dir_id = self.search_for_id(name=directory_name)
         if dir_id == '':
             self.logger.info(f"Directory {directory_name} doesn't exist. Saving file at root")
@@ -75,14 +100,7 @@ class GdriveManager:
             self.logger.info(f"File {filename} doesn't exist. Uploading new file")
             self.upload_file(filename=filename, directory_name=directory_name)
         else:
-            file = self.drive.CreateFile({'title': filename,
-                                          'id': file_id,
-                                          'parents': [dir_id]})
+            self.logger.info(f"Updating file")
+            file = self.drive.CreateFile({'title': filename, 'id': file_id, 'parents': [dir_id]})
             file.SetContentFile(filename)
             file.Upload()
-
-
-if __name__ == "__main__":
-    tmp = GdriveManager()
-    a = tmp.create_directory('DC23_Paint_Drying')
-    print(a)
