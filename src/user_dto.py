@@ -1,6 +1,7 @@
 from dataclasses import dataclass, asdict
 from enum import Enum
 import json
+import uuid
 import xml.etree.ElementTree
 
 
@@ -27,6 +28,7 @@ class UserDto:
     surname: str
     email: str
     gender: Gender
+    id: str = str(uuid.uuid4())
 
     def to_json(self):
         return json.dumps(asdict(self))

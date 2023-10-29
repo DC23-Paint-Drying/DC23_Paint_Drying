@@ -1,9 +1,9 @@
 from flask import Flask, render_template, redirect, url_for
 from flask_wtf import CSRFProtect
 
-from forms import RegisterForm, OrderSubscriptionForm, EditProfileForm, EditSubscriptionForm
-from process_form import process_form
-from user_dto import UserDto, Gender
+from .forms import RegisterForm, OrderSubscriptionForm, EditProfileForm, EditSubscriptionForm
+from .process_form import process_form
+from .user_dto import UserDto, Gender
 
 app = Flask(__name__)
 app.secret_key = 'tO$&!|0wkamvVia0?n$NqIRVWOG'
