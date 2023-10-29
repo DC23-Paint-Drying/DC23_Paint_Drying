@@ -17,10 +17,11 @@ class GdriveManager:
         note: for the service account to work, you need to share the folder or
         files with the service account email.
         """
+        config_path = os.environ.get("CONFIG_FILE_PATH", "")
         settings = {
             "client_config_backend": "service",
             "service_config": {
-                "client_json_file_path": os.getenv('CONFIG_FILE_PATH'),
+                "client_json_file_path": config_path,
             }
         }
         gauth = GoogleAuth(settings=settings)
