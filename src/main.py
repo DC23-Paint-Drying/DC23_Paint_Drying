@@ -70,13 +70,14 @@ def edit_profile():
 
     form = EditProfileForm()
     if form.validate_on_submit():
-
-        user = db.get_client_by_mail(current_user_email)
-        user['username'] = form.username.data
-        user['name'] = form.name.data
-        user['surname'] = form.surname.data
-        user['age'] = form.age.data
-        user['gender'] = form.gender.data
+        users = db.get_clients(lambda client: client["email"] == current_user_email)
+        if users:
+            user = users[0]
+            user['username'] = form.username.data
+            user['name'] = form.name.data
+            user['surname'] = form.surname.data
+            user['age'] = form.age.data
+            user['gender'] = form.gender.data
 
         db.update_client(user)
 
