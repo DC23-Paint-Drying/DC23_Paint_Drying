@@ -75,20 +75,6 @@ class CSVDatabase:
 
         return None
 
-    def get_client_by_mail(self, client_email: str) -> Dict | None:
-        """
-        Returns a client with the provided email, or None if client with that email does not exist in the database
-
-        :param client_email: email of the client to fetch from the database
-        """
-        with open(self._filename, 'r', newline='') as csvfile:
-            reader = csv.DictReader(csvfile, fieldnames=self._fields)
-            for data in reader:
-                if data["email"] == client_email:
-                    return data
-
-        return None
-
     def update_client(self, client_data: Dict) -> None:
         """
         Replaces client data with id == client_data["id"] and replaces it with the provided client_data.

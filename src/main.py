@@ -34,8 +34,7 @@ def register():
 
     form = RegisterForm()
     if form.validate_on_submit():
-        user = db.get_client_by_mail(form.email.data)
-
+        user = db.get_clients(lambda client: client["email"] == form.email.data)
         if user:
             raise Exception('User with given email already exists')
 

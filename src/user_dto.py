@@ -1,7 +1,7 @@
 import random
 from dataclasses import dataclass, asdict
-from enum import Enum
 import json
+import uuid
 import xml.etree.ElementTree
 
 
@@ -25,11 +25,7 @@ class UserDto:
     age: int
     email: str
     gender: str
-    id: int = None
-
-    def __post_init__(self):
-        if self.id is None:
-            self.id = random.randint(1, 1000)
+    id: str = str(uuid.uuid4())
 
     def to_json(self):
         return json.dumps(asdict(self))
