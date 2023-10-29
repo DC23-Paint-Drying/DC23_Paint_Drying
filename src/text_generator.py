@@ -1,4 +1,7 @@
-def replace_keywords(text: str, userID: int, database) -> str:
+from src.database import Database
+
+
+def replace_keywords(text: str, user_id: int, database: Database) -> str:
     """
     Modifies text containing keywords in format {$word}
     List of all keywords: \n
@@ -10,22 +13,22 @@ def replace_keywords(text: str, userID: int, database) -> str:
     -{$subscribedServices}
     -{$notSubscribedServices}
     :param text: text to be modified
-    :param userID: id of user, to whom the mail is sent
+    :param user_id: id of user, to whom the mail is sent
     :param database: the database object - at the moment mock object
     :return:
     """
 
     if '{$greeting}' in text:
-        if database.get_user_sex(userID) == 'M':
+        if database.get_user_sex(user_id) == 'M':
             text = text.replace('{$greeting}',
-                                'Dear Mr ' + database.get_user_surname(userID))
-        if database.get_user_sex(userID) == 'F':
+                                'Dear Mr ' + database.get_user_surname(user_id))
+        if database.get_user_sex(user_id) == 'F':
             text = text.replace('{$greeting}',
-                                'Dear Mrs ' + database.get_user_surname(userID))
+                                'Dear Mrs ' + database.get_user_surname(user_id))
 
     if '{$proposeNewService}' in text:
-        subscribed_services = database.get_subscribed_services()
-        not_subscribed_services = database.get_not_subscribed_services()
+        subscribed_services = database.get_subscribed_services(user_id)
+        not_subscribed_services = database.get_not_subscribed_services(user_id)
 
         if len(not_subscribed_services) > 0:
             if len(subscribed_services) > 0:
@@ -51,11 +54,12 @@ def replace_keywords(text: str, userID: int, database) -> str:
                                 'Stay tuned for more!')
 
     if '{$proposeLengtheningSubscription}' in text:
-        subscribed_services = database.get_subscribed_services()
+        subscribed_services = database.get_subscribed_services(user_id)
         if len(subscribed_services) > 0:
             text = text.replace('{$proposeLengtheningSubscription}',
-                                'The subscription for ' + subscribed_services[0] + ' will soon expire! Quick! Renew the '
-                                                                                   'subscription!')
+                                'The subscription for ' + subscribed_services[
+                                    0] + ' will soon expire! Quick! Renew the '
+                                         'subscription!')
         else:
             # delete mark, because there is nothing to propose
             text = text.replace('{$proposeLengtheningSubscription}',
@@ -72,18 +76,18 @@ def replace_keywords(text: str, userID: int, database) -> str:
 
     if '{$subscribedServices}' in text:
         text = text.replace('{$subscribedServices}',
-                            ', '.join(database.get_subscribed_services()))
+                            ', '.join(database.get_subscribed_services(user_id)))
 
     if '{$notSubscribedServices}' in text:
-        text = text.replace('{$notSubscribedServices}', ', '.join(database.get_not_subscribed_services()))
+        text = text.replace('{$notSubscribedServices}', ', '.join(database.get_not_subscribed_services(user_id)))
 
     return text
 
 
-def get_propose_mail_text(userID: int, database) -> str:
+def get_propose_mail_text(user_id: int, database: Database) -> str:
     """
     function for creating mail text procedurally
-    :param userID:
+    :param user_id:
     :param database: the database object - at the moment mock object
     :return: mail text
     """
@@ -96,13 +100,13 @@ def get_propose_mail_text(userID: int, database) -> str:
                  '{$suggestContact}\n'
                  '\n'
                  '{$goodbye}')
-    return replace_keywords(mail_text, userID, database)
+    return replace_keywords(mail_text, user_id, database)
 
 
-def get_invoice_mail_text(userID: int, invoice, database) -> str:
+def get_invoice_mail_text(user_id: int, invoice, database) -> str:
     """
     function for creating mail text (for sending invoices) procedurally
-    :param userID:
+    :param user_id:
     :param invoice: the invoice object - at the moment mock object
     :param database: the database object - at the moment mock object
     :return:
@@ -129,4 +133,4 @@ def get_invoice_mail_text(userID: int, invoice, database) -> str:
                  '{$suggestContact}\n'
                  '\n'
                  '{$goodbye}')
-    return replace_keywords(mail_text, userID, database)
+    return replace_keywords(mail_text, user_id, database)
