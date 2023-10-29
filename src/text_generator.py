@@ -113,7 +113,7 @@ def get_invoice_mail_text(user_id: int, invoice, database) -> str:
     """
     products = ''
     for product in invoice.products:
-        products += "-" + product + "\n"
+        products += "- " + product + "\n"
 
     mail_text = ('{$greeting}\n'
                  '\n'
