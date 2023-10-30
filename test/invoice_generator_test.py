@@ -1,7 +1,8 @@
 import datetime
 import os
-import src.invoice_generator as invoice_generator
 import xml.etree.ElementTree as ET
+
+import src.invoice_generator as invoice_generator
 
 
 def test_generate_invoice():
