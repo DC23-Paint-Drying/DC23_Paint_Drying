@@ -1,7 +1,6 @@
-import xml.etree.cElementTree as ET
-import uuid
 import datetime
-
+import uuid
+import xml.etree.cElementTree as ET
 from typing import Dict
 
 
