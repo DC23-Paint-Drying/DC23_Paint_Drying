@@ -31,7 +31,7 @@
         </tr>
         <tr>
           <td>NIP {{ company_nip }}</td>
-          <td/>
+          <td></td>
         </tr>
       </tbody>
     </table>
@@ -54,7 +54,7 @@
     <div class="center">Twoje pakiety:</div>
 
 
-    {% if packages is defined and packages|length > 0 %}
+    {% if client_packages is defined and client_packages|length > 0 %}
     <table class="center">
       <thead>
         <tr>
@@ -63,7 +63,7 @@
         </tr>
       </thead>
       <tbody>
-      {% for package in packages %}
+      {% for package in client_packages %}
         <tr>
           <td>{{ package[0] }}</td>
           <td>{{ package[1] }}</td>

@@ -10,7 +10,8 @@ def test_generate_invoice():
         "name": "John",
         "surname": "Smith",
         "mail": "john@smi.th",
-        "subscriptions": "bronze"
+        "subscription": "bronze",
+        "packages": []
     }
 
     invoice_date = datetime.date(year=2023, month=10, day=1)
