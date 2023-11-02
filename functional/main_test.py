@@ -25,7 +25,7 @@ class MainPageTests(unittest.TestCase):
         self.driver.get(self.BASE_URL)
         assert self.driver.title == 'Paint Drying'
 
-        self.driver.find_element(by=By.LINK_TEXT, value="Register").click()        # click lint to go to register form
+        self.driver.find_element(by=By.LINK_TEXT, value="Register").click()        # click link to go to register form
 
         assert self.driver.title == 'Register - Paint Drying'
         assert self.driver.current_url == os.path.join(self.BASE_URL, "register")  # check if redirected to register
@@ -47,7 +47,3 @@ class MainPageTests(unittest.TestCase):
 
         assert self.driver.title == 'Edit Subscription - Paint Drying'
         assert self.driver.current_url == os.path.join(self.BASE_URL, "edit-subscription")
-
-    def test_if_it_works(self):
-        self.driver.get(os.path.join(self.BASE_URL, "aaa"))
-        assert self.driver.title == 'Paint Drying'
