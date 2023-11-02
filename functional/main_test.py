@@ -1,12 +1,16 @@
 import os
 import unittest
 
+import chromedriver_autoinstaller
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-
+from pyvirtualdisplay import Display
 
 class MainPageTests(unittest.TestCase):
     def setUp(self):
+        display = Display(visible=0, size=(800, 800))
+        display.start()
+        chromedriver_autoinstaller.install()
         self.BASE_URL = os.getenv("BASE_URL")
         self.driver = webdriver.Chrome()
 
