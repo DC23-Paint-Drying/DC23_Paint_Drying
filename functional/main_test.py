@@ -47,3 +47,7 @@ class MainPageTests(unittest.TestCase):
 
         assert self.driver.title == 'Edit Subscription - Paint Drying'
         assert self.driver.current_url == os.path.join(self.BASE_URL, "edit-subscription")
+
+    def test_if_it_works(self):
+        self.driver.get(os.path.join(self.BASE_URL, "aaa"))
+        assert self.driver.title == 'Paint Drying'
