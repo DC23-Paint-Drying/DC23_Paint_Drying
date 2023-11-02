@@ -18,7 +18,9 @@ jobs:
           python -m pip install --upgrade pip  
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Run Flask app locally
-        run: flask --app src/main run
+        run: flask --app src/main run &
+      - name: Sleep
+        run: sleep 1
   test:
     name: Run Functional Tests
     runs-on: ubuntu-latest
