@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Faktura {{ invoice_number }}</title>
+    <link href="./invoice.css" type="text/css" rel="stylesheet"/>
+  </head>
+
+  <body>
+    <p class="header">Faktura</p>
+    <p class="subheader">nr {{ invoice_number }}</p>
+    <p class="subheader">{{ invoice_date }}</p>
+
+    <hr/>
+
+    <table class="center">
+      <thead>
+        <tr>
+          <th>Wystawca</th>
+          <th>Nabywca</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ company_name }}</td>
+          <td>{{ client_name }} {{ client_surname }}</td>
+        </tr>
+        <tr>
+          <td>{{ company_address }}</td>
+          <td>{{ client_mail }}</td>
+        </tr>
+        <tr>
+          <td>NIP {{ company_nip }}</td>
+          <td/>
+        </tr>
+      </tbody>
+    </table>
+
+    <!--
+
+    <address id="from">
+      {{ company_name }}
+      {{ company_address }}
+      NIP {{ company_nip }}
+    </address>
+
+    <address id="to">
+      {{ client_name }} {{ client_surname }}
+      {{ client_mail }}
+    </address> -->
+
+    <hr/>
+
+    <div class="center">Twoje pakiety:</div>
+
+
+    {% if packages is defined and packages|length > 0 %}
+    <table class="center">
+      <thead>
+        <tr>
+          <th>Nazwa</th>
+          <th>Cena</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for package in packages %}
+        <tr>
+          <td>{{ package[0] }}</td>
+          <td>{{ package[1] }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+
+    <div>
+      <p class="center">Subskrypcja: {{ client_subscription }}</p>
+      <p class="center">Cena: {{ client_subscription_cost }}</p>
+    </div>
+
+    <p>Razem do zapłaty: {{ total_cost }}</p>
+
+    <hr/>
+
+    <p>Tytuł przelewu: {{ invoice_number }}</p>
+    <p>Zapłać do: {{ payment_due }}</p>
+
+    <div class="center">
+      <p>Dziękujemy za terminową wpłatę! ❤</p>
+      <p>Pamiętając o niej unikniesz dodatkowych opłat oraz postępowania karnego, ograniczenia wolności i ciężkich robót przymusowych! ❤</p>
+    </div>
+    <p class="header">❤</p>
+    <p class="subheader">{{ company_name }}</p>
+
+  </body>
+</html>

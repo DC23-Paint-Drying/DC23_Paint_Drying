@@ -14,3 +14,4 @@ Werkzeug==3.0.0
 Flask-WTF==1.2.1
 Bootstrap-Flask==2.3.2
 email_validator==2.0.0
+pdfkit==1.0.0
