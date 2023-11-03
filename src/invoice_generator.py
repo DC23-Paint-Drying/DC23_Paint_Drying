@@ -2,7 +2,6 @@ import datetime
 import importlib.resources
 import uuid
 from dataclasses import dataclass, asdict
-from typing import Dict, List, Tuple
 
 import jinja2
 import pdfkit
@@ -15,7 +14,7 @@ class Invoice:
     client_mail: str
     client_subscription: str
     client_subscription_cost: float
-    client_packages: List[Tuple[str, int]]
+    client_packages: list[tuple[str, float]]
     total_cost: float
     invoice_date: datetime.date
     payment_due: datetime.date
@@ -25,7 +24,7 @@ class Invoice:
     company_bank_account: str = "12 3456 7890 0000 0000 1234 5678"
     invoice_number: str = uuid.uuid4().hex
 
-    def __init__(self, client_data: Dict, date: datetime.date | None = None) -> None:
+    def __init__(self, client_data: dict, date: datetime.date | None = None) -> None:
         """
         Creates the Invoice dataclass object.
         The invoice payment is due to the first day of the next month, relative to the invoice's date.
@@ -86,7 +85,7 @@ class Invoice:
         return jinja2.Template(template).render(**asdict(self))
 
 
-def generate_invoice_xml(client_data: Dict, date: datetime.date | None = None, indent: str = "    ") -> str:
+def generate_invoice_xml(client_data: dict, date: datetime.date | None = None, indent: str = "    ") -> str:
     """
     DEPRECATED. Please use Invoice(client_data, date).save_xml(output_filename) instead.
 
