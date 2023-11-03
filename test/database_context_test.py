@@ -15,14 +15,14 @@ class DataBaseContextTests(unittest.TestCase):
         self.context.destroy()
 
     def test_read_write(self):
-        user = UserDto("testName", "testFirstName", "testSurname", "99", "test@email.com", "other")
+        user = UserDto("testName", "testFirstName", "testSurname", 99, "test@email.com", "other", "timestamp")
         bundles = [BundleInfo(str(uuid.uuid4()), "test@email.com", "YellowPaintPremium", "1980-01-01", "2040-12-20"),
                    BundleInfo(str(uuid.uuid4()), "test@email.com", "NoAds", "1980-01-01", "2040-12-20")]
         info = ClientInfo(user, "basic", bundles)
         assert user.username == "testName"
         assert user.name == "testFirstName"
         assert user.surname == "testSurname"
-        assert user.age == "99"
+        assert user.age == 99
         assert user.email == "test@email.com"
         assert user.gender == "other"
 

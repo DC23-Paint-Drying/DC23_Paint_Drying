@@ -8,13 +8,15 @@ def test_user_creation():
     age = 18
     email = 'mail'
     gender = 'male'
+    timestamp = 'timestamp'
 
     user = UserDto(username=username,
                    name=name,
                    surname=surname,
                    age=age,
                    email=email,
-                   gender=gender)
+                   gender=gender,
+                   timestamp=timestamp)
 
     assert user.username == username
     assert user.name == name
@@ -29,7 +31,8 @@ def test_json_serialization_deserialization():
                    surname='surname',
                    age=18,
                    email='mail@example.com',
-                   gender='male')
+                   gender='male',
+                   timestamp='timestamp')
 
     json_data = user.to_json()
     user_from_json = UserDto.from_json(json_data)
@@ -43,7 +46,8 @@ def test_xml_serialization_deserialization():
                    surname='surname',
                    age=18,
                    email='mail@example.com',
-                   gender='male')
+                   gender='male',
+                   timestamp='timestamp')
 
     xml_data = user.to_xml()
     user_from_xml = UserDto.from_xml(xml_data)
@@ -57,7 +61,8 @@ def test_csv_serialization_deserialization():
                    surname='surname',
                    age=18,
                    email='mail@example.com',
-                   gender='male')
+                   gender='male',
+                   timestamp='timestamp')
 
     csv_data = user.to_csv()
     user_from_csv = UserDto.from_csv(csv_data)
