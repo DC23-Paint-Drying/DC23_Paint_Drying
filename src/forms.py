@@ -31,7 +31,7 @@ class EditProfileForm(FlaskForm):
     gender = RadioField(label='Gender', choices=[('female', 'Female'),
                                                  ('male', 'Male'),
                                                  ('other', 'Other')])
-    submit = SubmitField(label='Register')
+    submit = SubmitField(label='Edit Profile')
 
 
 class EditSubscriptionForm(FlaskForm):
