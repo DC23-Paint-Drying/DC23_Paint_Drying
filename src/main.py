@@ -74,7 +74,7 @@ def register():
 def order_subscription():
 	form = OrderSubscriptionForm()
 	if form.validate_on_submit():
-		# example how to get data from wtforms
+	# example how to get data from wtforms
 		process_form(email=form.email.data,
 					 subscription_level=form.subscription_level.data)
 		return redirect(url_for('index'))
@@ -97,7 +97,7 @@ def edit_profile():
 			user['age'] = form.age.data
 			user['gender'] = form.gender.data
 
-		db.update_client(user)
+			db.update_client(user)
 
 		return redirect(url_for('index'))
 	return render_template("edit_profile.html", form=form, the_title="Edit Profile - Paint Drying")
@@ -107,7 +107,7 @@ def edit_profile():
 def edit_subscription():
 	form = EditSubscriptionForm()
 	if form.validate_on_submit():
-		# place for change user subscription
+	# place for change user subscription
 
 		return redirect(url_for('index'))
 	return render_template("edit_subscription.html", form=form, the_title="Edit Subscription - Paint Drying")
