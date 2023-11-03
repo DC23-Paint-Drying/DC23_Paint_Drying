@@ -77,7 +77,7 @@ def register():
 def order_subscription():
     form = OrderSubscriptionForm()
     if not current_user_email:
-        return render_template("unauthorized.html", the_title="Unauthorized - Paint Drying")
+        return render_template("unauthorized.html", the_title="Unauthorized - Paint Drying"), 401
 
     if form.validate_on_submit():
         # example how to get data from wtforms
@@ -91,7 +91,7 @@ def order_subscription():
 def edit_profile():
     form = EditProfileForm()
     if not current_user_email:
-        return render_template("unauthorized.html", the_title="Unauthorized - Paint Drying")
+        return render_template("unauthorized.html", the_title="Unauthorized - Paint Drying"), 401
 
     if form.validate_on_submit():
         users = db.get_clients(lambda client: client["email"] == current_user_email)
@@ -113,7 +113,7 @@ def edit_profile():
 def edit_subscription():
     form = EditSubscriptionForm()
     if not current_user_email:
-        return render_template("unauthorized.html", the_title="Unauthorized - Paint Drying")
+        return render_template("unauthorized.html", the_title="Unauthorized - Paint Drying"), 401
 
     if form.validate_on_submit():
         # place for change user subscription
