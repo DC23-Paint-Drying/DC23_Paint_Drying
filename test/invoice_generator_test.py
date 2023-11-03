@@ -108,16 +108,12 @@ def test_generate_pdf():
 
     invoice.save_pdf(filename)
 
-    reader = PdfReader(filename)
-    page = reader.pages[0]
+    page = PdfReader(filename).pages[0]
 
     words = []
     for line in page.extract_text().split('\n'):
         for word in line.split(' '):
             words.append(word)
-
-    for word in words:
-        print(word)
 
     assert f"{invoice.invoice_number}" in words
     assert str(invoice_date) in words
