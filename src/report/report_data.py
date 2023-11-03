@@ -6,6 +6,7 @@ Module used to collect data for report.
 def get_report_data() -> dict:
     """
     Collects all required data for report and transforms it to dictionary.
+    *Temporary mock, will be changed to actual data collection*
 
     Returns:
         Dictionary containing data for report.

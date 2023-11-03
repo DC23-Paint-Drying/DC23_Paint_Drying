@@ -1,12 +1,15 @@
 """
 Module containing utility functions used during report generation
 """
+
+
+import uuid
+
 from docx import Document
 from docx.table import Table, _Cell
 from docx.enum import table, text
 from docx.shared import Emu
 import matplotlib.pyplot as plt
-import uuid
 
 
 def set_footer(document: Document, page_number: str) -> None:
@@ -44,6 +47,10 @@ def create_table(document: Document, rows: int, cols: int) -> Table:
         Reference to created table.
 
     """
+
+    if rows < 1 or cols < 1:
+        raise ValueError('Row and column size must be atleast 1')
+
     t = document.add_table(rows=rows, cols=cols)
     t.alignment = table.WD_TABLE_ALIGNMENT.CENTER
     for row in t.rows:
@@ -83,6 +90,13 @@ def create_donut_chart(values: [int], labels: [str]) -> str:
         Path to image file with donut chart
 
     """
+
+    if not values or not labels:
+        raise ValueError('Values and labels must not be empty')
+
+    if len(values) != len(labels):
+        raise ValueError('Each value must have exactly one label')
+
     fig, ax = plt.subplots()
     fig.set_figwidth(6.0)
     fig.set_figheight(6.0)
