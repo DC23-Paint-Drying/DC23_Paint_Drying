@@ -1,94 +1,94 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8"/>
-    <title>Faktura {{ invoice_number }}</title>
-    <link href="./invoice.css" type="text/css" rel="stylesheet"/>
-  </head>
+	<head>
+		<meta charset="utf-8"/>
+		<title>Faktura {{ invoice_number }}</title>
+		<link href="./invoice.css" type="text/css" rel="stylesheet"/>
+	</head>
 
-  <body>
-    <p class="header">Faktura</p>
-    <p class="subheader">nr {{ invoice_number }}</p>
-    <p class="subheader">{{ invoice_date }}</p>
+	<body>
+		<p class="header">Faktura</p>
+		<p class="subheader">nr {{ invoice_number }}</p>
+		<p class="subheader">{{ invoice_date }}</p>
 
-    <hr/>
+		<hr/>
 
-    <table class="center">
-      <thead>
-        <tr>
-          <th>Wystawca</th>
-          <th>Nabywca</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>{{ company_name }}</td>
-          <td>{{ client_name }} {{ client_surname }}</td>
-        </tr>
-        <tr>
-          <td>{{ company_address }}</td>
-          <td>{{ client_mail }}</td>
-        </tr>
-        <tr>
-          <td>NIP {{ company_nip }}</td>
-          <td></td>
-        </tr>
-      </tbody>
-    </table>
+		<table class="center">
+			<thead>
+				<tr>
+					<th>Wystawca</th>
+					<th>Nabywca</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>{{ company_name }}</td>
+					<td>{{ client_name }} {{ client_surname }}</td>
+				</tr>
+				<tr>
+					<td>{{ company_address }}</td>
+					<td>{{ client_mail }}</td>
+				</tr>
+				<tr>
+					<td>NIP {{ company_nip }}</td>
+					<td></td>
+				</tr>
+			</tbody>
+		</table>
 
-    <!--
+		<!--
 
-    <address id="from">
-      {{ company_name }}
-      {{ company_address }}
-      NIP {{ company_nip }}
-    </address>
+		<address id="from">
+			{{ company_name }}
+			{{ company_address }}
+			NIP {{ company_nip }}
+		</address>
 
-    <address id="to">
-      {{ client_name }} {{ client_surname }}
-      {{ client_mail }}
-    </address> -->
+		<address id="to">
+			{{ client_name }} {{ client_surname }}
+			{{ client_mail }}
+		</address> -->
 
-    <hr/>
+		<hr/>
 
-    <div class="center">Twoje Usługi:</div>
+		<div class="center">Twoje Usługi:</div>
 
-    <table class="center">
-      <thead>
-        <tr>
-          <th>Nazwa</th>
-          <th>Cena</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Subskrypcja {{ client_subscription }}</td>
-          <td>{{ client_subscription_cost }} zł</td>
-        </tr>
-        {% if client_packages is defined and client_packages|length > 0 %}
-        {% for package in client_packages %}
-        <tr>
-          <td>Pakiet {{ package[0] }}</td>
-          <td>{{ package[1] }} zł</td>
-        </tr>
-        {% endfor %}
-        {% endif %}
-      </tbody>
-    </table>
+		<table class="center">
+			<thead>
+				<tr>
+					<th>Nazwa</th>
+					<th>Cena</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Subskrypcja {{ client_subscription }}</td>
+					<td>{{ client_subscription_cost }} zł</td>
+				</tr>
+				{% if client_packages is defined and client_packages|length > 0 %}
+				{% for package in client_packages %}
+				<tr>
+					<td>Pakiet {{ package[0] }}</td>
+					<td>{{ package[1] }} zł</td>
+				</tr>
+				{% endfor %}
+				{% endif %}
+			</tbody>
+		</table>
 
-    <p>Razem do zapłaty: {{ total_cost }} zł</p>
+		<p>Razem do zapłaty: {{ total_cost }} zł</p>
 
-    <hr/>
+		<hr/>
 
-    <p>Tytuł przelewu: {{ invoice_number }}</p>
-    <p>Zapłać do: {{ payment_due }}</p>
+		<p>Tytuł przelewu: {{ invoice_number }}</p>
+		<p>Zapłać do: {{ payment_due }}</p>
 
-    <div class="center">
-      <p>Dziękujemy za terminową wpłatę!</p>
-      <p>Pamiętając o niej unikniesz dodatkowych opłat oraz postępowania karnego, ograniczenia wolności i ciężkich robót przymusowych!</p>
-    </div>
-    <p class="header">❤</p>
-    <p class="subheader">{{ company_name }}</p>
+		<div class="center">
+			<p>Dziękujemy za terminową wpłatę!</p>
+			<p>Pamiętając o niej unikniesz dodatkowych opłat oraz postępowania karnego, ograniczenia wolności i ciężkich robót przymusowych!</p>
+		</div>
+		<p class="header">❤</p>
+		<p class="subheader">{{ company_name }}</p>
 
-  </body>
+	</body>
 </html>
