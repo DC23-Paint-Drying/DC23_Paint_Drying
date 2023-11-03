@@ -6,6 +6,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from pyvirtualdisplay import Display
 
+
 class MainPageTests(unittest.TestCase):
     def setUp(self):
         display = Display(visible=0, size=(800, 800))
@@ -23,7 +24,6 @@ class MainPageTests(unittest.TestCase):
 
     def test_register_link(self):
         self.driver.get(self.BASE_URL)
-        assert self.driver.title == 'Paint Drying'
 
         self.driver.find_element(by=By.LINK_TEXT, value="Register").click()        # click link to go to register form
 
@@ -32,7 +32,6 @@ class MainPageTests(unittest.TestCase):
 
     def test_order_subscription_link(self):
         self.driver.get(self.BASE_URL)
-        assert self.driver.title == 'Paint Drying'
 
         self.driver.find_element(by=By.LINK_TEXT, value="Order subscription").click()
 
@@ -41,7 +40,6 @@ class MainPageTests(unittest.TestCase):
 
     def test_edit_user_subscription_link(self):
         self.driver.get(self.BASE_URL)
-        assert self.driver.title == 'Paint Drying'
 
         self.driver.find_element(by=By.LINK_TEXT, value="Edit User Subscription").click()
 

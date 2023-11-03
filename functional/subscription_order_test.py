@@ -15,7 +15,6 @@ class SubscriptionOrderTests(unittest.TestCase):
 
     def test_subscription_order(self):
         self.driver.get(os.path.join(self.BASE_URL, "subscribe"))
-
         assert self.driver.title == "Order Subscription - Paint Drying"
 
         self.driver.find_element(by=By.ID, value="email").send_keys("a@b.c")        # write email address to email field
@@ -28,17 +27,13 @@ class SubscriptionOrderTests(unittest.TestCase):
     def test_subscription_order_return_to_main(self):
         self.driver.get(os.path.join(self.BASE_URL, "subscribe"))
 
-        assert self.driver.title == "Order Subscription - Paint Drying"
-
-        self.driver.find_element(by=By.LINK_TEXT, value="Main Page").click()        # click lint to return to main page
+        self.driver.find_element(by=By.LINK_TEXT, value="Main Page").click()        # click link to return to main page
 
         assert self.driver.title == "Paint Drying"
         assert self.driver.current_url == self.BASE_URL
 
     def test_subscription_order_email_required(self):
         self.driver.get(os.path.join(self.BASE_URL, "subscribe"))
-
-        assert self.driver.title == "Order Subscription - Paint Drying"
 
         self.driver.implicitly_wait(0.5)
 
@@ -53,8 +48,6 @@ class SubscriptionOrderTests(unittest.TestCase):
 
     def test_subscription_order_sub_level_required(self):
         self.driver.get(os.path.join(self.BASE_URL, "subscribe"))
-
-        assert self.driver.title == "Order Subscription - Paint Drying"
 
         self.driver.find_element(by=By.ID, value="email").send_keys("a@b.c")
         self.driver.find_element(by=By.ID, value="submit").click()
