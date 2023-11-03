@@ -59,9 +59,9 @@ def order_subscription():
     form = OrderSubscriptionForm()
     if form.validate_on_submit():
         # example how to get data from wtforms
-        process_form(email=form.email.data,
+        process_form(subscription_email=form.email.data,
                      subscription_level=form.subscription_level.data,
-                     timestamp=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+                     subscription_timestamp=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         return redirect(url_for('index'))
     return render_template("order_subscription.html", form=form, the_title="Order Subscription - Paint Drying")
 
