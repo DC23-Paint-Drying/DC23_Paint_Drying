@@ -1,7 +1,17 @@
+from os import remove, listdir
+
 import pytest
 from docx import Document
 
 import src.report.report_utils as utils
+
+
+@pytest.fixture(autouse=True)
+def cleanup_files():
+    yield
+    for file in listdir('./'):
+        if file.endswith('.png'):
+            remove(file)
 
 
 def test_set_footer():
@@ -22,6 +32,10 @@ def test_create_table_with_invalid_size():
     document = Document()
     with pytest.raises(ValueError):
         utils.create_table(document, -1, -1)
+
+
+def test_create_donut_chart():
+    utils.create_donut_chart([1, 1], ['a', 'b'])
 
 
 def test_create_donut_chart_with_no_values():

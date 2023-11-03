@@ -32,6 +32,6 @@ coverage report -m
 
 # Generating monthly report
 ```bash
-python src/report/report_generate.py [DIRECTORY](optional)
+python src/report/report.py generate [DIRECTORY](optional)
 ```
 
