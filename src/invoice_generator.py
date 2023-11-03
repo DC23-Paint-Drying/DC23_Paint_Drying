@@ -15,7 +15,7 @@ class Invoice:
     client_mail: str
     client_subscription: str
     client_subscription_cost: float
-    client_packages: List[Tuple[str, str]]
+    client_packages: List[Tuple[str, int]]
     total_cost: float
     invoice_date: datetime.date
     payment_due: datetime.date
