@@ -32,7 +32,7 @@ def test_generate_invoice():
     assert tree.find("./client/name").text == "John"
     assert tree.find("./client/surname").text == "Smith"
     assert tree.find("./client/mail").text == "john@smi.th"
-    assert tree.find("./client/subscriptions").text == "bronze"
+    assert tree.find("./client/subscription/type").text == "bronze"
 
     # todo test payment amount when subscriptions' cost is added
     assert tree.find("./payment/due").text == "2023-11-01"

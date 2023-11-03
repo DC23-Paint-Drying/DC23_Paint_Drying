@@ -1,4 +1,5 @@
 import datetime
+import importlib.resources
 import uuid
 from dataclasses import dataclass, asdict
 from typing import Dict, List, Tuple
@@ -55,7 +56,7 @@ class Invoice:
 
         :param output_filename: name of the XML file to be created
         """
-        rendered_template = self._render_template("./templates/invoices/xml_template.xml")
+        rendered_template = self._render_template("xml_template.xml")
 
         with open(output_filename, 'w', encoding='utf-8') as file:
             file.write(rendered_template)
@@ -66,10 +67,10 @@ class Invoice:
 
         :param output_filename: name of the PDF file to be created
         """
-        rendered_template = self._render_template("./templates/invoices/pdf_template.html")
+        rendered_template = self._render_template("pdf_template.html")
         pdfkit.from_string(rendered_template,
                            output_filename,
-                           css="./templates/invoices/invoice.css",
+                           css=importlib.resources.files('src.templates.invoices').joinpath("invoice.css"),
                            options={"enable-local-file-access": True})
 
     def _render_template(self, template_file: str) -> str:
@@ -79,7 +80,7 @@ class Invoice:
         :param template_file: filename of the jinja template file
         :return: rendered jinja template
         """
-        with open(template_file, 'r', encoding='utf-8') as file:
+        with importlib.resources.files('src.templates.invoices').joinpath(template_file).open('r', encoding='utf-8') as file:
             template = file.read()
 
         return jinja2.Template(template).render(**asdict(self))
