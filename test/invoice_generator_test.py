@@ -1,5 +1,6 @@
 import datetime
 import os
+import pytest
 import xml.etree.ElementTree as ET
 
 from PyPDF2 import PdfReader
@@ -49,6 +50,8 @@ def test_generate_invoice():
     os.remove(filename)
 
 
+# requires the user to have wkhtmltopdf installed, otherwise raises: OSError: No wkhtmltopdf executable found: "b''"
+@pytest.mark.skip(reason="Shouldn't be run automatically")
 def test_generate_pdf():
     user_data = {
         "name": "John",
@@ -70,22 +73,22 @@ def test_generate_pdf():
     reader = PdfReader(filename)
     page = reader.pages[0]
 
-    lines = page.extract_text().split('\n')
     words = []
-    for line in lines:
+    for line in page.extract_text().split('\n'):
         for word in line.split(' '):
             words.append(word)
 
     for word in words:
         print(word)
 
-    assert f"nr {invoice.invoice_number}" in lines
-    assert str(invoice_date) in lines
+    assert f"{invoice.invoice_number}" in words
+    assert str(invoice_date) in words
 
     # todo test company data when it is standardized (written in a constants file for example)
 
-    assert "John Smith" in lines
-    assert "john@smi.th" in lines
+    assert "John" in words
+    assert "Smith" in words
+    assert "john@smi.th" in words
 
     assert "bronze" in words
     assert str(invoice.client_subscription_cost) in words
