@@ -56,7 +56,7 @@ class Invoice:
 
         :param output_filename: name of the XML file to be created
         """
-        rendered_template = self._render_template("xml_template.xml")
+        rendered_template = self._render_template("xml_template.xml.j2")
 
         with open(output_filename, 'w', encoding='utf-8') as file:
             file.write(rendered_template)
@@ -67,7 +67,7 @@ class Invoice:
 
         :param output_filename: name of the PDF file to be created
         """
-        rendered_template = self._render_template("pdf_template.html")
+        rendered_template = self._render_template("pdf_template.html.j2")
         pdfkit.from_string(rendered_template,
                            output_filename,
                            css=importlib.resources.files('src.templates.invoices').joinpath("invoice.css"),
