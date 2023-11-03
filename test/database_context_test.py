@@ -15,7 +15,7 @@ class DataBaseContextTests(unittest.TestCase):
         self.context.destroy()
 
     def test_read_write(self):
-        user = UserDto("testName", "testFirstName", "testSurname", 99, "test@email.com", "other", "timestamp")
+        user = UserDto("testName", "testFirstName", "testSurname", 99, "test@email.com", "other", "2023-01-01 00:00:00")
         bundles = [BundleInfo(str(uuid.uuid4()), "test@email.com", "YellowPaintPremium", "1980-01-01", "2040-12-20"),
                    BundleInfo(str(uuid.uuid4()), "test@email.com", "NoAds", "1980-01-01", "2040-12-20")]
         info = ClientInfo(user, "basic", bundles)
@@ -25,6 +25,7 @@ class DataBaseContextTests(unittest.TestCase):
         assert user.age == 99
         assert user.email == "test@email.com"
         assert user.gender == "other"
+        assert user.timestamp == "2023-01-01 00:00:00"
 
         assert len(bundles) == 2
 
@@ -40,6 +41,7 @@ class DataBaseContextTests(unittest.TestCase):
         assert client.basic.age == "99"
         assert client.basic.email == "test@email.com"
         assert client.basic.gender == "other"
+        assert client.basic.timestamp == "2023-01-01 00:00:00"
 
         assert client.subscription == "basic"
 

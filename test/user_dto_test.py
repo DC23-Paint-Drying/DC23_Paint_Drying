@@ -8,7 +8,7 @@ def test_user_creation():
     age = 18
     email = 'mail'
     gender = 'male'
-    timestamp = 'timestamp'
+    timestamp = '2023-01-01 00:00:00'
 
     user = UserDto(username=username,
                    name=name,
@@ -32,7 +32,7 @@ def test_json_serialization_deserialization():
                    age=18,
                    email='mail@example.com',
                    gender='male',
-                   timestamp='timestamp')
+                   timestamp='2023-01-01 00:00:00')
 
     json_data = user.to_json()
     user_from_json = UserDto.from_json(json_data)
@@ -47,7 +47,7 @@ def test_xml_serialization_deserialization():
                    age=18,
                    email='mail@example.com',
                    gender='male',
-                   timestamp='timestamp')
+                   timestamp='2023-01-01 00:00:00')
 
     xml_data = user.to_xml()
     user_from_xml = UserDto.from_xml(xml_data)
@@ -62,7 +62,7 @@ def test_csv_serialization_deserialization():
                    age=18,
                    email='mail@example.com',
                    gender='male',
-                   timestamp='timestamp')
+                   timestamp='2023-01-01 00:00:00')
 
     csv_data = user.to_csv()
     user_from_csv = UserDto.from_csv(csv_data)
