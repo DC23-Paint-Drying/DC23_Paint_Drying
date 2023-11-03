@@ -16,12 +16,14 @@ def test_generate_invoice():
 
     invoice_date = datetime.date(year=2023, month=10, day=1)
 
-    filename = invoice_generator.generate_invoice_xml(user_data, date=invoice_date)
-    invoice_number = filename[8:-4]
+    invoice = invoice_generator.Invoice(user_data, date=invoice_date)
+    filename = "invoice-test.xml"
+
+    invoice.save_xml(filename)
 
     tree = ET.parse(filename)
 
-    assert tree.find("./invoice-number").text == invoice_number
+    assert tree.find("./invoice-number").text == invoice.invoice_number
     assert tree.find("./date").text == str(invoice_date)
 
     # todo test company data when it is standardized (written in a constants file for example)
