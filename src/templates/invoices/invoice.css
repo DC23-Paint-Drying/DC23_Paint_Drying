@@ -3,6 +3,7 @@ html {
   font-size: 11pt;
   line-height: 1.6;
 }
+
 body {
   margin: 0;
 }
@@ -40,27 +41,32 @@ table {
 }
 
 th {
-  border-bottom: .2mm solid #aa99aa;
-  color: #aa99aaa9a;
+  border-bottom: .2mm solid #bfb;
+  color: #bfb;
   font-size: 10pt;
   font-weight: 400;
   padding-bottom: .25cm;
   text-transform: uppercase;
 }
+
 td {
   padding-top: 7mm;
 }
+
+th, td {
+  text-align: center;
+}
+
+th:first-of-type, td:first-of-type {
+  text-align: left;
+}
+
 td:last-of-type {
   color: #275c8c;
   font-weight: bold;
   text-align: right;
 }
-th, td {
-  text-align: center;
-}
-th:first-of-type, td:first-of-type {
-  text-align: left;
-}
+
 th:last-of-type, td:last-of-type {
   text-align: right;
 }
