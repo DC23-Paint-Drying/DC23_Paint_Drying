@@ -51,10 +51,8 @@
 
     <hr/>
 
-    <div class="center">Twoje pakiety:</div>
+    <div class="center">Twoje Usługi:</div>
 
-
-    {% if client_packages is defined and client_packages|length > 0 %}
     <table class="center">
       <thead>
         <tr>
@@ -63,22 +61,22 @@
         </tr>
       </thead>
       <tbody>
-      {% for package in client_packages %}
         <tr>
-          <td>{{ package[0] }}</td>
-          <td>{{ package[1] }}</td>
+          <td>Subskrypcja {{ client_subscription }}</td>
+          <td>{{ client_subscription_cost }} zł</td>
         </tr>
-      {% endfor %}
+        {% if client_packages is defined and client_packages|length > 0 %}
+        {% for package in client_packages %}
+        <tr>
+          <td>Pakiet {{ package[0] }}</td>
+          <td>{{ package[1] }} zł</td>
+        </tr>
+        {% endfor %}
+        {% endif %}
       </tbody>
     </table>
-    {% endif %}
 
-    <div>
-      <p class="center">Subskrypcja: {{ client_subscription }}</p>
-      <p class="center">Cena: {{ client_subscription_cost }}</p>
-    </div>
-
-    <p>Razem do zapłaty: {{ total_cost }}</p>
+    <p>Razem do zapłaty: {{ total_cost }} zł</p>
 
     <hr/>
 
@@ -86,8 +84,8 @@
     <p>Zapłać do: {{ payment_due }}</p>
 
     <div class="center">
-      <p>Dziękujemy za terminową wpłatę! ❤</p>
-      <p>Pamiętając o niej unikniesz dodatkowych opłat oraz postępowania karnego, ograniczenia wolności i ciężkich robót przymusowych! ❤</p>
+      <p>Dziękujemy za terminową wpłatę!</p>
+      <p>Pamiętając o niej unikniesz dodatkowych opłat oraz postępowania karnego, ograniczenia wolności i ciężkich robót przymusowych!</p>
     </div>
     <p class="header">❤</p>
     <p class="subheader">{{ company_name }}</p>
