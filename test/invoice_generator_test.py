@@ -2,7 +2,7 @@ import datetime
 import os
 import xml.etree.ElementTree as ET
 
-from pypdf import PdfReader
+from PyPDF2 import PdfReader
 
 import src.invoice_generator as invoice_generator
 from src import manifest
