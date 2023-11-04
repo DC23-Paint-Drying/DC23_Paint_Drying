@@ -100,7 +100,7 @@ def generate_invoice_xml(client_data: dict, date: datetime.date | None = None, i
     """
 
     from warnings import warn
-    warn("Method generate_invoice_xml() is deprecated."
+    warn("Method generate_invoice_xml() is deprecated. "
          "Please use Invoice(client_data, date).save_xml(output_filename) instead.")
 
     invoice = Invoice(client_data, date)

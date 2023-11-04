@@ -1,6 +1,5 @@
 import datetime
 import os
-import pytest
 import xml.etree.ElementTree as ET
 
 from PyPDF2 import PdfReader
@@ -108,10 +107,7 @@ def test_generate_pdf():
 
     page = PdfReader(filename).pages[0]
 
-    words = []
-    for line in page.extract_text().split('\n'):
-        for word in line.split(' '):
-            words.append(word)
+    words = page.extract_text().split()
 
     assert f"{invoice.invoice_number}" in words
     assert str(invoice_date) in words
