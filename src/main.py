@@ -28,6 +28,14 @@ def index():
     return render_template("index.html", the_title="Paint Drying")
 
 
+@app.route("/logout", methods=['POST', 'GET'])
+def logout():
+    global current_user_email
+    current_user_email = None
+
+    return render_template("index.html", the_title="Paint Drying")
+
+
 @app.route("/login", methods=['POST', 'GET'])
 def login():
     global current_user_email
@@ -53,8 +61,8 @@ def register():
 
     form = RegisterForm()
     if form.validate_on_submit():
-        user = db.get_clients(lambda client: client["email"] == form.email.data)
-        if user:
+        users = db.get_clients(lambda client: client["email"] == form.email.data)
+        if users:
             err_msg = "An account with the provided email already exists. " \
                       "Please choose a different email or log in if you have an existing account."
             return render_template("register.html", form=form, err_msg=err_msg, the_title="Register - Paint Drying"), 409

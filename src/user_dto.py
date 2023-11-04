@@ -1,5 +1,5 @@
 import random
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, field
 import json
 import uuid
 import xml.etree.ElementTree
@@ -25,7 +25,7 @@ class UserDto:
     age: int
     email: str
     gender: str
-    id: str = str(uuid.uuid4())
+    id: str = field(default_factory=lambda: str(uuid.uuid4()))
 
     def to_json(self):
         return json.dumps(asdict(self))

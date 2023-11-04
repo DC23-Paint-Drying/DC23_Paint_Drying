@@ -22,6 +22,14 @@ class MainPageTests(unittest.TestCase):
         self.driver.get(self.BASE_URL)
         assert self.driver.title == 'Paint Drying'
 
+    def test_login_link(self):
+        self.driver.get(self.BASE_URL)
+
+        self.driver.find_element(by=By.LINK_TEXT, value="Login").click()  # click link to go to login form
+
+        assert self.driver.title == 'Login - Paint Drying'
+        assert self.driver.current_url == os.path.join(self.BASE_URL, "login")  # check if redirected to login
+
     def test_register_link(self):
         self.driver.get(self.BASE_URL)
 
@@ -30,7 +38,7 @@ class MainPageTests(unittest.TestCase):
         assert self.driver.title == 'Register - Paint Drying'
         assert self.driver.current_url == os.path.join(self.BASE_URL, "register")  # check if redirected to register
 
-    def test_order_subscription_link(self):
+    def test_order_subscription_link_unauthorized(self):
         self.driver.get(self.BASE_URL)
 
         self.driver.find_element(by=By.LINK_TEXT, value="Order subscription").click()
@@ -38,10 +46,18 @@ class MainPageTests(unittest.TestCase):
         assert self.driver.title == 'Unauthorized - Paint Drying'
         assert self.driver.current_url == os.path.join(self.BASE_URL, "subscribe")
 
-    def test_edit_user_subscription_link(self):
+    def test_edit_user_subscription_link_unauthorized(self):
         self.driver.get(self.BASE_URL)
 
         self.driver.find_element(by=By.LINK_TEXT, value="Edit User Subscription").click()
 
         assert self.driver.title == 'Unauthorized - Paint Drying'
         assert self.driver.current_url == os.path.join(self.BASE_URL, "edit-subscription")
+
+    def test_edit_user_data_link_unauthorized(self):
+        self.driver.get(self.BASE_URL)
+
+        self.driver.find_element(by=By.LINK_TEXT, value="Edit User Data").click()
+
+        assert self.driver.title == 'Unauthorized - Paint Drying'
+        assert self.driver.current_url == os.path.join(self.BASE_URL, "edit-profile")
