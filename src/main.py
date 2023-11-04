@@ -1,3 +1,4 @@
+import datetime
 import inspect
 from dataclasses import asdict
 
@@ -43,7 +44,8 @@ def register():
                        form.surname.data,
                        form.age.data,
                        form.email.data,
-                       form.gender.data)
+                       form.gender.data,
+                       datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         current_user_email = form.email.data
 
         db.add_client(asdict(user))
@@ -57,8 +59,9 @@ def order_subscription():
     form = OrderSubscriptionForm()
     if form.validate_on_submit():
         # example how to get data from wtforms
-        process_form(email=form.email.data,
-                     subscription_level=form.subscription_level.data)
+        process_form(subscription_email=form.email.data,
+                     subscription_level=form.subscription_level.data,
+                     subscription_timestamp=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         return redirect(url_for('index'))
     return render_template("order_subscription.html", form=form, the_title="Order Subscription - Paint Drying")
 

@@ -1,0 +1,31 @@
+name: Run Functional Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches: main
+
+jobs:
+  build:
+    name: Run Functional Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip  
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Run Flask app locally
+        run: flask --app src/main run &
+      - name: Removing previous chrome instances on runner
+        run: sudo apt purge google-chrome-stable
+      - name: Installing all necessary packages
+        run: pip install chromedriver-autoinstaller pyvirtualdisplay
+      - name: Install xvfb
+        run: sudo apt-get install xvfb
+      - name: Run functional tests
+        run: source .envrc && python -m pytest functional/
+      - name: Close Python
+        run: kill $(pidof python)
