@@ -1,0 +1,33 @@
+<invoice>
+	<invoice-number>{{ invoice_number }}</invoice-number>
+	<date>{{ invoice_date }}</date>
+	<company>
+		<name>{{ company_name }}</name>
+		<address>{{ company_address }}</address>
+		<NIP>{{ company_nip }}</NIP>
+		<bank-account-number>{{ company_bank_account }}</bank-account-number>
+	</company>
+	<client>
+		<name>{{ client_name }}</name>
+		<surname>{{ client_surname }}</surname>
+		<mail>{{ client_mail }}</mail>
+		<subscription>
+			<name>{{ client_subscription }}</name>
+			<cost>{{ client_subscription_cost }}</cost>
+		</subscription>
+		{% if client_packets is defined and client_packets|length > 0 %}
+		<packets>
+			{% for packet in client_packets %}
+			<packet>
+				<name>{{ packet[0] }}</name>
+				<cost>{{ packet[1] }}</cost>
+			</packet>
+			{% endfor %}
+		</packets>
+		{% endif %}
+	</client>
+	<payment>
+		<amount>{{ total_cost }}</amount>
+		<due>{{ payment_due }}</due>
+	</payment>
+</invoice>

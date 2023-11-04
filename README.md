@@ -7,6 +7,11 @@ pip install -r requirements.txt
 
 ```
 
+# Generating PDF files
+
+Generating PDF files requires wkhtmltopdf: https://github.com/JazzCore/python-pdfkit/wiki/Installing-wkhtmltopdf
+
+
 # Setting mail
 Mail sending needs to have set the environmental variables: COMPANY_MAIL and PASSWORD.
 Setting them using Bash:
