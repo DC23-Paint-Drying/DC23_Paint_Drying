@@ -88,8 +88,6 @@ def test_generate_invoice_deprecated():
     os.remove(filename)
 
 
-# requires the user to have wkhtmltopdf installed, otherwise raises: OSError: No wkhtmltopdf executable found: "b''"
-@pytest.mark.skip(reason="Shouldn't be run automatically")
 def test_generate_pdf():
     user_data = {
         "name": "John",
