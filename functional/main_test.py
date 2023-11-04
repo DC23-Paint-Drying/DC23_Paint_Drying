@@ -27,7 +27,7 @@ class MainPageTests(unittest.TestCase):
 
         self.driver.find_element(by=By.LINK_TEXT, value="Register").click()        # click link to go to register form
 
-        assert self.driver.title == 'Unauthorized - Paint Drying'
+        assert self.driver.title == 'Register - Paint Drying'
         assert self.driver.current_url == os.path.join(self.BASE_URL, "register")  # check if redirected to register
 
     def test_order_subscription_link(self):
