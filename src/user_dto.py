@@ -8,15 +8,17 @@ import xml.etree.ElementTree
 @dataclass
 class UserDto:
     """
-        Data class for storing user information.
+    Data class for storing user information.
 
-        Attributes:
-        - username (str): The username of the user.
-        - name (str): The user's first name.
-        - surname (str): The user's last name.
-        - age (int): The user's age.
-        - email (str): The user's email address, treated as the user's ID.
-        - gender (str): The user's gender.
+    Attributes:
+    - username (str): The username of the user.
+    - name (str): The user's first name.
+    - surname (str): The user's last name.
+    - age (int): The user's age.
+    - email (str): The user's email address, treated as the user's ID.
+    - gender (str): The user's gender.
+    - timestamp (str): The timestamp when the user data was created.
+    - id (str): A unique identifier for the user.
     """
 
     username: str
@@ -27,6 +29,7 @@ class UserDto:
     gender: str
     timestamp: str
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    timestamp: str
 
     def to_json(self):
         return json.dumps(asdict(self))
@@ -57,7 +60,7 @@ class UserDto:
         return cls(**data)
 
     def to_csv(self):
-        return f"{self.username},{self.name},{self.surname},{self.age},{self.email},{self.gender},{self.id}\n"
+        return f"{self.username},{self.name},{self.surname},{self.age},{self.email},{self.gender},{self.timestamp},{self.id}\n"
 
     @classmethod
     def from_csv(cls, csv_str):

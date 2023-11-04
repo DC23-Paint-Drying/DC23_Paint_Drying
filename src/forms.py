@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, RadioField, SubmitField
 from wtforms.validators import DataRequired, Length, Email, NumberRange
-
+from . import manifest
 
 class LoginForm(FlaskForm):
     email = StringField(label='Email', validators=[DataRequired(), Email()])
@@ -22,9 +22,7 @@ class RegisterForm(FlaskForm):
 
 class OrderSubscriptionForm(FlaskForm):
     email = StringField(label='Email', validators=[DataRequired(), Email()])
-    subscription_level = RadioField(label='Subscription', choices=[('bronze', 'Bronze'),
-                                                             ('silver', 'Silver'),
-                                                             ('gold', 'Gold')])
+    subscription_level = RadioField(label='Subscription', choices=[(name, manifest.SUBSCRIPTIONS[name]["name"]) for name in manifest.SUBSCRIPTIONS])
     submit = SubmitField(label='Order Subscription')
 
 
@@ -40,7 +38,5 @@ class EditProfileForm(FlaskForm):
 
 
 class EditSubscriptionForm(FlaskForm):
-    subscription_level = RadioField(label='Subscription', choices=[('bronze', 'Bronze'),
-                                                             ('silver', 'Silver'),
-                                                             ('gold', 'Gold')])
+    subscription_level = RadioField(label='Subscription', choices=[(name, manifest.SUBSCRIPTIONS[name]["name"]) for name in manifest.SUBSCRIPTIONS])
     submit = SubmitField(label='Order Subscription')
