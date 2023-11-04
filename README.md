@@ -9,7 +9,10 @@ pip install -r requirements.txt
 
 # Setting mail
 Mail sending needs to have set the environmental variables: COMPANY_MAIL and PASSWORD.
-In pycharm they can be set in "Run Configuration".
+Setting them using Bash:
+$Env:COMPANY_MAIL   = "mail"
+$Env:PASSWORD     = "xxxx xxxx xxxx xxxx"
+
 
 
 

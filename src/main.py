@@ -2,13 +2,17 @@ import datetime
 import inspect
 from dataclasses import asdict
 
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, request
 from flask_wtf import CSRFProtect
 
+from .database import Database
 from .forms import RegisterForm, OrderSubscriptionForm, EditProfileForm, EditSubscriptionForm
+from .invoice_generator import generate_invoice_xml
 from .process_form import process_form
 from .csvDatabase import CSVDatabase
 from .user_dto import UserDto
+from .mail import send_mail
+from .text_generator import get_propose_mail_text, get_invoice_mail_text
 
 app = Flask(__name__)
 app.secret_key = 'tO$&!|0wkamvVia0?n$NqIRVWOG'
@@ -96,3 +100,32 @@ def edit_subscription():
 
         return redirect(url_for('index'))
     return render_template("edit_subscription.html", form=form, the_title="Edit Subscription - Paint Drying")
+
+
+@app.route("/admin_panel", methods=['GET', 'POST'])
+def admin_panel():
+    if request.method == 'GET':
+        if request.args.get('suggest_services') == 'suggest':
+            clients = db.get_clients()
+            for client in clients:
+                mail_text = get_propose_mail_text(client['id'], Database(db))
+                send_mail(client['email'],
+                          'Suggestion',
+                          mail_text.__str__(),
+                          [])
+            return render_template("admin_panel.html", the_title="Paint Drying", notification="Mails sent")
+        if request.args.get('send_invoice') == 'send':
+            clients = db.get_clients()
+            if len(clients) > 0:
+                client = clients[0]
+                file_name = generate_invoice_xml(client)
+                mail_text = get_invoice_mail_text(client['id'], 0, Database(db))
+                send_mail(client['email'],
+                          'Suggestion',
+                          mail_text.__str__(),
+                          [file_name])
+            return render_template("admin_panel.html", the_title="Paint Drying", notification="Invoices sent")
+        if request.args.get('generate_report') == 'generate':
+            return render_template("admin_panel.html", the_title="Paint Drying", notification="Report generated")
+
+    return render_template("admin_panel.html", the_title="Paint Drying", notification="")

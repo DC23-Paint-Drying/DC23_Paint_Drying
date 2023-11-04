@@ -107,7 +107,7 @@ def get_propose_mail_text(user_id: int, database: Database) -> str:
     return replace_keywords(mail_text, user_id, database)
 
 
-def get_invoice_mail_text(user_id: int, invoice, database) -> str:
+def get_invoice_mail_text(user_id: int, invoice, database: Database) -> str:
     """
     function for creating mail text (for sending invoices) procedurally
     :param user_id:

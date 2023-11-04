@@ -1,7 +1,13 @@
 from typing import List
 
+from .csvDatabase import CSVDatabase
+from .manifest import SUBSCRIPTIONS
+
 
 class Database:
+    def __init__(self, db: CSVDatabase) -> None:
+        self.db: CSVDatabase = db
+
     """
     Database object is used for retrieving data from the database.
     At the moment is used for generating mail text, however tested with mocks.
@@ -14,9 +20,13 @@ class Database:
         :return: one of string values: 'M' or 'F'
         """
 
-        # TO IMPLEMENT
+        client = self.db.get_client(user_id)
 
-        return ''
+        if client['gender'] == 'female':
+            return 'F'
+        else:
+            return 'M'
+
 
     def get_subscribed_services(self, user_id) -> List[str]:
         """
@@ -26,9 +36,13 @@ class Database:
         :return: list of names of subscribed services
         """
 
-        # TO IMPLEMENT
+        client = self.db.get_client(user_id)
 
-        return []
+        services = client['subscriptions'].replace('[','').replace(']','')
+        if services == '':
+            return []
+        else:
+            return services.split('.')
 
     def get_not_subscribed_services(self, user_id) -> List[str]:
         """
@@ -38,9 +52,15 @@ class Database:
         :return: list of names of NOT subscribed services
         """
 
-        # TO IMPLEMENT
+        client = self.db.get_client(user_id)
+        subscribed = client['subscriptions']
+        not_subscribed = []
 
-        return []
+        for service in SUBSCRIPTIONS.keys():
+            if service not in subscribed:
+                not_subscribed.append(service)
+
+        return not_subscribed
 
     def get_user_surname(self, user_id) -> str:
         """
@@ -50,6 +70,4 @@ class Database:
         :return: user surname as string
         """
 
-        # TO IMPLEMENT
-
-        return ''
+        return self.db.get_client(user_id)['surname']

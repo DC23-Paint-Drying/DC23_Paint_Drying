@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>DC Paint Drying</h1>
+
+<p style="text-align:center; margin: 100px; font-size: 70px">Admin Panel</p>
+<form method="get" class="VerticalFlex">
+    <div class="HorizontalFlex">
+        <div class="AdminButton">
+            <input type="submit" value="suggest" name="suggest_services" id="suggest_services">
+            <label for="suggest_services" class="VerticalFlex" style="height: 100%;">
+                Suggest new services
+            </label>
+
+        </div>
+        <div class="AdminButton">
+            <input type="submit" value="send" name="send_invoice" id="send_invoice">
+            <label for="send_invoice" class="VerticalFlex" style="height: 100%;">
+                Send invoice
+            </label>
+        </div>
+    </div>
+    <div class="HorizontalFlex">
+        <div class="AdminButton">
+            <input type="submit" value="generate" name="generate_report" id="generate_report">
+            <label for="generate_report" class="VerticalFlex" style="height: 100%;">
+                Generate report
+            </label>
+        </div>
+    </div>
+    <div id="notification">
+        {{ notification }}
+    </div>
+</form>
+
+
+{% endblock %}

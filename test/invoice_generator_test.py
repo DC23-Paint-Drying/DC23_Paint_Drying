@@ -9,7 +9,7 @@ def test_generate_invoice():
     user_data = {
         "name": "John",
         "surname": "Smith",
-        "mail": "john@smi.th",
+        "email": "john@smi.th",
         "subscriptions": "bronze"
     }
 

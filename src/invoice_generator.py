@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import datetime
 import uuid
 import xml.etree.cElementTree as ET
@@ -37,7 +39,7 @@ def generate_invoice_xml(client_data: Dict, date: datetime.date | None = None, i
     client = ET.SubElement(invoice, "client")
     ET.SubElement(client, "name").text = client_data["name"]
     ET.SubElement(client, "surname").text = client_data["surname"]
-    ET.SubElement(client, "mail").text = client_data["mail"]
+    ET.SubElement(client, "mail").text = client_data["email"]
     ET.SubElement(client, "subscriptions").text = client_data["subscriptions"]
 
     payment = ET.SubElement(invoice, "payment")

@@ -1,5 +1,5 @@
 import random
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, field
 import json
 import uuid
 import xml.etree.ElementTree
@@ -18,6 +18,7 @@ class UserDto:
     - email (str): The user's email address, treated as the user's ID.
     - gender (str): The user's gender.
     - timestamp (str): The timestamp when the user data was created.
+    - subscriptions ([str]]): The list of names of subscribed services.
     - id (str): A unique identifier for the user.
     """
 
@@ -28,6 +29,7 @@ class UserDto:
     email: str
     gender: str
     timestamp: str
+    subscriptions: [str] = field(default_factory=list)
     id: str = str(uuid.uuid4())
 
     def to_json(self):
@@ -55,11 +57,19 @@ class UserDto:
             value = element.text
             if value is not None and value.isdigit():
                 value = int(value)
+            else:
+                # if data[i] is a list
+                if '[' in value:
+                    value = value.replace('[','').replace(']','')
+                    if value == '':
+                        value = []
+                    else:
+                        value = value.split('.')
             data[key] = value
         return cls(**data)
 
     def to_csv(self):
-        return f"{self.username},{self.name},{self.surname},{self.age},{self.email},{self.gender},{self.timestamp},{self.id}\n"
+        return f"{self.username},{self.name},{self.surname},{self.age},{self.email},{self.gender},{self.timestamp},[{'.'.join(self.subscriptions)}],{self.id}\n"
 
     @classmethod
     def from_csv(cls, csv_str):
@@ -67,4 +77,13 @@ class UserDto:
         for i in range(len(data)):
             if data[i].isdigit():
                 data[i] = int(data[i])
+            else:
+                # if data[i] is a list
+                if '[' in data[i]:
+                    data[i] = data[i].replace('[','').replace(']','')
+                    if data[i] == '':
+                        data[i] = []
+                    else:
+                        data[i] = data[i].split('.')
+
         return cls(*data)
