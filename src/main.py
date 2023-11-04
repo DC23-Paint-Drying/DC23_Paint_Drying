@@ -5,7 +5,7 @@ from dataclasses import asdict
 from flask import Flask, render_template, redirect, url_for
 from flask_wtf import CSRFProtect
 
-from .forms import LoginForm, RegisterForm, OrderSubscriptionForm, EditProfileForm, EditSubscriptionForm
+from .forms import RegisterForm, OrderSubscriptionForm, EditProfileForm, EditSubscriptionForm
 from .process_form import process_form
 from .csvDatabase import CSVDatabase
 from .user_dto import UserDto
@@ -29,25 +29,6 @@ def index():
     return render_template("index.html", the_title="Paint Drying")
 
 
-@app.route("/login", methods=['POST', 'GET'])
-def login():
-    global current_user_email
-
-    form = LoginForm()
-    if form.validate_on_submit():
-        users = db.get_clients(lambda client: client["email"] == form.email.data)
-        if not users:
-            err_msg = "Invalid Email address. Please check it and try again."
-            return render_template("login.html", form=form, err_msg=err_msg, the_title="Login - Paint Drying"), 401
-        user = users[0]
-        # user data is ready to further processing
-
-        current_user_email = form.email.data
-
-        return redirect(url_for('index'))
-    return render_template("login.html", form=form, err_msg=None, the_title="Login - Paint Drying")
-
-
 @app.route("/register", methods=['POST', 'GET'])
 def register():
     global current_user_email
@@ -56,9 +37,7 @@ def register():
     if form.validate_on_submit():
         user = db.get_clients(lambda client: client["email"] == form.email.data)
         if user:
-            err_msg = "An account with the provided email already exists. " \
-                      "Please choose a different email or log in if you have an existing account."
-            return render_template("register.html", form=form, err_msg=err_msg, the_title="Register - Paint Drying"), 409
+            raise Exception('User with given email already exists')
 
         user = UserDto(form.username.data,
                        form.name.data,
@@ -72,15 +51,12 @@ def register():
         db.add_client(asdict(user))
 
         return redirect(url_for('index'))
-    return render_template("register.html", form=form, err_msg=None, the_title="Register - Paint Drying")
+    return render_template("register.html", form=form, the_title="Register - Paint Drying")
 
 
 @app.route("/subscribe", methods=['POST', 'GET'])
 def order_subscription():
     form = OrderSubscriptionForm()
-    if not current_user_email:
-        return render_template("unauthorized.html", the_title="Unauthorized - Paint Drying"), 401
-
     if form.validate_on_submit():
         # example how to get data from wtforms
         process_form(subscription_email=form.email.data,
@@ -92,10 +68,10 @@ def order_subscription():
 
 @app.route("/edit-profile", methods=['POST', 'GET'])
 def edit_profile():
-    form = EditProfileForm()
     if not current_user_email:
-        return render_template("unauthorized.html", the_title="Unauthorized - Paint Drying"), 401
+        raise Exception('User needs to be logged in to edit profile')
 
+    form = EditProfileForm()
     if form.validate_on_submit():
         users = db.get_clients(lambda client: client["email"] == current_user_email)
         if users:
@@ -106,7 +82,7 @@ def edit_profile():
             user['age'] = form.age.data
             user['gender'] = form.gender.data
 
-            db.update_client(user)
+        db.update_client(user)
 
         return redirect(url_for('index'))
     return render_template("edit_profile.html", form=form, the_title="Edit Profile - Paint Drying")
@@ -115,9 +91,6 @@ def edit_profile():
 @app.route("/edit-subscription", methods=['POST', 'GET'])
 def edit_subscription():
     form = EditSubscriptionForm()
-    if not current_user_email:
-        return render_template("unauthorized.html", the_title="Unauthorized - Paint Drying"), 401
-
     if form.validate_on_submit():
         # place for change user subscription
 
