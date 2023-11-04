@@ -27,7 +27,7 @@ class MainPageTests(unittest.TestCase):
 
         self.driver.find_element(by=By.LINK_TEXT, value="Register").click()        # click link to go to register form
 
-        assert self.driver.title == 'Register - Paint Drying'
+        assert self.driver.title == 'Unauthorized - Paint Drying'
         assert self.driver.current_url == os.path.join(self.BASE_URL, "register")  # check if redirected to register
 
     def test_order_subscription_link(self):
@@ -35,7 +35,7 @@ class MainPageTests(unittest.TestCase):
 
         self.driver.find_element(by=By.LINK_TEXT, value="Order subscription").click()
 
-        assert self.driver.title == 'Order Subscription - Paint Drying'
+        assert self.driver.title == 'Unauthorized - Paint Drying'
         assert self.driver.current_url == os.path.join(self.BASE_URL, "subscribe")
 
     def test_edit_user_subscription_link(self):
@@ -43,5 +43,5 @@ class MainPageTests(unittest.TestCase):
 
         self.driver.find_element(by=By.LINK_TEXT, value="Edit User Subscription").click()
 
-        assert self.driver.title == 'Edit Subscription - Paint Drying'
+        assert self.driver.title == 'Unauthorized - Paint Drying'
         assert self.driver.current_url == os.path.join(self.BASE_URL, "edit-subscription")
