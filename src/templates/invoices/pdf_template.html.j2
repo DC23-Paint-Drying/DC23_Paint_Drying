@@ -65,11 +65,11 @@
 					<td>Subskrypcja {{ client_subscription }}</td>
 					<td>{{ client_subscription_cost }} zł</td>
 				</tr>
-				{% if client_packages is defined and client_packages|length > 0 %}
-				{% for package in client_packages %}
+				{% if client_packets is defined and client_packets|length > 0 %}
+				{% for packet in client_packets %}
 				<tr>
-					<td>Pakiet {{ package[0] }}</td>
-					<td>{{ package[1] }} zł</td>
+					<td>Pakiet {{ packet[0] }}</td>
+					<td>{{ packet[1] }} zł</td>
 				</tr>
 				{% endfor %}
 				{% endif %}
@@ -81,6 +81,7 @@
 		<hr/>
 
 		<p>Tytuł przelewu: {{ invoice_number }}</p>
+		<p>Nr konta bankowego: {{ company_bank_account }}</p>
 		<p>Zapłać do: {{ payment_due }}</p>
 
 		<div class="center">

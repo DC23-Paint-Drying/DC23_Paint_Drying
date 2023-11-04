@@ -12,18 +12,18 @@
 		<surname>{{ client_surname }}</surname>
 		<mail>{{ client_mail }}</mail>
 		<subscription>
-			<type>{{ client_subscription }}</type>
+			<name>{{ client_subscription }}</name>
 			<cost>{{ client_subscription_cost }}</cost>
 		</subscription>
-		{% if client_packages is defined and client_packages|length > 0 %}
-		<packages>
-			{% for package in client_packages %}
-			<package>
-				<type>{{ package[0] }}</type>
-				<cost>{{ package[1] }}</cost>
-			</package>
+		{% if client_packets is defined and client_packets|length > 0 %}
+		<packets>
+			{% for packet in client_packets %}
+			<packet>
+				<name>{{ packet[0] }}</name>
+				<cost>{{ packet[1] }}</cost>
+			</packet>
 			{% endfor %}
-		</packages>
+		</packets>
 		{% endif %}
 	</client>
 	<payment>

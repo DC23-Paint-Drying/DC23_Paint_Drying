@@ -6,6 +6,8 @@ from dataclasses import dataclass, asdict
 import jinja2
 import pdfkit
 
+from . import manifest
+
 
 @dataclass
 class Invoice:
@@ -14,14 +16,14 @@ class Invoice:
     client_mail: str
     client_subscription: str
     client_subscription_cost: float
-    client_packages: list[tuple[str, float]]
+    client_packets: list[tuple[str, float]]
     total_cost: float
     invoice_date: datetime.date
     payment_due: datetime.date
-    company_name: str = "Drying Paint Inc."
-    company_address: str = "Paintburg, Paint Street 54/6"
-    company_nip: str = "123-456-78-90"
-    company_bank_account: str = "12 3456 7890 0000 0000 1234 5678"
+    company_name: str = manifest.COMPANY_NAME
+    company_address: str = manifest.COMPANY_ADDRESS
+    company_nip: str = manifest.COMPANY_NIP
+    company_bank_account: str = manifest.COMPANY_BANK_ACCOUNT
     invoice_number: str = uuid.uuid4().hex
 
     def __init__(self, client_data: dict, date: datetime.date | None = None) -> None:
@@ -30,7 +32,7 @@ class Invoice:
         The invoice payment is due to the first day of the next month, relative to the invoice's date.
 
         :param client_data: Data of the client for whom the invoice is to be generated. Must contain fields:
-            "name", "surname", "mail", "subscription", "packages".
+            "name", "surname", "mail", "subscription", "packets".
         :param date: Date of the invoice. If left as None, current date is used.
         """
 
@@ -43,11 +45,11 @@ class Invoice:
         self.client_name = client_data["name"]
         self.client_surname = client_data["surname"]
         self.client_mail = client_data["mail"]
-        self.client_subscription = client_data["subscription"]
-        self.client_subscription_cost = 100  # todo
-        self.client_packages = client_data["packages"]
+        self.client_subscription = manifest.SUBSCRIPTIONS[client_data["subscription"]]["name"]
+        self.client_subscription_cost = manifest.SUBSCRIPTIONS[client_data["subscription"]]["price"]
+        self.client_packets = [(manifest.PACKETS[packet]["name"], manifest.PACKETS[packet]["price"]) for packet in client_data["packets"]]
 
-        self.total_cost = self.client_subscription_cost + sum([package[1] for package in self.client_packages])
+        self.total_cost = self.client_subscription_cost + sum([packet[1] for packet in self.client_packets])
 
     def save_xml(self, output_filename: str) -> None:
         """
