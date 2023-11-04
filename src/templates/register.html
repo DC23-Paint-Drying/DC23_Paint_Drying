@@ -7,13 +7,6 @@
 <a href="{{ url_for('index') }}">Main Page</a>
 
 <div class="container w-50">
-	{% if err_msg %}
-		<div class="alert alert-danger d-flex align-items-center" role="alert">
-			<div>
-				<span>{{err_msg}}</span>
-			</div>
-		</div>
-	{% endif %}
 	<form method="post">
 		{{form.hidden_tag()}}
 		<fieldset>
