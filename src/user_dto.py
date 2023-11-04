@@ -29,7 +29,6 @@ class UserDto:
     gender: str
     timestamp: str
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
-    timestamp: str
 
     def to_json(self):
         return json.dumps(asdict(self))
