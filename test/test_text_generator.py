@@ -36,7 +36,7 @@ class TestReplaceKeywords(unittest.TestCase):
         database.get_subscribed_services = MagicMock(return_value=['a', 'b', 'c'])
         database.get_not_subscribed_services = MagicMock(return_value=['d', 'e'])
         assert text_gen.replace_keywords('{$proposeNewService}', 1,
-                                         database) == ('Zauważyliśmi, że jest Pani zaintereseowana usługą a. Powinnaś '
+                                         database) == ('Zauważyliśmi, że jest Pani zainteresowana usługą a. Powinna Pani '
                                                        'sprawdzić także te usługi: d, e!')
 
         # test when nothing is bought, but there are more than 2 services in total
@@ -96,7 +96,7 @@ class TestProposeMailText(unittest.TestCase):
         assert text_gen.get_propose_mail_text(1, database) == (''
                                         'Szanowny Panie Wierzba\n'
                                         '\n'
-                                        'Zauważyliśmi, że jest Pan zaintereseowany usługą abba. Powinienieś sprawdzić '
+                                        'Zauważyliśmi, że jest Pan zainteresowany usługą abba. Powinienien Pan sprawdzić '
                                         'także te usługi: d, e!\n'
                                         '\n'
                                         'Uwaga! Subskrypcja na abba wkrótce wygaśnie! Szybko! Odnów subskrypcję!\n'

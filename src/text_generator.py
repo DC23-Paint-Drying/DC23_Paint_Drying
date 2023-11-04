@@ -39,9 +39,9 @@ def replace_keywords(text: str, user_id: int, database: Database) -> str:
                 else:
                     services = ", ".join(not_subscribed_services)
                 text = text.replace('{$proposeNewService}',
-                                    'Zauważyliśmi, że jest '+('Pan zaintereseowany ' if user_is_male else 'Pani zaintereseowana ') +
+                                    'Zauważyliśmi, że jest '+('Pan zainteresowany ' if user_is_male else 'Pani zainteresowana ') +
                                                                                                    'usługą ' +
-                                    subscribed_services[0] + '. '+('Powinienieś' if user_is_male else 'Powinnaś')+' '
+                                    subscribed_services[0] + '. '+('Powinienien Pan' if user_is_male else 'Powinna Pani')+' '
                                     'sprawdzić także te usługi: ' + services + '!')
             else:
                 if len(not_subscribed_services) >= 3:
