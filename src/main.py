@@ -3,12 +3,14 @@ import datetime
 from flask import Flask, render_template, redirect, url_for
 from flask_wtf import CSRFProtect
 
+
 from .client_info import ClientInfo
 from .database_context import DatabaseContext
-from .forms import LoginForm, RegisterForm, OrderSubscriptionForm, EditProfileForm, EditSubscriptionForm
+from .forms import LoginForm, RegisterForm, OrderSubscriptionForm, OrderPacketsForm, EditProfileForm, EditSubscriptionForm
 from .process_form import process_form
 from .subscription_info import SubscriptionInfo
 from .user_dto import UserDto
+from . import manifest
 
 app = Flask(__name__)
 app.secret_key = 'tO$&!|0wkamvVia0?n$NqIRVWOG'
@@ -101,6 +103,21 @@ def order_subscription():
         db.serialize(user)
         return redirect(url_for('index'))
     return render_template("order_subscription.html", form=form, the_title="Order Subscription - Paint Drying")
+
+
+@app.route("/order-packets", methods=['POST', 'GET'])
+def order_packets():
+    form = OrderPacketsForm()
+    descriptions = [(manifest.PACKETS[name]["name"], manifest.PACKETS[name]["description"]) for name in manifest.PACKETS]
+    descriptions = dict(descriptions)
+    if not current_user_email:
+        return render_template("unauthorized.html", the_title="Unauthorized - Paint Drying"), 401
+
+    if form.validate_on_submit():
+        # place for processing from data
+
+        return redirect(url_for('index'))
+    return render_template("order_packets.html", form=form, descriptions=descriptions, the_title="Order Packets - Paint Drying")
 
 
 @app.route("/edit-profile", methods=['POST', 'GET'])
