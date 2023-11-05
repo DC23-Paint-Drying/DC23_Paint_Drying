@@ -27,6 +27,7 @@ app = Flask(__name__)
 app.secret_key = 'tO$&!|0wkamvVia0?n$NqIRVWOG'
 
 login_manager = LoginManager(app)
+model_manager = ModelManager()
 
 csrf = CSRFProtect(app)
 
@@ -118,14 +119,14 @@ def register():
 @app.route("/subscribe", methods=['POST', 'GET'])
 @login_required
 def order_subscription(): #unused
-    ModelManager.deploy_process()
+    model_manager.deploy_process()
     form = OrderSubscriptionForm()
     prices = [(manifest.SUBSCRIPTIONS[name]["name"], manifest.SUBSCRIPTIONS[name]["price"])
               for name in manifest.SUBSCRIPTIONS]
     prices = dict(prices)
 
     if form.validate_on_submit():
-        ModelManager.complete_task()
+        model_manager.complete_task()
         subscription = SubscriptionInfo(subscription_level=form.subscription_level.data,
                                         subscription_timestamp=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         client = db.get_client_by_email(current_user.email)
@@ -205,7 +206,7 @@ def edit_profile():
 @app.route("/edit-subscription", methods=['POST', 'GET'])
 @login_required
 def edit_subscription():
-    ModelManager.deploy_process()
+    model_manager.deploy_process()
 
     form = EditSubscriptionForm()
     if current_user.user_type == manifest.USER_TYPES.ADMIN:
@@ -216,7 +217,7 @@ def edit_subscription():
     prices = dict(prices)
 
     if form.validate_on_submit():
-        ModelManager.complete_task()
+        model_manager.complete_task()
         client = db.get_client_by_email(form.email.data if form.email.data != "current_user" else current_user.email)
         if client:
             client.subscription = SubscriptionInfo(subscription_level=form.subscription_level.data,
@@ -322,7 +323,7 @@ def wants_additional_services():
                 "userAccepts": {"value": True}
             }
         }
-    ModelManager.complete_task(data=variables)
+    model_manager.complete_task(data=variables)
     return redirect(url_for('edit_subscription'))
 
 @app.route("/no-additional-services", methods=['POST', 'GET'])
@@ -333,7 +334,7 @@ def no_additional_services():
                 "userAccepts": {"value": False}
             }
         }
-    ModelManager.complete_task(data=variables,end=True)
+    model_manager.complete_task(data=variables,end=True)
         
     return redirect(url_for('index'))
 
