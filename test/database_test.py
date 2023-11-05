@@ -1,65 +1,55 @@
+import unittest
+import uuid
+
+from src.bundle_info import BundleInfo
+from src.client_info import ClientInfo
 from src.csvDatabase import CSVDatabase
 from src.database import Database
+from src.database_context import DatabaseContext
+from src.subscription_info import SubscriptionInfo
+from src.user_dto import UserDto
+
+import utils.data_set as data_set
 
 
-def test_get_user_sex():
-    columns = ["id", "gender"]
-    client1 = {"id": '1', "gender": "male"}
-    client2 = {"id": '2', "gender": "female"}
-    csvdb = CSVDatabase("dbtest.csv", columns)
+class DatabaseTests(unittest.TestCase):
 
-    csvdb.add_client(client1)
-    csvdb.add_client(client2)
+    def setUp(self) -> None:
+        self.context = DatabaseContext("db")
+        self.db = Database(self.context)
 
-    db = Database(csvdb)
-    assert db.get_user_sex('1') == 'M'
-    assert db.get_user_sex('2') == 'F'
+    def tearDown(self) -> None:
+        self.context.destroy()
 
-    csvdb.drop_database()
+    def test_get_user_sex(self):
+        male_client = data_set.generate_male_client_info()
+        female_client = data_set.generate_female_client_info()
+        self.context.serialize(male_client)
+        self.context.serialize(female_client)
 
-def test_get_subscribed_packets():
-    packets = ['monthly','family']
-    columns = ["id", "packets"]
-    client1 = {"id": '1', "packets": packets}
-    csvdb = CSVDatabase("dbtest.csv", columns)
+        assert self.db.get_user_sex(male_client.basic.id) == 'M'
+        assert self.db.get_user_sex(female_client.basic.id) == 'F'
 
-    csvdb.add_client(client1)
 
-    db = Database(csvdb)
-    assert db.get_subscribed_packets('1') == ['Miesięczny','Rodzinny']
+    def test_get_subscribed_packets(self):
+        male_client = data_set.generate_male_client_info()
+        self.context.serialize(male_client)
 
-    csvdb.drop_database()
-def test_get_not_subscribed_packets():
-    columns = ["id", "packets"]
-    client1 = {"id": '1', "packets": ['monthly']}
-    csvdb = CSVDatabase("dbtest.csv", columns)
+        assert self.db.get_subscribed_packets(male_client.basic.id) == ['Miesięczny','Rodzinny']
 
-    csvdb.add_client(client1)
 
-    db = Database(csvdb)
-    assert db.get_not_subscribed_packets('1') == ['Rodzinny']
+    def test_get_not_subscribed_packets(self):
+        female_client = data_set.generate_female_client_info()
+        self.context.serialize(female_client)
 
-    csvdb.drop_database()
-def test_get_subscription():
-    columns = ["id", "subscription"]
-    client1 = {"id": '1', "subscription": 'basic'}
-    csvdb = CSVDatabase("dbtest.csv", columns)
+        assert self.db.get_not_subscribed_packets(female_client.basic.id) == ['Miesięczny','Rodzinny']
 
-    csvdb.add_client(client1)
+    def test_get_subscription(self):
+        male_client = data_set.generate_male_client_info()
+        self.context.serialize(male_client)
+        assert self.db.get_subscription(male_client.basic.id) == 'Podstawowy'
 
-    db = Database(csvdb)
-    assert db.get_subscription('1') == 'Podstawowy'
-
-    csvdb.drop_database()
-def test_get_user_surname():
-    surname = 'Kaczka'
-    columns = ["id", "surname"]
-    client1 = {"id": '1', "surname": surname}
-    csvdb = CSVDatabase("dbtest.csv", columns)
-
-    csvdb.add_client(client1)
-
-    db = Database(csvdb)
-    assert db.get_user_surname('1') == surname
-
-    csvdb.drop_database()
+    def test_get_user_surname(self):
+        male_client = data_set.generate_male_client_info()
+        self.context.serialize(male_client)
+        assert self.db.get_user_surname(male_client.basic.id) == 'testSurname'

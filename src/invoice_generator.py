@@ -7,6 +7,7 @@ import jinja2
 import pdfkit
 
 from . import manifest
+from .client_info import ClientInfo
 
 
 @dataclass
@@ -26,7 +27,7 @@ class Invoice:
     company_bank_account: str = manifest.COMPANY_BANK_ACCOUNT
     invoice_number: str = uuid.uuid4().hex
 
-    def __init__(self, client_data: dict, date: datetime.date | None = None) -> None:
+    def __init__(self, client_data: ClientInfo, date: datetime.date | None = None) -> None:
         """
         Creates the Invoice dataclass object.
         The invoice payment is due to the first day of the next month, relative to the invoice's date.
@@ -42,12 +43,12 @@ class Invoice:
 
         self.payment_due = datetime.date(year=self.invoice_date.year, month=self.invoice_date.month+1, day=1)
 
-        self.client_name = client_data["name"]
-        self.client_surname = client_data["surname"]
-        self.client_mail = client_data["email"]
-        self.client_subscription = manifest.SUBSCRIPTIONS[client_data["subscription"]]["name"]
-        self.client_subscription_cost = manifest.SUBSCRIPTIONS[client_data["subscription"]]["price"]
-        self.client_packets = [(manifest.PACKETS[packet]["name"], manifest.PACKETS[packet]["price"]) for packet in client_data["packets"]]
+        self.client_name = client_data.basic.name
+        self.client_surname = client_data.basic.surname
+        self.client_mail = client_data.basic.email
+        self.client_subscription = manifest.SUBSCRIPTIONS[client_data.subscription.subscription_level]["name"]
+        self.client_subscription_cost = manifest.SUBSCRIPTIONS[client_data.subscription.subscription_level]["price"]
+        self.client_packets = [(manifest.PACKETS[packet.name]["name"], manifest.PACKETS[packet.name]["price"]) for packet in client_data.bundles]
 
         self.total_cost = self.client_subscription_cost + sum([packet[1] for packet in self.client_packets])
 
@@ -87,7 +88,7 @@ class Invoice:
         return jinja2.Template(template).render(**asdict(self))
 
 
-def generate_invoice_xml(client_data: dict, date: datetime.date | None = None, indent: str = "    ") -> str:
+def generate_invoice_xml(client_data: ClientInfo, date: datetime.date | None = None, indent: str = "    ") -> str:
     """
     DEPRECATED. Please use Invoice(client_data, date).save_xml(output_filename) instead.
 

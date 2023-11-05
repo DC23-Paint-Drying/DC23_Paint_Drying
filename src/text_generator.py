@@ -3,7 +3,7 @@ from src.database import Database
 from src.invoice_generator import Invoice
 
 
-def replace_keywords(text: str, user_id: int, database: Database) -> str:
+def replace_keywords(text: str, user_id: str, database: Database) -> str:
     """
     Modifies text containing keywords in format {$word}
     List of all keywords: \n
@@ -90,7 +90,7 @@ def replace_keywords(text: str, user_id: int, database: Database) -> str:
     return text
 
 
-def get_propose_mail_text(user_id: int, database: Database) -> str:
+def get_propose_mail_text(user_id: str, database: Database) -> str:
     """
     function for creating mail text procedurally
     :param user_id:
@@ -109,7 +109,7 @@ def get_propose_mail_text(user_id: int, database: Database) -> str:
     return replace_keywords(mail_text, user_id, database)
 
 
-def get_invoice_mail_text(user_id: int, invoice: Invoice, database: Database) -> str:
+def get_invoice_mail_text(user_id: str, invoice: Invoice, database: Database) -> str:
     """
     function for creating mail text (for sending invoices) procedurally
     :param user_id:

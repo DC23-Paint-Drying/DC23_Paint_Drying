@@ -47,8 +47,7 @@ def test_xml_serialization_deserialization():
                    age=18,
                    email='mail@example.com',
                    gender='male',
-                   timestamp='2023-01-01 00:00:00',
-                   packets=['a', 'b'])
+                   timestamp='2023-01-01 00:00:00')
 
     xml_data = user.to_xml()
     user_from_xml = UserDto.from_xml(xml_data)
@@ -63,8 +62,7 @@ def test_csv_serialization_deserialization():
                    age=18,
                    email='mail@example.com',
                    gender='male',
-                   timestamp='2023-01-01 00:00:00',
-                   packets=['a', 'b'])
+                   timestamp='2023-01-01 00:00:00')
 
     csv_data = user.to_csv()
     user_from_csv = UserDto.from_csv(csv_data)
@@ -79,8 +77,7 @@ def test_xml_serialization_deserialization_empty_packets():
                    age=18,
                    email='mail@example.com',
                    gender='male',
-                   timestamp='2023-01-01 00:00:00',
-                   packets=[])
+                   timestamp='2023-01-01 00:00:00')
 
     xml_data = user.to_xml()
     user_from_xml = UserDto.from_xml(xml_data)
@@ -95,8 +92,7 @@ def test_csv_serialization_deserialization_empty_packets():
                    age=18,
                    email='mail@example.com',
                    gender='male',
-                   timestamp='2023-01-01 00:00:00',
-                   packets=[])
+                   timestamp='2023-01-01 00:00:00')
 
     csv_data = user.to_csv()
     user_from_csv = UserDto.from_csv(csv_data)

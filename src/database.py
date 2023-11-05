@@ -1,12 +1,12 @@
 from typing import List
 
-from .csvDatabase import CSVDatabase
+from .database_context import DatabaseContext
 from .manifest import SUBSCRIPTIONS, PACKETS
 
 
 class Database:
-    def __init__(self, db: CSVDatabase) -> None:
-        self.db: CSVDatabase = db
+    def __init__(self, db: DatabaseContext) -> None:
+        self.db: DatabaseContext = db
 
     """
     Database object is used for retrieving data from the database.
@@ -20,7 +20,7 @@ class Database:
         :return: one of string values: 'M' or 'F'
         """
 
-        client = self.db.get_client(user_id)
+        client = self.db.basic_db.get_client(user_id)
 
         if client['gender'] == 'female':
             return 'F'
@@ -36,12 +36,11 @@ class Database:
         :return: list of names of subscribed services
         """
 
-        client = self.db.get_client(user_id)
-
-        packets = client['packets']
+        email = self.db.basic_db.get_client(user_id)['email']
+        client = self.db.get_client_by_email(email)
         names = []
-        for packet in packets:
-            names.append( PACKETS[packet]['name'])
+        for packet in client.bundles:
+            names.append(PACKETS[packet.name]['name'])
 
         return names
 
@@ -53,12 +52,15 @@ class Database:
         :return: list of names of NOT subscribed services
         """
 
-        client = self.db.get_client(user_id)
-        subscribed = client['packets']
+        email = self.db.basic_db.get_client(user_id)['email']
+        client = self.db.get_client_by_email(email)
+        subscribed = client.bundles
         not_subscribed = []
 
+        subscribed_packets_names = [x.name for x in subscribed]
+
         for service in PACKETS.keys():
-            if service not in subscribed:
+            if service not in subscribed_packets_names:
                 not_subscribed.append(PACKETS[service]['name'])
 
         return not_subscribed
@@ -71,9 +73,10 @@ class Database:
         :return: list of names of subscribed services
         """
 
-        client = self.db.get_client(user_id)
+        email = self.db.basic_db.get_client(user_id)['email']
+        client = self.db.get_client_by_email(email)
 
-        return SUBSCRIPTIONS[client['subscription']]['name']
+        return SUBSCRIPTIONS[client.subscription.subscription_level]['name']
 
     def get_user_surname(self, user_id) -> str:
         """
@@ -83,4 +86,4 @@ class Database:
         :return: user surname as string
         """
 
-        return self.db.get_client(user_id)['surname']
+        return self.db.basic_db.get_client(user_id)['surname']
