@@ -3,6 +3,11 @@ from wtforms import StringField, IntegerField, RadioField, SubmitField
 from wtforms.validators import DataRequired, Length, Email, NumberRange
 from . import manifest
 
+class LoginForm(FlaskForm):
+    email = StringField(label='Email', validators=[DataRequired(), Email()])
+    submit = SubmitField(label='Login')
+
+
 class RegisterForm(FlaskForm):
     username = StringField(label='Username', validators=[DataRequired(), Length(min=3, max=64)])
     name = StringField(label='Name', validators=[DataRequired(), Length(min=3, max=64)])
@@ -29,7 +34,7 @@ class EditProfileForm(FlaskForm):
     gender = RadioField(label='Gender', choices=[('female', 'Female'),
                                                  ('male', 'Male'),
                                                  ('other', 'Other')])
-    submit = SubmitField(label='Register')
+    submit = SubmitField(label='Edit Profile')
 
 
 class EditSubscriptionForm(FlaskForm):

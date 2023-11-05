@@ -4,6 +4,7 @@ import unittest
 from src.bundle_info import BundleInfo
 from src.client_info import ClientInfo
 import src.database_context
+from src.subscription_info import SubscriptionInfo
 from src.user_dto import UserDto
 
 
@@ -16,9 +17,10 @@ class DataBaseContextTests(unittest.TestCase):
 
     def test_read_write(self):
         user = UserDto("testName", "testFirstName", "testSurname", 99, "test@email.com", "other", "2023-01-01 00:00:00")
+        subscription = SubscriptionInfo('basic', "2023-01-01 00:00:00")
         bundles = [BundleInfo(str(uuid.uuid4()), "test@email.com", "YellowPaintPremium", "1980-01-01", "2040-12-20"),
                    BundleInfo(str(uuid.uuid4()), "test@email.com", "NoAds", "1980-01-01", "2040-12-20")]
-        info = ClientInfo(user, "basic", bundles)
+        info = ClientInfo(user, subscription, bundles)
         assert user.username == "testName"
         assert user.name == "testFirstName"
         assert user.surname == "testSurname"
@@ -26,6 +28,9 @@ class DataBaseContextTests(unittest.TestCase):
         assert user.email == "test@email.com"
         assert user.gender == "other"
         assert user.timestamp == "2023-01-01 00:00:00"
+
+        assert subscription.subscription_level == 'basic'
+        assert subscription.subscription_timestamp == "2023-01-01 00:00:00"
 
         assert len(bundles) == 2
 
@@ -43,7 +48,8 @@ class DataBaseContextTests(unittest.TestCase):
         assert client.basic.gender == "other"
         assert client.basic.timestamp == "2023-01-01 00:00:00"
 
-        assert client.subscription == "basic"
+        assert client.subscription.subscription_level == "basic"
+        assert client.subscription.subscription_timestamp == "2023-01-01 00:00:00"
 
         assert len(client.bundles) == 2
 

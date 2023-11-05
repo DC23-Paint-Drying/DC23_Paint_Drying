@@ -31,7 +31,7 @@ class UserDto:
     timestamp: str
     subscription: str = ''
     packets: [str] = field(default_factory=list)
-    id: str = str(uuid.uuid4())
+    id: str = field(default_factory=lambda: str(uuid.uuid4()))
 
     def to_json(self):
         return json.dumps(asdict(self))
