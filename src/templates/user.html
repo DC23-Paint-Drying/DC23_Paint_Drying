@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>DC Paint Drying</h1>
+<a href="{{ url_for('index') }}">Main Page</a>
+
+<table>
+	{% for key in data %}
+	<tr>
+	<td>{{key}}</td>
+	</tr>
+		{% for kk in data[key] %}
+			<tr>
+				<td>{{kk}}</td>
+				<td>{{data[key][kk]}}</td>
+			</tr>
+		{% endfor %}
+	{% endfor %}
+</table>
+
+{% endblock %}
