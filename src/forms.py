@@ -1,6 +1,11 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, RadioField, SubmitField
 from wtforms.validators import DataRequired, Length, Email, NumberRange
+from . import manifest
+
+class LoginForm(FlaskForm):
+    email = StringField(label='Email', validators=[DataRequired(), Email()])
+    submit = SubmitField(label='Login')
 
 
 class RegisterForm(FlaskForm):
@@ -17,10 +22,14 @@ class RegisterForm(FlaskForm):
 
 class OrderSubscriptionForm(FlaskForm):
     email = StringField(label='Email', validators=[DataRequired(), Email()])
-    subscription_level = RadioField(label='Subscription', choices=[('bronze', 'Bronze'),
-                                                             ('silver', 'Silver'),
-                                                             ('gold', 'Gold')])
+    subscription_level = RadioField(label='Subscription', choices=[(name, manifest.SUBSCRIPTIONS[name]["name"]) for name in manifest.SUBSCRIPTIONS])
     submit = SubmitField(label='Order Subscription')
+
+
+class OrderPacketsForm(FlaskForm):
+    email = StringField(label='Email', validators=[DataRequired(), Email()])
+    packets = RadioField(label='Packet', choices=[(name, manifest.PACKETS[name]["name"]) for name in manifest.PACKETS])
+    submit = SubmitField(label='Order Packet')
 
 
 class EditProfileForm(FlaskForm):
@@ -31,11 +40,9 @@ class EditProfileForm(FlaskForm):
     gender = RadioField(label='Gender', choices=[('female', 'Female'),
                                                  ('male', 'Male'),
                                                  ('other', 'Other')])
-    submit = SubmitField(label='Register')
+    submit = SubmitField(label='Edit Profile')
 
 
 class EditSubscriptionForm(FlaskForm):
-    subscription_level = RadioField(label='Subscription', choices=[('bronze', 'Bronze'),
-                                                             ('silver', 'Silver'),
-                                                             ('gold', 'Gold')])
+    subscription_level = RadioField(label='Subscription', choices=[(name, manifest.SUBSCRIPTIONS[name]["name"]) for name in manifest.SUBSCRIPTIONS])
     submit = SubmitField(label='Order Subscription')

@@ -1,23 +1,28 @@
-import random
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, field
 import json
 import uuid
 import xml.etree.ElementTree
+from flask_login import UserMixin
 
 
 @dataclass
-class UserDto:
+class UserDto(UserMixin):
     """
-        Data class for storing user information.
+    Data class for storing user information.
 
-        Attributes:
-        - username (str): The username of the user.
-        - name (str): The user's first name.
-        - surname (str): The user's last name.
-        - age (int): The user's age.
-        - email (str): The user's email address, treated as the user's ID.
-        - gender (str): The user's gender.
+    Attributes:
+    - username (str): The username of the user.
+    - name (str): The user's first name.
+    - surname (str): The user's last name.
+    - age (int): The user's age.
+    - email (str): The user's email address, treated as the user's ID.
+    - gender (str): The user's gender.
+    - timestamp (str): The timestamp when the user data was created.
+    - id (str): A unique identifier for the user.
     """
+
+    def get_id(self):
+        return self.email
 
     username: str
     name: str
@@ -25,7 +30,8 @@ class UserDto:
     age: int
     email: str
     gender: str
-    id: str = str(uuid.uuid4())
+    timestamp: str
+    id: str = field(default_factory=lambda: str(uuid.uuid4()))
 
     def to_json(self):
         return json.dumps(asdict(self))
@@ -56,7 +62,7 @@ class UserDto:
         return cls(**data)
 
     def to_csv(self):
-        return f"{self.username},{self.name},{self.surname},{self.age},{self.email},{self.gender},{self.id}\n"
+        return f"{self.username},{self.name},{self.surname},{self.age},{self.email},{self.gender},{self.timestamp},{self.id}\n"
 
     @classmethod
     def from_csv(cls, csv_str):

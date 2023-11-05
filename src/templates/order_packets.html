@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>DC Paint Drying</h1>
+<p>Register to our system</p>
+<a href="{{ url_for('index') }}">Main Page</a>
+
+<div class="container w-50">
+	<form method="post">
+		{{form.hidden_tag()}}
+	<fieldset>
+	<legend>
+		Join now
+	</legend>
+	<div class="form-group">
+		{{form.email.label(class="form-control-label")}}
+		{%if form.email.errors%}
+			{{form.email(class="form-control form-control-lg is-invalid")}}
+		{%for error in form.email.errors%}
+			<span>{{error}}</span>
+		{%endfor%}
+		{%else%}
+			{{form.email(class="form-control form-control-lg")}}
+		{%endif%}
+	</div>
+	<div class="form-group">
+		{{form.packets.label(class="form-control-label")}}
+		{%if form.packets.errors%}
+			{{form.packets(class="form-control form-control-lg is-invalid")}}
+		{%for error in form.packets.errors%}
+			<span>{{error}}</span>
+		{%endfor%}
+		{%else%}
+		{% for item in form.packets %}
+			<div class="form-group">
+				{{item(class="radio-input-class")}}
+				{{item.label.text}}
+				<p>{{descriptions[item.label.text]}}</p>
+			</div>
+		{% endfor %}
+
+		{%endif%}
+	</div>
+	</fieldset>
+	<div class="field-group">
+		{{form.submit(class='btn btn-online-info')}}
+	</div>
+	</form>
+</div>
+
+{% endblock %}

@@ -1,5 +1,6 @@
 import unittest
 from unittest.mock import MagicMock
+
 import src.text_generator as text_gen
 from src.text_generator import Database
 
@@ -18,7 +19,7 @@ class TestReplaceKeywords(unittest.TestCase):
         database.get_user_sex = MagicMock(return_value='M')
         database.get_user_surname = MagicMock(return_value='Wierzba')
 
-        assert text_gen.replace_keywords('{$greeting}', 1, database) == 'Dear Mr Wierzba'
+        assert text_gen.replace_keywords('{$greeting}', 1, database) == 'Szanowny Panie Wierzba'
 
     def test_propose_new_service(self):
         database = Database()
@@ -27,49 +28,50 @@ class TestReplaceKeywords(unittest.TestCase):
         database.get_subscribed_services = MagicMock(return_value=['a', 'b', 'c'])
         database.get_not_subscribed_services = MagicMock(return_value=[])
         assert text_gen.replace_keywords('{$proposeNewService}', 1,
-                                         database) == ('It seems, you are one of our best customers! You\'ve bought '
-                                                       'all of our services! Stay tuned for more!')
+                                         database) == ('Ptaki ćwierkają, że jest Pani jedną z naszych najlepszych klientek! '
+                                                       'Wykupiłaś wszystkie nasze usługi! Zachęcamy do oczekiwania na '
+                                                       'nowe przyszłe usługi, które się pojawią niedługo!')
 
         # test when there is anything to suggest, but something is bought
         database.get_subscribed_services = MagicMock(return_value=['a', 'b', 'c'])
         database.get_not_subscribed_services = MagicMock(return_value=['d', 'e'])
         assert text_gen.replace_keywords('{$proposeNewService}', 1,
-                                         database) == ('It seems, you are very interested in service a. You should '
-                                                       'also check these services: d, e!')
+                                         database) == ('Zauważyliśmi, że jest Pani zainteresowana usługą a. Powinna Pani '
+                                                       'sprawdzić także te usługi: d, e!')
 
         # test when nothing is bought, but there are more than 2 services in total
         database.get_subscribed_services = MagicMock(return_value=[])
         database.get_not_subscribed_services = MagicMock(return_value=['a', 'b', 'c'])
         assert text_gen.replace_keywords('{$proposeNewService}', 1,
-                                         database) == 'Looking for new action? Check our best services: a, b, c!'
+                                         database) == 'Szukasz nowych wrażeń? Sprawdź nasze najlepsze usługi: a, b, c!'
 
         # test when nothing is bought, but there are less than 3 services in total
         database.get_subscribed_services = MagicMock(return_value=[])
         database.get_not_subscribed_services = MagicMock(return_value=['a', 'b'])
         assert text_gen.replace_keywords('{$proposeNewService}', 1,
-                                         database) == 'Looking for new action? Check our best services: a, b!'
+                                         database) == 'Szukasz nowych wrażeń? Sprawdź nasze najlepsze usługi: a, b!'
 
     def test_proposeLengtheningSubscription(self):
         database = Database()
         database.get_subscribed_services = MagicMock(return_value=['abb', 'b', 'c', 'd', 'e'])
 
         assert text_gen.replace_keywords('{$proposeLengtheningSubscription}', 1,
-                                         database) == ('The subscription for abb will soon expire! Quick! Renew the '
-                                                       'subscription!')
+                                         database) == ('Uwaga! Subskrypcja na abb wkrótce wygaśnie! Szybko! Odnów '
+                                                       'subskrypcję!')
 
     def test_suggestContact(self):
         database = Database()
 
         assert text_gen.replace_keywords('{$suggestContact}', 1,
-                                         database) == ('We are glad, you are interested in our services. For more '
-                                                       'information, we suggest visiting our website to check new '
-                                                       'products we offer!')
+                                         database) == ('Cieszymy się, że interesuje się Pani naszymi usługami. W celu '
+                                                       'uzyskania więcej informacji, zalecamy odwiedzenie naszej '
+                                                       'strony,by sprawdzić nowe produkty, które oferujemy!')
 
     def test_goodbye(self):
         database = Database()
 
         assert text_gen.replace_keywords('{$goodbye}', 1,
-                                         database) == 'Enjoy our services \nDC Drying Paint Services'
+                                         database) == 'Ciesz się naszymi usługami! \nDC Drying Paint Services'
 
     def test_subscribedServices(self):
         database = Database()
@@ -92,22 +94,19 @@ class TestProposeMailText(unittest.TestCase):
         database.get_subscribed_services = MagicMock(return_value=['abba', 'b', 'c'])
         database.get_not_subscribed_services = MagicMock(return_value=['d', 'e'])
         assert text_gen.get_propose_mail_text(1, database) == (''
-                                                               'Dear Mr Wierzba\n'
-                                                               '\n'
-                                                               'It seems, you are very interested in service abba. '
-                                                               'You should also check these '
-                                                               'services: d, e!\n'
-                                                               '\n'
-                                                               'The subscription for abba will soon expire! Quick! '
-                                                               'Renew the subscription!\n'
-                                                               '\n'
-                                                               'We are glad, you are interested in our services. For '
-                                                               'more information, we '
-                                                               'suggest visiting our website to check new products we '
-                                                               'offer!\n'
-                                                               '\n'
-                                                               'Enjoy our services \n'
-                                                               'DC Drying Paint Services')
+                                        'Szanowny Panie Wierzba\n'
+                                        '\n'
+                                        'Zauważyliśmi, że jest Pan zainteresowany usługą abba. Powinienien Pan sprawdzić '
+                                        'także te usługi: d, e!\n'
+                                        '\n'
+                                        'Uwaga! Subskrypcja na abba wkrótce wygaśnie! Szybko! Odnów subskrypcję!\n'
+                                        '\n'
+                                        'Cieszymy się, że interesuje się Pan naszymi usługami. W celu uzyskania '
+                                        'więcej informacji, zalecamy odwiedzenie naszej strony,by sprawdzić nowe '
+                                        'produkty, które oferujemy!\n'
+                                        '\n'
+                                        'Ciesz się naszymi usługami! \n'
+                                        'DC Drying Paint Services')
 
     def test_0_subscribed_services(self):
         database = Database()
@@ -116,20 +115,18 @@ class TestProposeMailText(unittest.TestCase):
         database.get_subscribed_services = MagicMock(return_value=[])
         database.get_not_subscribed_services = MagicMock(return_value=['debohra', 'esda'])
         assert text_gen.get_propose_mail_text(1, database) == (''
-                                                               'Dear Mrs Kowalska\n'
-                                                               '\n'
-                                                               'Looking for new action? Check our best services: '
-                                                               'debohra, esda!\n'
-                                                               '\n'
-                                                               '\n'
-                                                               '\n'
-                                                               'We are glad, you are interested in our services. For '
-                                                               'more information, we '
-                                                               'suggest visiting our website to check new products we '
-                                                               'offer!\n'
-                                                               '\n'
-                                                               'Enjoy our services \n'
-                                                               'DC Drying Paint Services')
+                                            'Szanowna Pani Kowalska\n'
+                                            '\n'
+                                            'Szukasz nowych wrażeń? Sprawdź nasze najlepsze usługi: debohra, esda!\n'
+                                            '\n'
+                                            '\n'
+                                            '\n'
+                                            'Cieszymy się, że interesuje się Pani naszymi usługami. W celu uzyskania '
+                                            'więcej informacji, zalecamy odwiedzenie naszej strony,by sprawdzić nowe '
+                                            'produkty, które oferujemy!\n'
+                                            '\n'
+                                            'Ciesz się naszymi usługami! \n'
+                                            'DC Drying Paint Services')
 
     def test_everything_subscribed(self):
         database = Database()
@@ -138,21 +135,20 @@ class TestProposeMailText(unittest.TestCase):
         database.get_subscribed_services = MagicMock(return_value=['abba', 'b', 'c'])
         database.get_not_subscribed_services = MagicMock(return_value=[])
         assert text_gen.get_propose_mail_text(1, database) == (''
-                                                               'Dear Mr Wierzba\n'
-                                                               '\n'
-                                                               'It seems, you are one of our best customers! You\'ve '
-                                                               'bought all of our services! Stay tuned for more!\n'
-                                                               '\n'
-                                                               'The subscription for abba will soon expire! Quick! '
-                                                               'Renew the subscription!\n'
-                                                               '\n'
-                                                               'We are glad, you are interested in our services. For '
-                                                               'more information, we '
-                                                               'suggest visiting our website to check new products we '
-                                                               'offer!\n'
-                                                               '\n'
-                                                               'Enjoy our services \n'
-                                                               'DC Drying Paint Services')
+                                        'Szanowny Panie Wierzba\n'
+                                        '\n'
+                                        'Ptaki ćwierkają, że jest Pan jednym z naszych najlepszym klientów! Wykupiłeś '
+                                        'wszystkie nasze usługi! Zachęcamy do oczekiwania na nowe przyszłe usługi, '
+                                        'które się pojawią niedługo!\n'
+                                        '\n'
+                                        'Uwaga! Subskrypcja na abba wkrótce wygaśnie! Szybko! Odnów subskrypcję!\n'
+                                        '\n'
+                                        'Cieszymy się, że interesuje się Pan naszymi usługami. W celu uzyskania '
+                                        'więcej informacji, zalecamy odwiedzenie naszej strony,by sprawdzić nowe '
+                                        'produkty, które oferujemy!\n'
+                                        '\n'
+                                        'Ciesz się naszymi usługami! \n'
+                                        'DC Drying Paint Services')
 
 
 class TestInvoice(unittest.TestCase):
@@ -168,24 +164,25 @@ class TestInvoice(unittest.TestCase):
         invoice.price = 1315
 
         assert (text_gen.get_invoice_mail_text(1, invoice, database) ==
-                ('Dear Mr Wierzba\n'
+                ('Szanowny Panie Wierzba\n'
                  '\n'
-                 'Thank you for your order for the following products:\n'
+                 'Dziękujemy za zamówienie poniższych produktów:\n'
                  '- green\n'
                  '\n'
-                 'Please find your invoice attached to this email.\n'
+                 'Faktura znajduje się w załącznikach.\n'
                  '\n'
-                 'Your order\n'
+                 'Twoje zamówienie\n'
                  '\n'
-                 'Reference no.:\r123553\n'
-                 'Payment method:\rVISA/Mastercard - 1234\n'
-                 'Order date:\r2016-08-31\n'
-                 'Grand total:\r1,315.00 USD\n'
+                 'Numer zamówienia:\r123553\n'
+                 'Metoda płatności:\rVISA/Mastercard - 1234\n'
+                 'Data zamówienia:\r2016-08-31\n'
+                 'Całkowita kwota:\r1,315.00 USD\n'
                  '\n'
-                 'We are glad, you are interested in our services. For more information, we '
-                 'suggest visiting our website to check new products we offer!\n'
+                 'Cieszymy się, że interesuje się Pan naszymi usługami. W celu uzyskania '
+                 'więcej informacji, zalecamy odwiedzenie naszej strony,by sprawdzić nowe '
+                 'produkty, które oferujemy!\n'
                  '\n'
-                 'Enjoy our services \n'
+                 'Ciesz się naszymi usługami! \n'
                  'DC Drying Paint Services'))
 
     def test_multiple_product(self):
@@ -200,24 +197,25 @@ class TestInvoice(unittest.TestCase):
         invoice.price = 1315
 
         assert (text_gen.get_invoice_mail_text(1, invoice, database) ==
-                ('Dear Mrs Wierzba\n'
+                ('Szanowna Pani Wierzba\n'
                  '\n'
-                 'Thank you for your order for the following products:\n'
+                 'Dziękujemy za zamówienie poniższych produktów:\n'
                  '- green\n'
                  '- yellow\n'
                  '- red\n'
                  '\n'
-                 'Please find your invoice attached to this email.\n'
+                 'Faktura znajduje się w załącznikach.\n'
                  '\n'
-                 'Your order\n'
+                 'Twoje zamówienie\n'
                  '\n'
-                 'Reference no.:\r123553\n'
-                 'Payment method:\rVISA/Mastercard - 1234\n'
-                 'Order date:\r2016-08-31\n'
-                 'Grand total:\r1,315.00 USD\n'
+                 'Numer zamówienia:\r123553\n'
+                 'Metoda płatności:\rVISA/Mastercard - 1234\n'
+                 'Data zamówienia:\r2016-08-31\n'
+                 'Całkowita kwota:\r1,315.00 USD\n'
                  '\n'
-                 'We are glad, you are interested in our services. For more information, we '
-                 'suggest visiting our website to check new products we offer!\n'
+                 'Cieszymy się, że interesuje się Pani naszymi usługami. W celu uzyskania '
+                 'więcej informacji, zalecamy odwiedzenie naszej strony,by sprawdzić nowe '
+                 'produkty, które oferujemy!\n'
                  '\n'
-                 'Enjoy our services \n'
+                 'Ciesz się naszymi usługami! \n'
                  'DC Drying Paint Services'))
