@@ -9,6 +9,7 @@ from docx.enum import section, text
 from docx.shared import RGBColor
 
 import report_utils as utils
+import report_charts as charts
 from report_data import get_report_data
 
 
@@ -29,12 +30,12 @@ def generate(directory: str = '') -> str:
     filepath = f'{directory}/report-{data["date"]}.docx'
 
     # generate all chart images
-    users_chart = utils.create_donut_chart(list(data["users"]["activity"].values()),
-                                           list(data["users"]["activity"].keys()))
-    users_age_chart = utils.create_donut_chart(list(data["users"]["age"].values()),
-                                               list(data["users"]["age"].keys()))
-    users_gender_chart = utils.create_donut_chart(list(data["users"]["gender"].values()),
-                                                  list(data["users"]["gender"].keys()))
+    users_chart = charts.create_donut_chart(list(data["users"]["activity"].values()),
+                                            list(data["users"]["activity"].keys()))
+    users_age_chart = charts.create_donut_chart(list(data["users"]["age"].values()),
+                                                list(data["users"]["age"].keys()))
+    users_gender_chart = charts.create_donut_chart(list(data["users"]["gender"].values()),
+                                                   list(data["users"]["gender"].keys()))
 
     try:
         document = utils.create_stylised_document()

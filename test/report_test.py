@@ -8,14 +8,6 @@ from docx.oxml.shared import qn
 import src.report.report_utils as utils
 
 
-@pytest.fixture(autouse=True)
-def cleanup_files():
-    yield
-    for file in listdir('./'):
-        if file.endswith('.png'):
-            remove(file)
-
-
 def test_set_footer():
     document = Document()
     text = '1'
@@ -36,30 +28,6 @@ def test_create_table_with_invalid_size():
     document = Document()
     with pytest.raises(ValueError):
         utils.create_table(document, -1, -1)
-
-
-def test_create_donut_chart():
-    utils.create_donut_chart([1, 1], ['a', 'b'])
-
-
-def test_create_donut_chart_with_no_values():
-    with pytest.raises(ValueError):
-        utils.create_donut_chart([], ['a', 'b'])
-
-
-def test_create_donut_chart_with_no_labels():
-    with pytest.raises(ValueError):
-        utils.create_donut_chart([1, 2], [])
-
-
-def test_create_donut_chart_with_not_enough_labels():
-    with pytest.raises(ValueError):
-        utils.create_donut_chart([1, 2], ['a'])
-
-
-def test_create_donut_chart_with_too_many_labels():
-    with pytest.raises(ValueError):
-        utils.create_donut_chart([1, 2], ['a', 'b', 'c'])
 
 
 def test_add_nonexistent_image_to_cell():
