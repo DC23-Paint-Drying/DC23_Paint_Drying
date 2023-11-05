@@ -105,12 +105,11 @@ def order_subscription():
 
 
 @app.route("/order-packets", methods=['POST', 'GET'])
+@login_required
 def order_packets():
     form = OrderPacketsForm()
     descriptions = [(manifest.PACKETS[name]["name"], manifest.PACKETS[name]["description"]) for name in manifest.PACKETS]
     descriptions = dict(descriptions)
-    if not current_user_email:
-        return render_template("unauthorized.html", the_title="Unauthorized - Paint Drying"), 401
 
     if form.validate_on_submit():
         # place for processing from data
