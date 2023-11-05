@@ -87,13 +87,13 @@ class CSVDatabase:
             for data in reader:
                 if data["id"] == client_id:
                     #check for lists values
-                    for value in data:
-                        if '[' in value:
-                            value = value.replace('[', '').replace(']', '')
-                            if value == '':
-                                value = []
+                    for key in data:
+                        if '[' in data[key]:
+                            data[key] = data[key].replace('[', '').replace(']', '')
+                            if data[key] == '':
+                                data[key] = []
                             else:
-                                value = value.split('.')
+                                data[key] = data[key].split('.')
                     return data
 
         return None

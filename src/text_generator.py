@@ -31,29 +31,29 @@ def replace_keywords(text: str, user_id: int, database: Database) -> str:
                                 'Szanowna Pani ' + database.get_user_surname(user_id))
 
     if '{$proposeNewService}' in text:
-        subscribed_services = database.get_subscribed_services(user_id)
-        not_subscribed_services = database.get_not_subscribed_services(user_id)
+        subscribed_packets = database.get_subscribed_packets(user_id)
+        not_subscribed_packets = database.get_not_subscribed_packets(user_id)
 
-        if len(not_subscribed_services) > 0:
-            if len(subscribed_services) > 0:
-                if len(not_subscribed_services) > 3:
-                    services = ", ".join(not_subscribed_services[0:3])
+        if len(not_subscribed_packets) > 0:
+            if len(subscribed_packets) > 0:
+                if len(not_subscribed_packets) > 3:
+                    services = ", ".join(not_subscribed_packets[0:3])
                 else:
-                    services = ", ".join(not_subscribed_services)
+                    services = ", ".join(not_subscribed_packets)
                 text = text.replace('{$proposeNewService}',
                                     'Zauważyliśmi, że jest '+('Pan zainteresowany ' if user_is_male else 'Pani zainteresowana ') +
                                                                                                    'usługą ' +
-                                    subscribed_services[0] + '. '+('Powinienien Pan' if user_is_male else 'Powinna Pani')+' '
+                                    subscribed_packets[0] + '. '+('Powinienien Pan' if user_is_male else 'Powinna Pani')+' '
                                     'sprawdzić także te usługi: ' + services + '!')
             else:
-                if len(not_subscribed_services) >= 3:
+                if len(not_subscribed_packets) >= 3:
                     text = text.replace('{$proposeNewService}',
                                         'Szukasz nowych wrażeń? Sprawdź nasze najlepsze usługi: ' + ', '.join(
-                                            not_subscribed_services[0:3]) + '!')
+                                            not_subscribed_packets[0:3]) + '!')
                 else:
                     text = text.replace('{$proposeNewService}',
                                         'Szukasz nowych wrażeń? Sprawdź nasze najlepsze usługi: ' +
-                                        ', '.join(not_subscribed_services) + '!')
+                                        ', '.join(not_subscribed_packets) + '!')
         else:
             text = text.replace('{$proposeNewService}',
                                 'Ptaki ćwierkają, że jest '+('Pan jednym z naszych najlepszym klientów! Wykupiłeś' if user_is_male else
@@ -61,11 +61,11 @@ def replace_keywords(text: str, user_id: int, database: Database) -> str:
                                 'Zachęcamy do oczekiwania na nowe przyszłe usługi, które się pojawią niedługo!')
 
     if '{$proposeLengtheningSubscription}' in text:
-        subscribed_services = database.get_subscribed_services(user_id)
-        if len(subscribed_services) > 0:
+        subscription = database.get_subscription(user_id)
+        if subscription != '':
             text = text.replace('{$proposeLengtheningSubscription}',
-                                'Uwaga! Subskrypcja na ' + subscribed_services[
-                                    0] + ' wkrótce wygaśnie! Szybko! Odnów subskrypcję!')
+                                'Uwaga! Subskrypcja na ' + subscription +
+                                ' wkrótce wygaśnie! Szybko! Odnów subskrypcję!')
         else:
             # delete mark, because there is nothing to propose
             text = text.replace('{$proposeLengtheningSubscription}',
@@ -82,10 +82,10 @@ def replace_keywords(text: str, user_id: int, database: Database) -> str:
 
     if '{$subscribedServices}' in text:
         text = text.replace('{$subscribedServices}',
-                            ', '.join(database.get_subscribed_services(user_id)))
+                            ', '.join(database.get_subscribed_packets(user_id)))
 
     if '{$notSubscribedServices}' in text:
-        text = text.replace('{$notSubscribedServices}', ', '.join(database.get_not_subscribed_services(user_id)))
+        text = text.replace('{$notSubscribedServices}', ', '.join(database.get_not_subscribed_packets(user_id)))
 
     return text
 

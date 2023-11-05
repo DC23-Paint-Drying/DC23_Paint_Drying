@@ -1,7 +1,7 @@
 from typing import List
 
 from .csvDatabase import CSVDatabase
-from .manifest import SUBSCRIPTIONS
+from .manifest import SUBSCRIPTIONS, PACKETS
 
 
 class Database:
@@ -28,7 +28,7 @@ class Database:
             return 'M'
 
 
-    def get_subscribed_services(self, user_id) -> List[str]:
+    def get_subscribed_packets(self, user_id) -> List[str]:
         """
         Function which retrieves all services subscribed by user
         :param self:
@@ -38,9 +38,14 @@ class Database:
 
         client = self.db.get_client(user_id)
 
-        return client['subscriptions']
+        packets = client['packets']
 
-    def get_not_subscribed_services(self, user_id) -> List[str]:
+        for packet in packets:
+            packet = PACKETS[packet]['name']
+
+        return packets
+
+    def get_not_subscribed_packets(self, user_id) -> List[str]:
         """
         Function which retrieves all services NOT subscribed by user
         :param self:
@@ -49,14 +54,26 @@ class Database:
         """
 
         client = self.db.get_client(user_id)
-        subscribed = client['subscriptions']
+        subscribed = client['packets']
         not_subscribed = []
 
-        for service in SUBSCRIPTIONS.keys():
+        for service in PACKETS.keys():
             if service not in subscribed:
-                not_subscribed.append(service)
+                not_subscribed.append(PACKETS[service]['name'])
 
         return not_subscribed
+
+    def get_subscription(self, user_id) -> str:
+        """
+        Function which retrieves all services subscribed by user
+        :param self:
+        :param user_id:
+        :return: list of names of subscribed services
+        """
+
+        client = self.db.get_client(user_id)
+
+        return SUBSCRIPTIONS[client['subscription']]['name']
 
     def get_user_surname(self, user_id) -> str:
         """

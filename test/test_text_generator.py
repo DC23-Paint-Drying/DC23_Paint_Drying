@@ -21,36 +21,36 @@ class TestReplaceKeywords(unittest.TestCase):
         database.get_user_sex = MagicMock(return_value='F')
 
         # test when all is bought
-        database.get_subscribed_services = MagicMock(return_value=['a', 'b', 'c'])
-        database.get_not_subscribed_services = MagicMock(return_value=[])
+        database.get_subscribed_packets = MagicMock(return_value=['a', 'b', 'c'])
+        database.get_not_subscribed_packets = MagicMock(return_value=[])
         assert text_gen.replace_keywords('{$proposeNewService}', 1,
                                          database) == ('Ptaki ćwierkają, że jest Pani jedną z naszych najlepszych klientek! '
                                                        'Wykupiłaś wszystkie nasze usługi! Zachęcamy do oczekiwania na '
                                                        'nowe przyszłe usługi, które się pojawią niedługo!')
 
         # test when there is anything to suggest, but something is bought
-        database.get_subscribed_services = MagicMock(return_value=['a', 'b', 'c'])
-        database.get_not_subscribed_services = MagicMock(return_value=['d', 'e'])
+        database.get_subscribed_packets = MagicMock(return_value=['a', 'b', 'c'])
+        database.get_not_subscribed_packets = MagicMock(return_value=['d', 'e'])
         assert text_gen.replace_keywords('{$proposeNewService}', 1,
                                          database) == ('Zauważyliśmi, że jest Pani zainteresowana usługą a. Powinna Pani '
                                                        'sprawdzić także te usługi: d, e!')
 
         # test when nothing is bought, but there are more than 2 services in total
-        database.get_subscribed_services = MagicMock(return_value=[])
-        database.get_not_subscribed_services = MagicMock(return_value=['a', 'b', 'c'])
+        database.get_subscribed_packets = MagicMock(return_value=[])
+        database.get_not_subscribed_packets = MagicMock(return_value=['a', 'b', 'c'])
         assert text_gen.replace_keywords('{$proposeNewService}', 1,
                                          database) == 'Szukasz nowych wrażeń? Sprawdź nasze najlepsze usługi: a, b, c!'
 
         # test when nothing is bought, but there are less than 3 services in total
-        database.get_subscribed_services = MagicMock(return_value=[])
-        database.get_not_subscribed_services = MagicMock(return_value=['a', 'b'])
+        database.get_subscribed_packets = MagicMock(return_value=[])
+        database.get_not_subscribed_packets = MagicMock(return_value=['a', 'b'])
         assert text_gen.replace_keywords('{$proposeNewService}', 1,
                                          database) == 'Szukasz nowych wrażeń? Sprawdź nasze najlepsze usługi: a, b!'
 
     def test_proposeLengtheningSubscription(self):
         database = Database(CSVDatabase("db.csv", [param for param in inspect.signature(UserDto).parameters]))
         database.get_user_sex = MagicMock(return_value='M')
-        database.get_subscribed_services = MagicMock(return_value=['abb', 'b', 'c', 'd', 'e'])
+        database.get_subscription = MagicMock(return_value='abb')
 
         assert text_gen.replace_keywords('{$proposeLengtheningSubscription}', 1,
                                          database) == ('Uwaga! Subskrypcja na abb wkrótce wygaśnie! Szybko! Odnów '
@@ -75,14 +75,14 @@ class TestReplaceKeywords(unittest.TestCase):
     def test_subscribedServices(self):
         database = Database(CSVDatabase("db.csv", [param for param in inspect.signature(UserDto).parameters]))
         database.get_user_sex = MagicMock(return_value='M')
-        database.get_subscribed_services = MagicMock(return_value=['a', 'b', 'c', 'd', 'e'])
+        database.get_subscribed_packets = MagicMock(return_value=['a', 'b', 'c', 'd', 'e'])
 
         assert text_gen.replace_keywords('{$subscribedServices}', 1, database) == 'a, b, c, d, e'
 
     def test_not_subscribedServices(self):
         database = Database(CSVDatabase("db.csv", [param for param in inspect.signature(UserDto).parameters]))
         database.get_user_sex = MagicMock(return_value='M')
-        database.get_not_subscribed_services = MagicMock(return_value=['a', 'b', 'c', 'd', 'e'])
+        database.get_not_subscribed_packets = MagicMock(return_value=['a', 'b', 'c', 'd', 'e'])
 
         assert text_gen.replace_keywords('{$notSubscribedServices}', 1, database) == 'a, b, c, d, e'
 
@@ -92,12 +92,13 @@ class TestProposeMailText(unittest.TestCase):
         database = Database(CSVDatabase("db.csv", [param for param in inspect.signature(UserDto).parameters]))
         database.get_user_sex = MagicMock(return_value='M')
         database.get_user_surname = MagicMock(return_value='Wierzba')
-        database.get_subscribed_services = MagicMock(return_value=['abba', 'b', 'c'])
-        database.get_not_subscribed_services = MagicMock(return_value=['d', 'e'])
+        database.get_subscription = MagicMock(return_value='abba')
+        database.get_subscribed_packets = MagicMock(return_value=['aaaa', 'b', 'c'])
+        database.get_not_subscribed_packets = MagicMock(return_value=['d', 'e'])
         assert text_gen.get_propose_mail_text(1, database) == (''
                                         'Szanowny Panie Wierzba\n'
                                         '\n'
-                                        'Zauważyliśmi, że jest Pan zainteresowany usługą abba. Powinienien Pan sprawdzić '
+                                        'Zauważyliśmi, że jest Pan zainteresowany usługą aaaa. Powinienien Pan sprawdzić '
                                         'także te usługi: d, e!\n'
                                         '\n'
                                         'Uwaga! Subskrypcja na abba wkrótce wygaśnie! Szybko! Odnów subskrypcję!\n'
@@ -113,8 +114,9 @@ class TestProposeMailText(unittest.TestCase):
         database = Database(CSVDatabase("db.csv", [param for param in inspect.signature(UserDto).parameters]))
         database.get_user_sex = MagicMock(return_value='F')
         database.get_user_surname = MagicMock(return_value='Kowalska')
-        database.get_subscribed_services = MagicMock(return_value=[])
-        database.get_not_subscribed_services = MagicMock(return_value=['debohra', 'esda'])
+        database.get_subscription = MagicMock(return_value='')
+        database.get_subscribed_packets = MagicMock(return_value=[])
+        database.get_not_subscribed_packets = MagicMock(return_value=['debohra', 'esda'])
         assert text_gen.get_propose_mail_text(1, database) == (''
                                             'Szanowna Pani Kowalska\n'
                                             '\n'
@@ -133,8 +135,9 @@ class TestProposeMailText(unittest.TestCase):
         database = Database(CSVDatabase("db.csv", [param for param in inspect.signature(UserDto).parameters]))
         database.get_user_sex = MagicMock(return_value='M')
         database.get_user_surname = MagicMock(return_value='Wierzba')
-        database.get_subscribed_services = MagicMock(return_value=['abba', 'b', 'c'])
-        database.get_not_subscribed_services = MagicMock(return_value=[])
+        database.get_subscription = MagicMock(return_value='abba')
+        database.get_subscribed_packets = MagicMock(return_value=['abba', 'b', 'c'])
+        database.get_not_subscribed_packets = MagicMock(return_value=[])
         assert text_gen.get_propose_mail_text(1, database) == (''
                                         'Szanowny Panie Wierzba\n'
                                         '\n'
