@@ -44,7 +44,7 @@ class Invoice:
 
         self.client_name = client_data["name"]
         self.client_surname = client_data["surname"]
-        self.client_mail = client_data["mail"]
+        self.client_mail = client_data["email"]
         self.client_subscription = manifest.SUBSCRIPTIONS[client_data["subscription"]]["name"]
         self.client_subscription_cost = manifest.SUBSCRIPTIONS[client_data["subscription"]]["price"]
         self.client_packets = [(manifest.PACKETS[packet]["name"], manifest.PACKETS[packet]["price"]) for packet in client_data["packets"]]

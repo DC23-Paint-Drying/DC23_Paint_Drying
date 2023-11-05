@@ -38,11 +38,7 @@ class Database:
 
         client = self.db.get_client(user_id)
 
-        services = client['subscriptions'].replace('[','').replace(']','')
-        if services == '':
-            return []
-        else:
-            return services.split('.')
+        return client['subscriptions']
 
     def get_not_subscribed_services(self, user_id) -> List[str]:
         """

@@ -12,7 +12,7 @@ def test_generate_invoice():
     user_data = {
         "name": "John",
         "surname": "Smith",
-        "mail": "john@smi.th",
+        "email": "john@smi.th",
         "subscription": "basic",
         "packets": ["monthly"]
     }
@@ -55,7 +55,7 @@ def test_generate_invoice_deprecated():
     user_data = {
         "name": "John",
         "surname": "Smith",
-        "mail": "john@smi.th",
+        "email": "john@smi.th",
         "subscription": "basic",
         "packets": ["monthly"]
     }
@@ -94,7 +94,7 @@ def test_generate_pdf():
     user_data = {
         "name": "John",
         "surname": "Smith",
-        "mail": "john@smi.th",
+        "email": "john@smi.th",
         "subscription": "basic",
         "packets": ["monthly"]
     }

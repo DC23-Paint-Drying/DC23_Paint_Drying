@@ -18,7 +18,7 @@ class UserDto:
     - email (str): The user's email address, treated as the user's ID.
     - gender (str): The user's gender.
     - timestamp (str): The timestamp when the user data was created.
-    - subscriptions ([str]]): The list of names of subscribed services.
+    - subscription (str): The name of subscribed subcription.
     - id (str): A unique identifier for the user.
     """
 
@@ -29,7 +29,8 @@ class UserDto:
     email: str
     gender: str
     timestamp: str
-    subscriptions: [str] = field(default_factory=list)
+    subscription: str = ''
+    packets: [str] = field(default_factory=list)
     id: str = str(uuid.uuid4())
 
     def to_json(self):
@@ -58,6 +59,8 @@ class UserDto:
             if value is not None and value.isdigit():
                 value = int(value)
             else:
+                if value is None:
+                    value = ''
                 # if data[i] is a list
                 if '[' in value:
                     value = value.replace('[','').replace(']','')
@@ -69,7 +72,7 @@ class UserDto:
         return cls(**data)
 
     def to_csv(self):
-        return f"{self.username},{self.name},{self.surname},{self.age},{self.email},{self.gender},{self.timestamp},[{'.'.join(self.subscriptions)}],{self.id}\n"
+        return f"{self.username},{self.name},{self.surname},{self.age},{self.email},{self.gender},{self.timestamp},{self.subscription},[{'.'.join(self.packets)}],{self.id}\n"
 
     @classmethod
     def from_csv(cls, csv_str):
@@ -87,3 +90,17 @@ class UserDto:
                         data[i] = data[i].split('.')
 
         return cls(*data)
+
+    def to_dict(self) -> dict :
+        dict = {}
+        dict['username'] = self.username
+        dict['name'] = self.name
+        dict['surname'] = self.surname
+        dict['age'] = self.age
+        dict['email'] = self.email
+        dict['gender'] = self.gender
+        dict['timestamp'] = self.timestamp
+        dict['subscription'] = self.subscription
+        dict['packets'] = self.packets
+        dict['id'] = self.id
+        return dict

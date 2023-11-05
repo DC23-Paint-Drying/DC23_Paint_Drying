@@ -1,13 +1,14 @@
 import datetime
 import inspect
 from dataclasses import asdict
+import os
 
 from flask import Flask, render_template, redirect, url_for, request
 from flask_wtf import CSRFProtect
 
 from .database import Database
 from .forms import RegisterForm, OrderSubscriptionForm, EditProfileForm, EditSubscriptionForm
-from .invoice_generator import generate_invoice_xml
+from .invoice_generator import generate_invoice_xml, Invoice
 from .process_form import process_form
 from .csvDatabase import CSVDatabase
 from .user_dto import UserDto
@@ -118,12 +119,16 @@ def admin_panel():
             clients = db.get_clients()
             if len(clients) > 0:
                 client = clients[0]
-                file_name = generate_invoice_xml(client)
-                mail_text = get_invoice_mail_text(client['id'], 0, Database(db))
+                file_name = 'invoice.pdf'
+                invoice = Invoice(client)
+                invoice.save_pdf('invoice.pdf')
+                mail_text = get_invoice_mail_text(client['id'], invoice, Database(db))
                 send_mail(client['email'],
-                          'Suggestion',
+                          'Invoice',
                           mail_text.__str__(),
                           [file_name])
+
+                os.remove(file_name)
             return render_template("admin_panel.html", the_title="Paint Drying", notification="Invoices sent")
         if request.args.get('generate_report') == 'generate':
             return render_template("admin_panel.html", the_title="Paint Drying", notification="Report generated")

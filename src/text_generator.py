@@ -1,4 +1,6 @@
+from src import manifest
 from src.database import Database
+from src.invoice_generator import Invoice
 
 
 def replace_keywords(text: str, user_id: int, database: Database) -> str:
@@ -107,7 +109,7 @@ def get_propose_mail_text(user_id: int, database: Database) -> str:
     return replace_keywords(mail_text, user_id, database)
 
 
-def get_invoice_mail_text(user_id: int, invoice, database: Database) -> str:
+def get_invoice_mail_text(user_id: int, invoice: Invoice, database: Database) -> str:
     """
     function for creating mail text (for sending invoices) procedurally
     :param user_id:
@@ -116,23 +118,29 @@ def get_invoice_mail_text(user_id: int, invoice, database: Database) -> str:
     :return:
     """
     products = ''
-    for product in invoice.products:
-        products += "- " + product + "\n"
+    if len(invoice.client_packets) > 0:
+        for packet in invoice.client_packets:
+            products += "- " + packet[0] + "\n"
 
     mail_text = ('{$greeting}\n'
                  '\n'
-                 'Dziękujemy za zamówienie poniższych produktów:\n'
-                 + products +
+                 'Aktualna subskrypcja: ' + invoice.client_subscription + '\n'
+                 'Kwota: ' + f'{invoice.client_subscription_cost} PLN' + '\n'
+                 +
+                 (
+                     ('\nDziękujemy za zamówienie poniższych pakietów:\n'
+                     + products) if len(invoice.client_packets) > 0
+                     else ''
+                 )+
                  '\n'
                  'Faktura znajduje się w załącznikach.'
                  '\n'
                  '\n'
                  'Twoje zamówienie\n'
                  '\n'
-                 'Numer zamówienia:\r' + str(invoice.number) + '\n'  # 12345566
-                 'Metoda płatności:\r' + invoice.payment + '\n'  # VISA/Mastercard - 1234
-                 'Data zamówienia:\r' + invoice.date + '\n'  # 2016-08-31
-                 'Całkowita kwota:\r' + f'{invoice.price:,.2f} USD\n'  # 1,315.00 USD
+                 'Numer zamówienia:\r' + str(invoice.invoice_number) + '\n'  # 12345566                 
+                 'Data zamówienia:\r' + str(invoice.invoice_date) + '\n'  # 2016-08-31
+                 'Całkowita kwota:\r' + f'{invoice.total_cost:,.2f} PLN\n'  
                  '\n'
                  '{$suggestContact}\n'
                  '\n'

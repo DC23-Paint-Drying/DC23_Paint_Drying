@@ -86,6 +86,14 @@ class CSVDatabase:
             reader = csv.DictReader(csvfile, fieldnames=self._fields)
             for data in reader:
                 if data["id"] == client_id:
+                    #check for lists values
+                    for value in data:
+                        if '[' in value:
+                            value = value.replace('[', '').replace(']', '')
+                            if value == '':
+                                value = []
+                            else:
+                                value = value.split('.')
                     return data
 
         return None
@@ -150,6 +158,14 @@ class CSVDatabase:
             next(reader)  # skip headers row
             for data in reader:
                 if predicate is None or predicate(data):
+                    # check for lists values
+                    for key in data:
+                        if '[' in data[key]:
+                            data[key] = data[key].replace('[', '').replace(']', '')
+                            if data[key] == '':
+                                data[key] = []
+                            else:
+                                data[key] = data[key].split('.')
                     clients.append(data)
 
         return clients

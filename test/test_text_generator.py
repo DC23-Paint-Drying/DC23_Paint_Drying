@@ -4,17 +4,9 @@ from unittest.mock import MagicMock
 
 import src.text_generator as text_gen
 from src.csvDatabase import CSVDatabase
+from src.invoice_generator import Invoice
 from src.text_generator import Database
 from src.user_dto import UserDto
-
-
-class InvoiceMock:
-    products = []
-    number = 0
-    payment = 'VISA/Mastercard - 1234'
-    date = ''
-    price = 0
-
 
 class TestReplaceKeywords(unittest.TestCase):
     def test_greeting(self):
@@ -166,26 +158,31 @@ class TestInvoice(unittest.TestCase):
         database.get_user_sex = MagicMock(return_value='M')
         database.get_user_surname = MagicMock(return_value='Wierzba')
 
-        invoice = InvoiceMock()
-        invoice.products = ['green']
-        invoice.number = 123553
-        invoice.date = '2016-08-31'
-        invoice.price = 1315
+        client = UserDto('username', 'name', 'Wierzba', 22, 'mail', 'male', '')
+        client = client.to_dict()
+        client['subscription'] = 'basic'
+        client['packets'] = ['monthly']
+
+        invoice = Invoice(client)
+        invoice.invoice_number = 123553
+        invoice.invoice_date = '2016-08-31'
 
         assert (text_gen.get_invoice_mail_text(1, invoice, database) ==
                 ('Szanowny Panie Wierzba\n'
                  '\n'
-                 'Dziękujemy za zamówienie poniższych produktów:\n'
-                 '- green\n'
+                 'Aktualna subskrypcja: Podstawowy\n'
+                 'Kwota: 12.99 PLN\n'                 
                  '\n'
+                 'Dziękujemy za zamówienie poniższych pakietów:\n'
+                  '- Miesięczny\n'
+                  '\n'
                  'Faktura znajduje się w załącznikach.\n'
                  '\n'
                  'Twoje zamówienie\n'
                  '\n'
-                 'Numer zamówienia:\r123553\n'
-                 'Metoda płatności:\rVISA/Mastercard - 1234\n'
+                 'Numer zamówienia:\r123553\n'                 
                  'Data zamówienia:\r2016-08-31\n'
-                 'Całkowita kwota:\r1,315.00 USD\n'
+                 'Całkowita kwota:\r22.98 PLN\n'
                  '\n'
                  'Cieszymy się, że interesuje się Pan naszymi usługami. W celu uzyskania '
                  'więcej informacji, zalecamy odwiedzenie naszej strony,by sprawdzić nowe '
@@ -199,28 +196,32 @@ class TestInvoice(unittest.TestCase):
         database.get_user_sex = MagicMock(return_value='F')
         database.get_user_surname = MagicMock(return_value='Wierzba')
 
-        invoice = InvoiceMock()
-        invoice.products = ['green', 'yellow', 'red']
-        invoice.number = 123553
-        invoice.date = '2016-08-31'
-        invoice.price = 1315
+        client = UserDto('username', 'name', 'Wierzba', 22, 'mail', 'male', '')
+        client = client.to_dict()
+        client['subscription'] = 'basic'
+        client['packets'] = ['monthly', 'family']
+
+        invoice = Invoice(client)
+        invoice.invoice_number = 123553
+        invoice.invoice_date = '2016-08-31'
 
         assert (text_gen.get_invoice_mail_text(1, invoice, database) ==
                 ('Szanowna Pani Wierzba\n'
                  '\n'
-                 'Dziękujemy za zamówienie poniższych produktów:\n'
-                 '- green\n'
-                 '- yellow\n'
-                 '- red\n'
+                 'Aktualna subskrypcja: Podstawowy\n'
+                 'Kwota: 12.99 PLN\n'
+                 '\n'
+                 'Dziękujemy za zamówienie poniższych pakietów:\n'
+                 '- Miesięczny\n'
+                 '- Rodzinny\n'
                  '\n'
                  'Faktura znajduje się w załącznikach.\n'
                  '\n'
                  'Twoje zamówienie\n'
                  '\n'
                  'Numer zamówienia:\r123553\n'
-                 'Metoda płatności:\rVISA/Mastercard - 1234\n'
                  'Data zamówienia:\r2016-08-31\n'
-                 'Całkowita kwota:\r1,315.00 USD\n'
+                 'Całkowita kwota:\r35.97 PLN\n'
                  '\n'
                  'Cieszymy się, że interesuje się Pani naszymi usługami. W celu uzyskania '
                  'więcej informacji, zalecamy odwiedzenie naszej strony,by sprawdzić nowe '

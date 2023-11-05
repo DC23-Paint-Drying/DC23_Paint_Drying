@@ -1,7 +1,7 @@
 import pytest
 
 import src.mail
-
+import utils.read_mail
 """
 Test by sending mail to self
 """
@@ -15,7 +15,7 @@ def test_send_mail():
     receiver = src.mail.COMPANY_MAIL  # send to self
 
     src.mail.send_mail(receiver, subject, content, ['attachment.txt'])
-    response = src.mail.read_mail()
+    response = utils.read_mail.read_mail()
 
     assert response['subject'] == subject
     assert response['content'] == content
