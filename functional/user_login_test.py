@@ -5,7 +5,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 
 
-class SubscriptionOrderTests(unittest.TestCase):
+class UserLoginTests(unittest.TestCase):
     def setUp(self):
         self.BASE_URL = os.getenv("BASE_URL", "")
         self.driver = webdriver.Chrome()
