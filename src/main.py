@@ -43,11 +43,12 @@ def login():
 
     form = LoginForm()
     if form.validate_on_submit():
-        users = db.get_clients(lambda client: client["email"] == form.email.data)
-        if not users:
-            err_msg = "Invalid Email address. Please check it and try again."
-            return render_template("login.html", form=form, err_msg=err_msg, the_title="Login - Paint Drying"), 401
-        user = users[0]
+        user = db.get_client_by_email(form.email.data)
+        if not user:
+            err_msg = "An account with the provided email already exists. " \
+                      "Please choose a different email or log in if you have an existing account."
+            return render_template("register.html", form=form, err_msg=err_msg,
+                                   the_title="Register - Paint Drying"), 409
         # user data is ready to further processing
 
         current_user_email = form.email.data
