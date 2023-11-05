@@ -92,9 +92,6 @@ def register():
 @login_required
 def order_subscription():
     form = OrderSubscriptionForm()
-    if not current_user.is_authenticated:
-        return render_template("unauthorized.html", the_title="Unauthorized - Paint Drying"), 401
-
     if form.validate_on_submit():
         subscription = SubscriptionInfo(subscription_level=form.subscription_level.data,
                                         subscription_timestamp=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
@@ -109,9 +106,6 @@ def order_subscription():
 @login_required
 def edit_profile():
     form = EditProfileForm()
-    if not current_user.is_authenticated:
-        return render_template("unauthorized.html", the_title="Unauthorized - Paint Drying"), 401
-
     if form.validate_on_submit():
         user = db.get_client_by_email(current_user.email)
         if user:
@@ -129,9 +123,6 @@ def edit_profile():
 @login_required
 def edit_subscription():
     form = EditSubscriptionForm()
-    if not current_user.is_authenticated:
-        return render_template("unauthorized.html", the_title="Unauthorized - Paint Drying"), 401
-
     if form.validate_on_submit():
         user = db.get_client_by_email(current_user.email)
         if user:
