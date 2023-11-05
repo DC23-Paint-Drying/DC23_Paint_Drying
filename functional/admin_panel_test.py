@@ -26,19 +26,19 @@ class MainPageTests(unittest.TestCase):
     def test_send_mail(self):
         self.driver.get(self.BASE_URL)
 
-        self.driver.find_element(by=By.ID, value="suggest-services").click()
+        self.driver.find_element(by=By.ID, value="suggest-services-label").click()
 
-        assert    self.driver.find_element(by=By.ID, value="notification").text == "Mails sent"
+        assert self.driver.find_element(by=By.ID, value="notification").text == "Mails sent"
     def test_send_invoice(self):
         self.driver.get(self.BASE_URL)
 
-        self.driver.find_element(by=By.ID, value="send-invoice").click()
+        self.driver.find_element(by=By.ID, value="send-invoice-label").click()
 
         assert self.driver.find_element(by=By.ID, value="notification").text == "Invoices sent"
     def test_send_generate_report(self):
         self.driver.get(self.BASE_URL)
 
-        self.driver.find_element(by=By.ID, value="generate-report").click()
+        self.driver.find_element(by=By.ID, value="generate-report-label").click()
 
         assert self.driver.find_element(by=By.ID, value="notification").text == "Report generated"
 
