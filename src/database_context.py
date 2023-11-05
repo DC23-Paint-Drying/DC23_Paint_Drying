@@ -7,6 +7,7 @@ from dataclasses import asdict
 
 from .bundle_info import BundleInfo
 from .client_info import ClientInfo
+from .subscription_info import SubscriptionInfo
 from .user_dto import UserDto
 from . import csvDatabase
 
@@ -26,7 +27,7 @@ class DatabaseContext:
         self.db_path = db_path
         if not os.path.isdir(db_path):
             os.mkdir(db_path)
-        self.basic_db = csvDatabase.CSVDatabase(self.db_path + "/basic.txt", list(inspect.signature(UserDto).parameters) + ["subscription"])
+        self.basic_db = csvDatabase.CSVDatabase(self.db_path + "/basic.txt", list(inspect.signature(UserDto).parameters) + list(inspect.signature(SubscriptionInfo).parameters))
         self.bundle_db = csvDatabase.CSVDatabase(self.db_path + "/bundles.txt", list(inspect.signature(BundleInfo).parameters))
 
     def get_client_by_email(self, email: str) -> ClientInfo:
@@ -39,11 +40,17 @@ class DatabaseContext:
             Returns:
                 ClientInfo
         """
-        data = self.basic_db.get_entry_by_field("email", email)[0]
-        sub_info = data["subscription"]
-        data.pop("subscription")
-        bundle_info = self.bundle_db.get_entry_by_field("email", email)
-        return ClientInfo(UserDto(**data), sub_info, [BundleInfo(**bundle) for bundle in bundle_info])
+        data = self.basic_db.get_entry_by_field("email", email)
+        if data:
+            data = data[0]
+
+            subscription_info = SubscriptionInfo(subscription_level=data['subscription_level'],
+                                                 subscription_timestamp=data['subscription_timestamp'])
+            data.pop('subscription_level')
+            data.pop('subscription_timestamp')
+
+            bundle_info = self.bundle_db.get_entry_by_field("email", email)
+            return ClientInfo(UserDto(**data), subscription_info, [BundleInfo(**bundle) for bundle in bundle_info])
 
     def serialize(self, client: ClientInfo) -> None:
         """
@@ -56,7 +63,8 @@ class DatabaseContext:
                 None
         """
         client_info = asdict(client.basic)
-        client_info["subscription"] = client.subscription
+        client_info["subscription_level"] = client.subscription.subscription_level
+        client_info["subscription_timestamp"] = client.subscription.subscription_timestamp
         try:
             self.basic_db.update_client(client_info)
         except KeyError:
