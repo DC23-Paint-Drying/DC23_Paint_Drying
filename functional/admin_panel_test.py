@@ -22,7 +22,7 @@ class MainPageTests(unittest.TestCase):
 
     def test_main(self):
         self.driver.get(self.BASE_URL)
-        assert self.driver.title == 'Paint Drying/admin_panel'
+        assert self.driver.title == 'Paint Drying/Admin Panel'
     def test_send_mail(self):
         self.driver.get(self.BASE_URL)
 

@@ -205,4 +205,4 @@ def admin_panel():
         if request.args.get('generate-report') == 'generate':
             return render_template("admin_panel.html", the_title="Paint Drying", notification="Report generated")
 
-    return render_template("admin_panel.html", the_title="Paint Drying", notification="")
+    return render_template("admin_panel.html", the_title="Paint Drying/Admin Panel", notification="")
