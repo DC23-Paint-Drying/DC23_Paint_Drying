@@ -26,6 +26,12 @@ class OrderSubscriptionForm(FlaskForm):
     submit = SubmitField(label='Order Subscription')
 
 
+class OrderPacketsForm(FlaskForm):
+    email = StringField(label='Email', validators=[DataRequired(), Email()])
+    packets = RadioField(label='Packet', choices=[(name, manifest.PACKETS[name]["name"]) for name in manifest.PACKETS])
+    submit = SubmitField(label='Order Packet')
+
+
 class EditProfileForm(FlaskForm):
     username = StringField(label='Username', validators=[DataRequired(), Length(min=3, max=64)])
     name = StringField(label='Name', validators=[DataRequired(), Length(min=3, max=64)])
