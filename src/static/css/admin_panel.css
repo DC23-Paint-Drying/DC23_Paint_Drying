@@ -1,4 +1,4 @@
-.VerticalFlex{
+.vertical-flex{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -7,7 +7,7 @@
 }
 
 
-.HorizontalFlex{
+.horizontal-flex{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -15,7 +15,7 @@
     gap: 20px;
 }
 
-.AdminButton{
+.admin-button{
     width: 200px;
     height: 200px;
     background-color: gray;
