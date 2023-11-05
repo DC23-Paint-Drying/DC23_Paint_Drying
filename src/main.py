@@ -1,4 +1,5 @@
 import datetime
+import json
 
 from flask import Flask, render_template, redirect, url_for
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
@@ -38,6 +39,13 @@ def unauthorized_access(error):
 @app.route("/")
 def index():
     return render_template("index.html", the_title="Paint Drying")
+
+@app.route("/user", methods=['GET'])
+@login_required
+def user():
+    user = db.get_client_by_email(current_user.email)
+    return render_template("user.html", data = json.loads(user.to_json()), the_title="Paint Drying")
+
 
 
 @app.route("/logout", methods=['POST', 'GET'])
