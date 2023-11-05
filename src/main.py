@@ -21,8 +21,7 @@ from .report import report,report_utils
 from .subscription_info import SubscriptionInfo
 from .text_generator import get_propose_mail_text, get_invoice_mail_text
 from .user_dto import UserDto
-
-
+from .model_manager import ModelManager
 
 app = Flask(__name__)
 app.secret_key = 'tO$&!|0wkamvVia0?n$NqIRVWOG'
@@ -118,20 +117,22 @@ def register():
 
 @app.route("/subscribe", methods=['POST', 'GET'])
 @login_required
-def order_subscription():  # unused
+def order_subscription(): #unused
+    ModelManager.deploy_process()
     form = OrderSubscriptionForm()
     prices = [(manifest.SUBSCRIPTIONS[name]["name"], manifest.SUBSCRIPTIONS[name]["price"])
               for name in manifest.SUBSCRIPTIONS]
     prices = dict(prices)
 
     if form.validate_on_submit():
+        ModelManager.complete_task()
         subscription = SubscriptionInfo(subscription_level=form.subscription_level.data,
                                         subscription_timestamp=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         client = db.get_client_by_email(current_user.email)
         client.subscription = subscription
         db.serialize(client)
-        return redirect(url_for('index'))
-    return render_template("order_subscription.html", form=form, prices=prices, the_title="Order Subscription - Paint Drying")
+        return redirect(url_for('propose_additional_services'))
+    return render_template("order_subscription.html", form=form, the_title="Order Subscription - Paint Drying")
 
 
 @app.route("/order-packets", methods=['POST', 'GET'])
@@ -204,6 +205,8 @@ def edit_profile():
 @app.route("/edit-subscription", methods=['POST', 'GET'])
 @login_required
 def edit_subscription():
+    ModelManager.deploy_process()
+
     form = EditSubscriptionForm()
     if current_user.user_type == manifest.USER_TYPES.ADMIN:
         form.email.choices = [(email, email) for email in db.get_all_emails()]
@@ -213,12 +216,13 @@ def edit_subscription():
     prices = dict(prices)
 
     if form.validate_on_submit():
+        ModelManager.complete_task()
         client = db.get_client_by_email(form.email.data if form.email.data != "current_user" else current_user.email)
         if client:
             client.subscription = SubscriptionInfo(subscription_level=form.subscription_level.data,
                                                    subscription_timestamp=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         db.serialize(client)
-        return redirect(url_for('index'))
+        return redirect(url_for('propose_additional_services'))
     return render_template("edit_subscription.html", form=form, prices=prices, the_title="Edit Subscription - Paint Drying")
 
 
@@ -304,3 +308,32 @@ def list_gdrive_files():
                            the_title="Paint Drying/Google Drive Files",
                            data=data,
                            gdrive_available=gdrive_available)
+
+
+@app.route("/propose-additional-services", methods=['POST', 'GET'])
+def propose_additional_services():
+    return render_template("propose_additional_services.html", the_title="Additional Services - Paint Drying")
+
+@app.route("/wants-additional-services", methods=['POST', 'GET'])
+def wants_additional_services():
+    variables = {
+            "variables":
+            {
+                "userAccepts": {"value": True}
+            }
+        }
+    ModelManager.complete_task(data=variables)
+    return redirect(url_for('edit_subscription'))
+
+@app.route("/no-additional-services", methods=['POST', 'GET'])
+def no_additional_services():
+    variables = {
+            "variables":
+            {
+                "userAccepts": {"value": False}
+            }
+        }
+    ModelManager.complete_task(data=variables,end=True)
+        
+    return redirect(url_for('index'))
+
