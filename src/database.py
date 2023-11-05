@@ -39,11 +39,11 @@ class Database:
         client = self.db.get_client(user_id)
 
         packets = client['packets']
-
+        names = []
         for packet in packets:
-            packet = PACKETS[packet]['name']
+            names.append( PACKETS[packet]['name'])
 
-        return packets
+        return names
 
     def get_not_subscribed_packets(self, user_id) -> List[str]:
         """

@@ -47,6 +47,12 @@ class TestReplaceKeywords(unittest.TestCase):
         assert text_gen.replace_keywords('{$proposeNewService}', 1,
                                          database) == 'Szukasz nowych wrażeń? Sprawdź nasze najlepsze usługi: a, b!'
 
+        # test when something is bought, but there are more than 3 services in total
+        database.get_subscribed_packets = MagicMock(return_value=['d'])
+        database.get_not_subscribed_packets = MagicMock(return_value=['a', 'b', 'c','e'])
+        assert text_gen.replace_keywords('{$proposeNewService}', 1,
+                                         database) == 'Zauważyliśmi, że jest Pani zainteresowana usługą d. Powinna Pani sprawdzić także te usługi: a, b, c!'
+
     def test_proposeLengtheningSubscription(self):
         database = Database(CSVDatabase("db.csv", [param for param in inspect.signature(UserDto).parameters]))
         database.get_user_sex = MagicMock(return_value='M')

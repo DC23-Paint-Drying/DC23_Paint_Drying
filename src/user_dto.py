@@ -19,6 +19,7 @@ class UserDto:
     - gender (str): The user's gender.
     - timestamp (str): The timestamp when the user data was created.
     - subscription (str): The name of subscribed subcription.
+    - packets [str]: The list of bought packets.
     - id (str): A unique identifier for the user.
     """
 
@@ -45,7 +46,10 @@ class UserDto:
         user_element = xml.etree.ElementTree.Element("User")
         for key, value in asdict(self).items():
             element = xml.etree.ElementTree.Element(key)
-            element.text = str(value)
+            if type(value) is list:
+                element.text = '[' + '.'.join(value) + ']'
+            else:
+                element.text = str(value)
             user_element.append(element)
         return xml.etree.ElementTree.tostring(user_element).decode()
 

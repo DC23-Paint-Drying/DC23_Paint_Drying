@@ -71,10 +71,15 @@ class CSVDatabase:
         if self.get_client(client_data["id"]):
             raise KeyError(f"Client with id {client_data['id']} already exists.")
 
+        client_data_copy = client_data.copy()  # prevent data change writing a list
         with open(self._filename, 'a', newline='') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=self._fields)
 
-            writer.writerow(client_data)
+            for key in client_data_copy.keys():
+                if type(client_data_copy[key]) is list:
+                    client_data_copy[key] = '['+'.'.join(client_data_copy[key])+']'
+
+            writer.writerow(client_data_copy)
 
     def get_client(self, client_id: str) -> Dict | None:
         """
