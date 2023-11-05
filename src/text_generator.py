@@ -18,13 +18,15 @@ def replace_keywords(text: str, user_id: int, database: Database) -> str:
     :return:
     """
 
+    user_is_male = database.get_user_sex(user_id) == 'M'
+
     if '{$greeting}' in text:
-        if database.get_user_sex(user_id) == 'M':
+        if user_is_male:
             text = text.replace('{$greeting}',
-                                'Dear Mr ' + database.get_user_surname(user_id))
-        if database.get_user_sex(user_id) == 'F':
+                                'Szanowny Panie ' + database.get_user_surname(user_id))
+        if not user_is_male:
             text = text.replace('{$greeting}',
-                                'Dear Mrs ' + database.get_user_surname(user_id))
+                                'Szanowna Pani ' + database.get_user_surname(user_id))
 
     if '{$proposeNewService}' in text:
         subscribed_services = database.get_subscribed_services(user_id)
@@ -37,29 +39,31 @@ def replace_keywords(text: str, user_id: int, database: Database) -> str:
                 else:
                     services = ", ".join(not_subscribed_services)
                 text = text.replace('{$proposeNewService}',
-                                    'It seems, you are very interested in service ' + subscribed_services
-                                    [0] + '. You should also check these services: ' + services + '!')
+                                    'Zauważyliśmi, że jest '+('Pan zainteresowany ' if user_is_male else 'Pani zainteresowana ') +
+                                                                                                   'usługą ' +
+                                    subscribed_services[0] + '. '+('Powinienien Pan' if user_is_male else 'Powinna Pani')+' '
+                                    'sprawdzić także te usługi: ' + services + '!')
             else:
                 if len(not_subscribed_services) >= 3:
                     text = text.replace('{$proposeNewService}',
-                                        'Looking for new action? Check our best services: ' + ', '.join(
+                                        'Szukasz nowych wrażeń? Sprawdź nasze najlepsze usługi: ' + ', '.join(
                                             not_subscribed_services[0:3]) + '!')
                 else:
                     text = text.replace('{$proposeNewService}',
-                                        'Looking for new action? Check our best services: ' +
+                                        'Szukasz nowych wrażeń? Sprawdź nasze najlepsze usługi: ' +
                                         ', '.join(not_subscribed_services) + '!')
         else:
             text = text.replace('{$proposeNewService}',
-                                'It seems, you are one of our best customers! You\'ve bought all of our services! '
-                                'Stay tuned for more!')
+                                'Ptaki ćwierkają, że jest '+('Pan jednym z naszych najlepszym klientów! Wykupiłeś' if user_is_male else
+                                'Pani jedną z naszych najlepszych klientek! Wykupiłaś')+' wszystkie nasze usługi! '
+                                'Zachęcamy do oczekiwania na nowe przyszłe usługi, które się pojawią niedługo!')
 
     if '{$proposeLengtheningSubscription}' in text:
         subscribed_services = database.get_subscribed_services(user_id)
         if len(subscribed_services) > 0:
             text = text.replace('{$proposeLengtheningSubscription}',
-                                'The subscription for ' + subscribed_services[
-                                    0] + ' will soon expire! Quick! Renew the '
-                                         'subscription!')
+                                'Uwaga! Subskrypcja na ' + subscribed_services[
+                                    0] + ' wkrótce wygaśnie! Szybko! Odnów subskrypcję!')
         else:
             # delete mark, because there is nothing to propose
             text = text.replace('{$proposeLengtheningSubscription}',
@@ -67,12 +71,12 @@ def replace_keywords(text: str, user_id: int, database: Database) -> str:
 
     if '{$suggestContact}' in text:
         text = text.replace('{$suggestContact}',
-                            'We are glad, you are interested in our services. For more information, we suggest '
-                            'visiting our website to check new products we offer!')
+                            'Cieszymy się, że interesuje się '+('Pan' if user_is_male else 'Pani')+' naszymi usługami. W celu uzyskania więcej informacji, zalecamy '
+                            'odwiedzenie naszej strony,by sprawdzić nowe produkty, które oferujemy!')
 
     if '{$goodbye}' in text:
         text = text.replace('{$goodbye}',
-                            'Enjoy our services \nDC Drying Paint Services')
+                            'Ciesz się naszymi usługami! \nDC Drying Paint Services')
 
     if '{$subscribedServices}' in text:
         text = text.replace('{$subscribedServices}',
@@ -117,18 +121,18 @@ def get_invoice_mail_text(user_id: int, invoice, database) -> str:
 
     mail_text = ('{$greeting}\n'
                  '\n'
-                 'Thank you for your order for the following products:\n'
+                 'Dziękujemy za zamówienie poniższych produktów:\n'
                  + products +
                  '\n'
-                 'Please find your invoice attached to this email.'
+                 'Faktura znajduje się w załącznikach.'
                  '\n'
                  '\n'
-                 'Your order\n'
+                 'Twoje zamówienie\n'
                  '\n'
-                 'Reference no.:\r' + str(invoice.number) + '\n'  # 12345566
-                 'Payment method:\r' + invoice.payment + '\n'  # VISA/Mastercard - 1234
-                 'Order date:\r' + invoice.date + '\n'  # 2016-08-31
-                 'Grand total:\r' + f'{invoice.price:,.2f} USD\n'  # 1,315.00 USD
+                 'Numer zamówienia:\r' + str(invoice.number) + '\n'  # 12345566
+                 'Metoda płatności:\r' + invoice.payment + '\n'  # VISA/Mastercard - 1234
+                 'Data zamówienia:\r' + invoice.date + '\n'  # 2016-08-31
+                 'Całkowita kwota:\r' + f'{invoice.price:,.2f} USD\n'  # 1,315.00 USD
                  '\n'
                  '{$suggestContact}\n'
                  '\n'

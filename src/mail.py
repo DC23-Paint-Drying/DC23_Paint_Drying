@@ -1,16 +1,15 @@
 """
     Module used for sending and checking mails
 """
-import email
-import imaplib
-import os
-import smtplib
-import ssl
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+import os
 from os.path import basename
+import smtplib
+import ssl
 from typing import List
+
 
 COMPANY_MAIL = os.environ.get("COMPANY_MAIL", "")
 PASSWORD = os.environ.get("PASSWORD", "")
