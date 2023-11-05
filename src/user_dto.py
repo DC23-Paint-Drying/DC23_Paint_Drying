@@ -1,12 +1,12 @@
-import random
 from dataclasses import dataclass, asdict, field
 import json
 import uuid
 import xml.etree.ElementTree
+from flask_login import UserMixin
 
 
 @dataclass
-class UserDto:
+class UserDto(UserMixin):
     """
     Data class for storing user information.
 
@@ -20,6 +20,9 @@ class UserDto:
     - timestamp (str): The timestamp when the user data was created.
     - id (str): A unique identifier for the user.
     """
+
+    def get_id(self):
+        return self.email
 
     username: str
     name: str
