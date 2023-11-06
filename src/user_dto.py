@@ -18,8 +18,6 @@ class UserDto(UserMixin):
     - email (str): The user's email address, treated as the user's ID.
     - gender (str): The user's gender.
     - timestamp (str): The timestamp when the user data was created.
-    - subscription (str): The name of subscribed subcription.
-    - packets [str]: The list of bought packets.
     - id (str): A unique identifier for the user.
     """
 
