@@ -12,10 +12,9 @@ class Database:
     Database object is used for retrieving data from the database.
     At the moment is used for generating mail text, however tested with mocks.
     """
-    def get_user_sex(self, user_id) -> str:
+    def get_user_sex(self, user_id: str) -> str:
         """
         Function which returns user sex
-        :param self:
         :param user_id:
         :return: one of string values: 'M' or 'F'
         """
@@ -27,11 +26,9 @@ class Database:
         else:
             return 'M'
 
-
-    def get_subscribed_packets(self, user_id) -> List[str]:
+    def get_subscribed_packets(self, user_id: str) -> List[str]:
         """
         Function which retrieves all services subscribed by user
-        :param self:
         :param user_id:
         :return: list of names of subscribed services
         """
@@ -44,10 +41,9 @@ class Database:
 
         return names
 
-    def get_not_subscribed_packets(self, user_id) -> List[str]:
+    def get_not_subscribed_packets(self, user_id: str) -> List[str]:
         """
         Function which retrieves all services NOT subscribed by user
-        :param self:
         :param user_id:
         :return: list of names of NOT subscribed services
         """
@@ -65,10 +61,9 @@ class Database:
 
         return not_subscribed
 
-    def get_subscription(self, user_id) -> str:
+    def get_subscription(self, user_id: str) -> str:
         """
         Function which retrieves all services subscribed by user
-        :param self:
         :param user_id:
         :return: list of names of subscribed services
         """
@@ -78,10 +73,9 @@ class Database:
 
         return SUBSCRIPTIONS[client.subscription.subscription_level]['name']
 
-    def get_user_surname(self, user_id) -> str:
+    def get_user_surname(self, user_id: str) -> str:
         """
         Function returning the user surname
-        :param self:
         :param user_id:
         :return: user surname as string
         """

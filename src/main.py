@@ -1,7 +1,5 @@
 import datetime
 
-import inspect
-from dataclasses import asdict
 import os
 import json
 
@@ -10,7 +8,7 @@ from flask import Flask, render_template, redirect, url_for, request
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 
 from .database import Database
-from .invoice_generator import generate_invoice_xml, Invoice
+from .invoice_generator import Invoice
 
 
 
@@ -193,7 +191,7 @@ def admin_panel():
                 client = db.get_client_by_email(clients[0]['email'])
                 file_name = 'invoice.pdf'
                 invoice = Invoice(client)
-                invoice.save_pdf('invoice.pdf')
+                invoice.save_pdf(file_name)
                 mail_text = get_invoice_mail_text(client.basic.id, invoice, Database(db))
                 send_mail(client.basic.email,
                           'Invoice',
