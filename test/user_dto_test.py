@@ -68,3 +68,15 @@ def test_csv_serialization_deserialization():
     user_from_csv = UserDto.from_csv(csv_data)
 
     assert user == user_from_csv
+
+def test_get_id():
+    mail = 'mail@example.com'
+    user = UserDto(username='username',
+                   name='name',
+                   surname='surname',
+                   age=18,
+                   email=mail,
+                   gender='male',
+                   timestamp='2023-01-01 00:00:00')
+
+    assert user.get_id() == mail
