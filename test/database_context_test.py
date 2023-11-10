@@ -20,8 +20,8 @@ class DataBaseContextTests(unittest.TestCase):
     def test_json_serialization(self):
         user = UserDto("testName", "testFirstName", "testSurname", 99, "test@email.com", "other", "2023-01-01 00:00:00")
         subscription = SubscriptionInfo('basic', "2023-01-01 00:00:00")
-        bundles = [BundleInfo(str(uuid.uuid4()), "test@email.com", "monthly", "1980-01-01", "2040-12-20"),
-                   BundleInfo(str(uuid.uuid4()), "test@email.com", "family", "1980-01-01", "2040-12-20")]
+        bundles = [BundleInfo("test@email.com", "monthly", "1980-01-01", "2040-12-20", str(uuid.uuid4())),
+                   BundleInfo("test@email.com", "family", "1980-01-01", "2040-12-20", str(uuid.uuid4()))]
         info = ClientInfo(user, subscription, bundles)
         data = json.loads(info.to_json())
         assert data["basic"]["name"] == "testFirstName"
@@ -32,8 +32,8 @@ class DataBaseContextTests(unittest.TestCase):
     def test_read_write(self):
         user = UserDto("testName", "testFirstName", "testSurname", 99, "test@email.com", "other", "2023-01-01 00:00:00")
         subscription = SubscriptionInfo('basic', "2023-01-01 00:00:00")
-        bundles = [BundleInfo(str(uuid.uuid4()), "test@email.com", "YellowPaintPremium", "1980-01-01", "2040-12-20"),
-                   BundleInfo(str(uuid.uuid4()), "test@email.com", "NoAds", "1980-01-01", "2040-12-20")]
+        bundles = [BundleInfo("test@email.com", "YellowPaintPremium", "1980-01-01", "2040-12-20", str(uuid.uuid4())),
+                   BundleInfo("test@email.com", "NoAds", "1980-01-01", "2040-12-20", str(uuid.uuid4()))]
         info = ClientInfo(user, subscription, bundles)
         assert user.username == "testName"
         assert user.name == "testFirstName"
