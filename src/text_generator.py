@@ -1,4 +1,3 @@
-from src import manifest
 from src.database import Database
 from src.invoice_generator import Invoice
 

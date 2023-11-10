@@ -71,15 +71,10 @@ class CSVDatabase:
         if self.get_client(client_data["id"]):
             raise KeyError(f"Client with id {client_data['id']} already exists.")
 
-        client_data_copy = client_data.copy()  # prevent data change writing a list
         with open(self._filename, 'a', newline='') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=self._fields)
 
-            for key in client_data_copy.keys():
-                if type(client_data_copy[key]) is list:
-                    client_data_copy[key] = '['+'.'.join(client_data_copy[key])+']'
-
-            writer.writerow(client_data_copy)
+            writer.writerow(client_data)
 
     def get_client(self, client_id: str) -> Dict | None:
         """
@@ -91,14 +86,6 @@ class CSVDatabase:
             reader = csv.DictReader(csvfile, fieldnames=self._fields)
             for data in reader:
                 if data["id"] == client_id:
-                    #check for lists values
-                    for key in data:
-                        if '[' in data[key]:
-                            data[key] = data[key].replace('[', '').replace(']', '')
-                            if data[key] == '':
-                                data[key] = []
-                            else:
-                                data[key] = data[key].split('.')
                     return data
 
         return None
@@ -163,14 +150,6 @@ class CSVDatabase:
             next(reader)  # skip headers row
             for data in reader:
                 if predicate is None or predicate(data):
-                    # check for lists values
-                    for key in data:
-                        if '[' in data[key]:
-                            data[key] = data[key].replace('[', '').replace(']', '')
-                            if data[key] == '':
-                                data[key] = []
-                            else:
-                                data[key] = data[key].split('.')
                     clients.append(data)
 
         return clients

@@ -6,15 +6,13 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from pyvirtualdisplay import Display
 
-from functional.functional_test_constant import BASE_URL
-
 
 class MainPageTests(unittest.TestCase):
     def setUp(self):
         display = Display(visible=0, size=(800, 800))
         display.start()
         chromedriver_autoinstaller.install()
-        self.BASE_URL = BASE_URL + '/admin_panel'
+        self.BASE_URL = self.BASE_URL = os.getenv("BASE_URL", "") + '/admin_panel'
         self.driver = webdriver.Chrome()
 
     def tearDown(self):

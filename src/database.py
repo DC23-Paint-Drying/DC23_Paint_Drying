@@ -59,9 +59,9 @@ class Database:
 
         subscribed_packets_names = [x.name for x in subscribed]
 
-        for service in PACKETS.keys():
-            if service not in subscribed_packets_names:
-                not_subscribed.append(PACKETS[service]['name'])
+        for packet in PACKETS.keys():
+            if packet not in subscribed_packets_names:
+                not_subscribed.append(PACKETS[packet]['name'])
 
         return not_subscribed
 
