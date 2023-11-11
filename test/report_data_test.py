@@ -20,14 +20,14 @@ def database_context_handling():
     db.serialize(ClientInfo(
         UserDto('test1', 'test1', 'test1', 17, 'test1@test.com', 'male', now.strftime('%Y-%m-%d %H:%M:%S')),
         SubscriptionInfo(list(company.SUBSCRIPTIONS.keys())[0], now.strftime('%Y-%m-%d %H:%M:%S')),
-        [BundleInfo(str(uuid.uuid4()), 'test1@test.com', list(company.PACKETS.keys())[0],
-                    now.strftime('%Y-%m-%d'), later.strftime('%Y-%m-%d'))]
+        [BundleInfo('test1@test.com', list(company.PACKETS.keys())[0],
+                    now.strftime('%Y-%m-%d'), later.strftime('%Y-%m-%d'), str(uuid.uuid4()))]
     ))
     db.serialize(ClientInfo(
         UserDto('test2', 'test2', 'test2', 22, 'test2@test.com', 'female', now.strftime('%Y-%m-%d %H:%M:%S')),
         SubscriptionInfo(list(company.SUBSCRIPTIONS.keys())[1], now.strftime('%Y-%m-%d %H:%M:%S')),
-        [BundleInfo(str(uuid.uuid4()), 'test2@test.com', list(company.PACKETS.keys())[1],
-                    now.strftime('%Y-%m-%d'), later.strftime('%Y-%m-%d'))]
+        [BundleInfo('test2@test.com', list(company.PACKETS.keys())[1],
+                    now.strftime('%Y-%m-%d'), later.strftime('%Y-%m-%d'), str(uuid.uuid4()))]
     ))
     yield
     db.destroy()
