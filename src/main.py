@@ -1,10 +1,11 @@
 import datetime
+import io
 
 import os
 import json
 
 from flask_wtf import CSRFProtect
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, render_template, redirect, url_for, request, after_this_request, send_file
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 
 from .database import Database
@@ -204,3 +205,27 @@ def admin_panel():
             return render_template("admin_panel.html", the_title="Paint Drying", notification="Report generated")
 
     return render_template("admin_panel.html", the_title="Paint Drying/Admin Panel", notification="")
+
+
+@app.route("/admin_panel/report")
+def download_file():
+
+    # create report and get its path
+    file_path = 'Poradnik Nowego Prezesa.pdf'
+
+    return_data = io.BytesIO()
+    # try opening and reading the report content
+    try:
+        with open(file_path, 'rb') as fo:
+            return_data.write(fo.read())
+    except EnvironmentError:
+        # user refreshed page
+        return render_template("empty_report.html", the_title="Paint Drying/Admin Panel/Report")
+    # (after writing, cursor will be at last byte, so move it to start)
+    return_data.seek(0)
+
+    # delete the file
+    os.remove(file_path)
+
+    return send_file(return_data, mimetype='application/pdf')
+
