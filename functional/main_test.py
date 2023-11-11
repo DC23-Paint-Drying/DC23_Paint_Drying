@@ -86,6 +86,18 @@ class MainPageTestsLoggedOut(unittest.TestCase):
 
         assert self.driver.title == 'Unauthorized - Paint Drying'
 
+    def test_order_packets_link(self):
+        self.driver.get(self.BASE_URL)
+
+        order_packets_link = self.driver.find_elements(by=By.LINK_TEXT, value="Order packets")
+
+        assert len(order_packets_link) == 0
+
+    def test_order_packets_link_unauthorized(self):
+        self.driver.get(os.path.join(self.BASE_URL, "order-packets"))
+
+        assert self.driver.title == 'Unauthorized - Paint Drying'
+
 
 class MainPageTestsLoggedIn(unittest.TestCase):
     BASE_URL = None
@@ -179,6 +191,14 @@ class MainPageTestsLoggedIn(unittest.TestCase):
 
         assert self.driver.title == 'Edit Profile - Paint Drying'
         assert self.driver.current_url == os.path.join(self.BASE_URL, "edit-profile")
+
+    def test_order_packets_link(self):
+        self.driver.get(self.BASE_URL)
+
+        self.driver.find_element(by=By.LINK_TEXT, value="Order packets").click()
+
+        assert self.driver.title == 'Order Packets - Paint Drying'
+        assert self.driver.current_url == os.path.join(self.BASE_URL, "order-packets")
 
     def test_logout_link(self):
         self.driver.get(self.BASE_URL)

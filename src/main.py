@@ -1,18 +1,32 @@
 import datetime
+
+import os
 import json
 
-from flask import Flask, render_template, redirect, url_for
-from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask_wtf import CSRFProtect
+from flask import Flask, render_template, redirect, url_for, request
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+
+from .database import Database
+from .invoice_generator import Invoice
 
 
+
+
+
+
+from .bundle_info import BundleInfo
 from .client_info import ClientInfo
 from .database_context import DatabaseContext
-from .forms import LoginForm, RegisterForm, OrderSubscriptionForm, OrderPacketsForm, EditProfileForm, EditSubscriptionForm
-from .process_form import process_form
+from .forms import LoginForm, RegisterForm, OrderSubscriptionForm, OrderPacketsForm, EditProfileForm, \
+    EditSubscriptionForm
 from .subscription_info import SubscriptionInfo
 from .user_dto import UserDto
+
+from .mail import send_mail
+from .text_generator import get_propose_mail_text, get_invoice_mail_text
 from . import manifest
+
 
 app = Flask(__name__)
 app.secret_key = 'tO$&!|0wkamvVia0?n$NqIRVWOG'
@@ -40,12 +54,12 @@ def unauthorized_access(error):
 def index():
     return render_template("index.html", the_title="Paint Drying")
 
+
 @app.route("/user", methods=['GET'])
 @login_required
 def user():
     user = db.get_client_by_email(current_user.email)
-    return render_template("user.html", data = json.loads(user.to_json()), the_title="Paint Drying")
-
+    return render_template("user.html", data=json.loads(user.to_json()), the_title="Paint Drying")
 
 
 @app.route("/logout", methods=['POST', 'GET'])
@@ -116,14 +130,22 @@ def order_subscription():
 @login_required
 def order_packets():
     form = OrderPacketsForm()
-    descriptions = [(manifest.PACKETS[name]["name"], manifest.PACKETS[name]["description"]) for name in manifest.PACKETS]
+    descriptions = [(manifest.PACKETS[name]["name"], manifest.PACKETS[name]["description"]) for name in
+                    manifest.PACKETS]
     descriptions = dict(descriptions)
 
     if form.validate_on_submit():
-        # place for processing from data
+        user = db.get_client_by_email(form.email.data)
+        user.bundles.append(BundleInfo(email=form.email.data,
+                                       name=form.packets.data,
+                                       date_from=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                                       date_to=(datetime.datetime.now() + datetime.timedelta(days=manifest.PACKETS[form.packets.data]['duration'])).strftime("%Y-%m-%d %H:%M:%S")
+                                       ))
+        db.serialize(user)
 
         return redirect(url_for('index'))
-    return render_template("order_packets.html", form=form, descriptions=descriptions, the_title="Order Packets - Paint Drying")
+    return render_template("order_packets.html", form=form, descriptions=descriptions,
+                           the_title="Order Packets - Paint Drying")
 
 
 @app.route("/edit-profile", methods=['POST', 'GET'])
@@ -156,3 +178,37 @@ def edit_subscription():
         db.serialize(user)
         return redirect(url_for('index'))
     return render_template("edit_subscription.html", form=form, the_title="Edit Subscription - Paint Drying")
+
+
+@app.route("/admin_panel", methods=['GET', 'POST'])
+def admin_panel():
+    if request.method == 'GET':
+        if request.args.get('suggest-services') == 'suggest':
+            clients = db.basic_db.get_clients()
+            print(clients)
+            for client in clients:
+                mail_text = get_propose_mail_text(client['id'], Database(db))
+                send_mail(client['email'],
+                          'Suggestion',
+                          mail_text.__str__(),
+                          [])
+            return render_template("admin_panel.html", the_title="Paint Drying", notification="Mails sent")
+        if request.args.get('send-invoice') == 'send':
+            clients = db.basic_db.get_clients()
+            if len(clients) > 0:
+                client = db.get_client_by_email(clients[0]['email'])
+                file_name = 'invoice.pdf'
+                invoice = Invoice(client)
+                invoice.save_pdf(file_name)
+                mail_text = get_invoice_mail_text(client.basic.id, invoice, Database(db))
+                send_mail(client.basic.email,
+                          'Invoice',
+                          mail_text.__str__(),
+                          [file_name])
+
+                os.remove(file_name)
+            return render_template("admin_panel.html", the_title="Paint Drying", notification="Invoices sent")
+        if request.args.get('generate-report') == 'generate':
+            return render_template("admin_panel.html", the_title="Paint Drying", notification="Report generated")
+
+    return render_template("admin_panel.html", the_title="Paint Drying/Admin Panel", notification="")

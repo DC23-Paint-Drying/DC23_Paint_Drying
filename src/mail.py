@@ -31,7 +31,7 @@ def send_mail(receiver: str, subject: str, content: str, files: List[str]) -> No
     port = 465  # For SSL
     smtp_server = "smtp.gmail.com"
 
-    msg = MIMEMultipart(content)
+    msg = MIMEMultipart()
     msg['Subject'] = subject
     msg['From'] = COMPANY_MAIL
     msg['To'] = ', '.join(receiver)
@@ -39,14 +39,14 @@ def send_mail(receiver: str, subject: str, content: str, files: List[str]) -> No
     msg.attach(MIMEText(content))
 
     # attach files
-    for filename in files or []:
+    for filename in files:
         with open(filename, "rb") as file:
             part = MIMEApplication(
                 file.read(),
                 Name=basename(filename)
             )
         # After the file is closed
-        part['Content-Disposition'] = 'attachment; filename="{basename(f)}"'
+        part['Content-Disposition'] = 'attachment; filename="%s"' % basename(filename)
         msg.attach(part)
 
     # send mail

@@ -174,3 +174,4 @@ def test_use_existing_csv_file_with_auto_columns():
     assert db2.get_client("01") == client
 
     db1.drop_database()
+
