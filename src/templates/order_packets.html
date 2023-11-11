@@ -14,17 +14,6 @@
 		Join now
 	</legend>
 	<div class="form-group">
-		{{form.email.label(class="form-control-label")}}
-		{%if form.email.errors%}
-			{{form.email(class="form-control form-control-lg is-invalid")}}
-		{%for error in form.email.errors%}
-			<span>{{error}}</span>
-		{%endfor%}
-		{%else%}
-			{{form.email(class="form-control form-control-lg")}}
-		{%endif%}
-	</div>
-	<div class="form-group">
 		{{form.packets.label(class="form-control-label")}}
 		{%if form.packets.errors%}
 			{{form.packets(class="form-control form-control-lg is-invalid")}}

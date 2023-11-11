@@ -54,12 +54,12 @@ def unauthorized_access(error):
 def index():
     return render_template("index.html", the_title="Paint Drying")
 
+
 @app.route("/user", methods=['GET'])
 @login_required
 def user():
     user = db.get_client_by_email(current_user.email)
     return render_template("user.html", data = json.loads(user.to_json()), the_title="Paint Drying")
-
 
 
 @app.route("/logout", methods=['POST', 'GET'])
@@ -119,7 +119,7 @@ def order_subscription():
     if form.validate_on_submit():
         subscription = SubscriptionInfo(subscription_level=form.subscription_level.data,
                                         subscription_timestamp=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-        user = db.get_client_by_email(form.email.data)
+        user = db.get_client_by_email(current_user.email)
         user.subscription = subscription
         db.serialize(user)
         return redirect(url_for('index'))
