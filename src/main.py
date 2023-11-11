@@ -1,31 +1,25 @@
 import datetime
-
-import os
 import json
+import logging
+import os
 
 from flask_wtf import CSRFProtect
 from flask import Flask, render_template, redirect, url_for, request
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 
-from .database import Database
-from .invoice_generator import Invoice
-
-
-
-
-
-
+from . import manifest
 from .bundle_info import BundleInfo
 from .client_info import ClientInfo
+from .database import Database
 from .database_context import DatabaseContext
 from .forms import LoginForm, RegisterForm, OrderSubscriptionForm, OrderPacketsForm, EditProfileForm, \
     EditSubscriptionForm
-from .subscription_info import SubscriptionInfo
-from .user_dto import UserDto
-
+from .gdrive_manager import GdriveManager
+from .invoice_generator import Invoice
 from .mail import send_mail
+from .subscription_info import SubscriptionInfo
 from .text_generator import get_propose_mail_text, get_invoice_mail_text
-from . import manifest
+from .user_dto import UserDto
 
 
 app = Flask(__name__)
@@ -37,6 +31,7 @@ csrf = CSRFProtect(app)
 
 db = DatabaseContext("db")
 
+gdriveManager = GdriveManager() if "CONFIG_FILE_PATH" in os.environ else None
 
 @login_manager.user_loader
 def load_user(user_email):
@@ -201,20 +196,44 @@ def admin_panel():
             return render_template("admin_panel.html", the_title="Paint Drying", notification="Mails sent")
         if request.args.get('send-invoice') == 'send':
             clients = db.basic_db.get_clients()
-            if len(clients) > 0:
-                client = db.get_client_by_email(clients[0]['email'])
-                file_name = 'invoice.pdf'
+            directory_name = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            for i in range(0, len(clients)):
+                client = db.get_client_by_email(clients[i]['email'])
+                file_name = f'invoice_{client.basic.id}'
                 invoice = Invoice(client)
-                invoice.save_pdf(file_name)
+                invoice.save_pdf(f"{file_name}.pdf")
                 mail_text = get_invoice_mail_text(client.basic.id, invoice, Database(db))
                 send_mail(client.basic.email,
                           'Invoice',
                           mail_text.__str__(),
-                          [file_name])
+                          [f"{file_name}.pdf"])
+                os.remove(f"{file_name}.pdf")
 
-                os.remove(file_name)
+                if gdriveManager is not None:
+                    invoice.save_xml(f"{file_name}.xml")
+                    gdriveManager.upload_file(filename=f"{file_name}.xml",
+                                              directory_name=directory_name)
+                    os.remove(f"{file_name}.xml")
             return render_template("admin_panel.html", the_title="Paint Drying", notification="Invoices sent")
         if request.args.get('generate-report') == 'generate':
             return render_template("admin_panel.html", the_title="Paint Drying", notification="Report generated")
 
     return render_template("admin_panel.html", the_title="Paint Drying/Admin Panel", notification="")
+
+
+@app.route("/invoices", methods=['GET', 'POST'])
+def gdrive_files():
+    data = {}
+    gdrive_available = False
+    if request.method == 'GET':
+        if gdriveManager is not None:
+            gdrive_available = True
+            headers = gdriveManager.list_files()
+            for h in headers:
+                files = gdriveManager.list_files(directory_name=h)
+                data[h] = files
+    return render_template("list_gdrive_files.html",
+                           the_title="Paint Drying/Google Drive Files",
+                           data=data,
+                           gdrive_available=gdrive_available)
+
