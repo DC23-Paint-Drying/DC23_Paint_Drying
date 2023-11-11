@@ -3,6 +3,10 @@ Module containing utility functions used during report generation.
 """
 
 
+from subprocess import check_call
+from os import environ, getcwd
+from os.path import splitext, basename, join
+
 from docx import Document
 from docx.text.paragraph import Paragraph
 from docx.table import Table, _Cell
@@ -11,13 +15,18 @@ from docx.shared import Emu, Pt, RGBColor
 from docx.oxml.shared import qn, OxmlElement
 
 
+LIBREOFFICE = environ.get("LIBREOFFICE", "")
+if not LIBREOFFICE:
+    print("Environmental variable LIBREOFFICE not set. PDF convertion won't function!")
+    print("LIBREOFFICE should be set to path to soffice/soffice.exe included with LibreOffice installation")
+
+
 def create_stylised_document() -> Document:
     """
     Creates document and sets all styles for headings and tables.
 
     Returns:
         Reference to created document.
-
     """
     document = Document()
 
@@ -36,7 +45,7 @@ def create_stylised_document() -> Document:
     # title
     heading1 = document.styles['Heading 1']
     heading1.paragraph_format.alignment = text.WD_ALIGN_PARAGRAPH.CENTER
-    heading1.paragraph_format.space_before = False
+    heading1.paragraph_format.space_before = Pt(26)
     heading1.font.size = Pt(26)
     heading1.font.bold = False
     heading1.font.italic = False
@@ -86,7 +95,80 @@ def create_stylised_document() -> Document:
     heading5.font.name = 'Calibri'
     heading5.font.color.rgb = black
 
+    # company header
+    heading6 = document.styles['Heading 6']
+    heading6.paragraph_format.space_before = False
+    heading6.paragraph_format.space_after = False
+    heading6.paragraph_format.line_spacing_rule = text.WD_LINE_SPACING.SINGLE
+    heading6.font.size = Pt(14)
+    heading6.font.bold = False
+    heading6.font.italic = False
+    heading6.font.name = 'Calibri'
+    heading6.font.color.rgb = black
+
     return document
+
+
+def create_company_header(document: Document, left: [str], right: [str]) -> Table:
+    """
+    Adds table containing company information in 2 column layout.
+
+    Args:
+        document:
+            Document to add table to.
+        left:
+            List of information to be displayed on the left of the page.
+        right:
+            List of information to be displayed on the right of the page.
+
+    Returns:
+        Reference to created table.
+    """
+
+    company_table = create_table(document, 1, 2)
+    company_table.cell(0, 0).paragraphs[0].text = f'\n'.join(left)
+    company_table.cell(0, 0).paragraphs[0].style = f'Heading 6'
+    company_table.cell(0, 0).paragraphs[0].paragraph_format.alignment = text.WD_ALIGN_PARAGRAPH.LEFT
+    company_table.cell(0, 0).vertical_alignment = table.WD_CELL_VERTICAL_ALIGNMENT.TOP
+    company_table.cell(0, 1).paragraphs[0].text = f'\n'.join(right)
+    company_table.cell(0, 1).paragraphs[0].style = f'Heading 6'
+    company_table.cell(0, 1).paragraphs[0].paragraph_format.alignment = text.WD_ALIGN_PARAGRAPH.RIGHT
+    company_table.cell(0, 1).vertical_alignment = table.WD_CELL_VERTICAL_ALIGNMENT.TOP
+
+    return company_table
+
+
+def create_table_of_contents(document: Document, headers: [str], page_numbers: [str]) -> Table:
+    """
+    Creates table of contents table with provided headers and their page numbers.
+
+    Args:
+        document:
+            Document to add toc to.
+        headers:
+            List of headers for toc.
+        page_numbers:
+            List of page numbers for each header.
+
+    Returns:
+        Reference to created table.
+    """
+
+    if not headers or not page_numbers:
+        raise ValueError('Values and labels must not be empty')
+
+    if len(headers) != len(page_numbers):
+        raise ValueError('Each value must have exactly one label')
+
+    toc = create_table(document, 1, 2)
+    toc.cell(0, 0).paragraphs[0].text = f'\n'.join(headers)
+    toc.cell(0, 0).paragraphs[0].style = f'Heading 4'
+    toc.cell(0, 0).paragraphs[0].paragraph_format.alignment = text.WD_ALIGN_PARAGRAPH.LEFT
+    toc.cell(0, 1).paragraphs[0].text = f'\n'.join(page_numbers)
+    toc.cell(0, 1).paragraphs[0].style = f'Heading 4'
+    toc.cell(0, 1).paragraphs[0].paragraph_format.alignment = text.WD_ALIGN_PARAGRAPH.RIGHT
+
+    return toc
 
 
 def set_footer(document: Document, page_number: str) -> None:
@@ -100,7 +182,7 @@ def set_footer(document: Document, page_number: str) -> None:
             Page number to add in the right corner of footer.
 
     Returns:
-
+        None
     """
     document.sections[-1].footer.is_linked_to_previous = False
     document.sections[-1].footer.paragraphs[0].text = f'\t\t{page_number}'
@@ -123,7 +205,6 @@ def create_table(document: Document, rows: int, cols: int) -> Table:
 
     Returns:
         Reference to created table.
-
     """
 
     if rows < 1 or cols < 1:
@@ -149,7 +230,7 @@ def delete_paragraph(paragraph: Paragraph) -> None:
             Paragraph to delete.
 
     Returns:
-
+        None
     """
     p = paragraph._element
     p.getparent().remove(p)
@@ -167,9 +248,10 @@ def add_image_to_cell(cell: _Cell, image: str) -> None:
             File path to image.
 
     Returns:
-
+        None
     """
-    cell.paragraphs[0].add_run().add_picture(image, Emu(cell.width))
+    # image width must be smaller than cell width to accomodate pdf conversion inacurracies
+    cell.paragraphs[0].add_run().add_picture(image, Emu(cell.width * 0.85))
 
 
 def change_cells_text_bold(cells: [_Cell], value: bool) -> None:
@@ -183,7 +265,7 @@ def change_cells_text_bold(cells: [_Cell], value: bool) -> None:
             Bold value to set text to.
 
     Returns:
-
+        None
     """
     for cell in cells:
         t = cell.paragraphs[0].text
@@ -202,7 +284,7 @@ def change_cells_text_color(cells: [_Cell], color: RGBColor) -> None:
             RGB color to set text to.
 
     Returns:
-
+        None
     """
     for cell in cells:
         t = cell.paragraphs[0].text
@@ -221,7 +303,7 @@ def change_cells_background_color(cells: [_Cell], color: str) -> None:
             RGB color to set background to.
 
     Returns:
-
+        None
     """
     for cell in cells:
         properties = cell._element.tcPr
@@ -231,3 +313,28 @@ def change_cells_background_color(cells: [_Cell], color: str) -> None:
             shading = OxmlElement('w:shd')
         shading.set(qn('w:fill'), color)
         properties.append(shading)
+
+
+def convert_docx_to_pdf(docx_path: str, pdf_directory: str) -> str:
+    """
+    Calls LibreOffice to convert provided docx_file to pdf.
+    Converted pdf file is saved in pdf_directory.
+    LibreOffice soffice utility is provided via environmental variable LIBREOFFICE.
+
+    Args:
+        docx_path:
+            Path to docx file to convert.
+        pdf_directory:
+            Directory to save pdf file in.
+
+    Returns:
+        Path to pdf file or empty if LIBREOFFICE is not set.
+    """
+
+    if not LIBREOFFICE:
+        return ''
+
+    args = [LIBREOFFICE, '--headless', '--convert-to', 'pdf', docx_path, '--outdir', pdf_directory]
+    check_call(args, cwd=getcwd(), shell=True)
+
+    return join(pdf_directory, splitext(basename(docx_path))[0] + '.pdf')

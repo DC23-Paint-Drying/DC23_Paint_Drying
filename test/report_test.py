@@ -1,5 +1,3 @@
-from os import remove, listdir
-
 import pytest
 from docx import Document
 from docx.shared import RGBColor
@@ -75,3 +73,37 @@ def test_change_cells_background_color():
 
 def test_create_stylised_document():
     assert utils.create_stylised_document() is not None
+
+
+def test_create_company_header():
+    document = Document()
+    header = utils.create_company_header(document, ['test1'], ['test2'])
+
+    assert header.cell(0, 0).text == 'test1'
+    assert header.cell(0, 1).text == 'test2'
+
+
+def test_create_table_of_contents_with_no_headers():
+    document = Document()
+    with pytest.raises(ValueError):
+        utils.create_table_of_contents(document, [], ['1'])
+
+
+def test_create_table_of_contents_without_matching_values():
+    document = Document()
+    with pytest.raises(ValueError):
+        utils.create_table_of_contents(document, ['test1', 'test2'], ['1'])
+
+
+def test_create_table_of_contents_with_no_page_numbers():
+    document = Document()
+    with pytest.raises(ValueError):
+        utils.create_table_of_contents(document, ['test1'], [])
+
+
+def test_create_table_of_contents():
+    document = Document()
+    toc = utils.create_table_of_contents(document, ['test1'], ['1'])
+
+    assert toc.cell(0, 0).text == 'test1'
+    assert toc.cell(0, 1).text == '1'

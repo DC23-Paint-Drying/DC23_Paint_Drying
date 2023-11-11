@@ -12,6 +12,11 @@ pip install -r requirements.txt
 Generating PDF files requires wkhtmltopdf: https://github.com/JazzCore/python-pdfkit/wiki/Installing-wkhtmltopdf
 
 
+# Converting DOCX to PDF
+
+Converting DOCX files to PDF requires LibreOffice: https://www.libreoffice.org/download/download-libreoffice/
+
+
 # Setting mail
 Mail sending needs to have set the environmental variables: COMPANY_MAIL and PASSWORD.
 In pycharm they can be set in "Run Configuration".
