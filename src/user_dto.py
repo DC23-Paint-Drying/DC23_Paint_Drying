@@ -70,4 +70,5 @@ class UserDto(UserMixin):
         for i in range(len(data)):
             if data[i].isdigit():
                 data[i] = int(data[i])
+
         return cls(*data)
