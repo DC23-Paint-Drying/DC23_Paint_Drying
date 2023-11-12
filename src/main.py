@@ -125,23 +125,43 @@ def order_subscription(): #unused
 @login_required
 def order_packets():
     form = OrderPacketsForm()
+
     if current_user.user_type == manifest.USER_TYPES.ADMIN:
-        form.email.choices = [(email, email) for email in db.get_all_emails()]
-    descriptions = [(manifest.PACKETS[name]["name"], manifest.PACKETS[name]["description"]) for name in
-                    manifest.PACKETS]
+        all_emails = db.get_all_emails()
+        form.email.choices = [(email, email) for email in all_emails]
+        user_bundles = {}
+        for email in all_emails:
+            user_bundles[email] = [bundle.name for bundle in db.get_client_by_email(email).bundles]
+    else:
+        form.email.choices = [(current_user.email, current_user.email)]
+        user_bundles = {current_user.email: [bundle.name for bundle in db.get_client_by_email(current_user.email).bundles]}
+
+    descriptions = [(manifest.PACKETS[name]["name"], manifest.PACKETS[name]["description"]) for name in manifest.PACKETS]
     descriptions = dict(descriptions)
 
     if form.validate_on_submit():
         user = db.get_client_by_email(form.email.data if form.email.data != "current_user" else current_user.email)
-        user.bundles.append(BundleInfo(email=user.basic.email,
-                                       name=form.packets.data,
-                                       date_from=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                                       date_to=(datetime.datetime.now() + datetime.timedelta(days=manifest.PACKETS[form.packets.data]['duration'])).strftime("%Y-%m-%d %H:%M:%S")
-                                       ))
-        db.serialize(user)
 
-        return redirect(url_for('index'))
-    return render_template("order_packets.html", form=form, descriptions=descriptions,
+        bundle_already_bought = False
+        for bundle in user.bundles:
+            if bundle.name == form.packets.data:
+                bundle_already_bought = True
+                break
+
+        if bundle_already_bought:
+            return render_template("order_packets.html", form=form, descriptions=descriptions, display_error=True,
+                                   user_packets=user_bundles, the_title="Order Packets - Paint Drying")
+        else:
+            user.bundles.append(BundleInfo(email=user.basic.email,
+                                           name=form.packets.data,
+                                           date_from=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                                           date_to=(datetime.datetime.now() + datetime.timedelta(days=manifest.PACKETS[form.packets.data]['duration'])).strftime("%Y-%m-%d %H:%M:%S")
+                                           ))
+            db.serialize(user)
+
+            return redirect(url_for('index'))
+
+    return render_template("order_packets.html", form=form, descriptions=descriptions, user_packets=user_bundles,
                            the_title="Order Packets - Paint Drying")
 
 
