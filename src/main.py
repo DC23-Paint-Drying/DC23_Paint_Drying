@@ -133,6 +133,7 @@ def order_packets():
         for email in all_emails:
             user_bundles[email] = [bundle.name for bundle in db.get_client_by_email(email).bundles]
     else:
+        form.email.choices = [(current_user.email, current_user.email)]
         user_bundles = {current_user.email: [bundle.name for bundle in db.get_client_by_email(current_user.email).bundles]}
 
     descriptions = [(manifest.PACKETS[name]["name"], manifest.PACKETS[name]["description"]) for name in manifest.PACKETS]

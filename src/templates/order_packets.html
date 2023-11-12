@@ -27,11 +27,11 @@
 		<div class="form-group">
 			{{form.packets.label(class="form-control-label")}}
 			{%if form.packets.errors%}
-				{{form.packets(class="form-control form-control-lg is-invalid")}}
-			{%for error in form.packets.errors%}
-				<span>{{error}}</span>
-			{%endfor%}
-			{%else%}
+				{%for error in form.packets.errors%}
+					<span>{{error}}</span>
+				{%endfor%}
+			{%endif%}
+
 			{% for item in form.packets %}
 				<div class="form-group packet-radio">
 					{{item(class="radio-input-class")}}
@@ -39,11 +39,10 @@
 					<p>{{descriptions[item.label.text]}}</p>
 				</div>
 			{% endfor %}
-
-			{%endif%}
 		</div>
 	</fieldset>
 	<div class="field-group">
+		<span id="no-packets-span" hidden>No packets available</span>
 		{{form.submit(class='btn btn-online-info')}}
 	</div>
 	{%if display_error is defined and display_error == true%}
@@ -57,26 +56,34 @@ window.onload = function(){
 	var userPackets = {{user_packets|tojson}};
 	var emailSelect = document.getElementById("email");
 
-	console.log(userPackets);
-
 	function hideOwnedPackets(){
 		var selectedEmail = emailSelect.options[emailSelect.selectedIndex].text;
+		var submitButton = document.getElementById("submit");
+		var noPacketsSpan = document.getElementById("no-packets-span");
+		var anyOptionsVisible = false;
 
 		for (packet of document.getElementsByClassName("packet-radio")) {
-			console.log(packet.children[0].value)
 			if (userPackets[selectedEmail].includes(packet.children[0].value)) {
 				packet.hidden = true;
-				console.log("true");
 			}
 			else {
 				packet.hidden = false;
-				console.log("false");
+				anyOptionsVisible = true;
 			}
+		}
+
+		if (anyOptionsVisible) {
+			submitButton.hidden = false;
+			noPacketsSpan.hidden = true;
+		}
+		else {
+			submitButton.hidden = true;
+			noPacketsSpan.hidden = false;
 		}
 	}
 
 	emailSelect.onchange = function(){ hideOwnedPackets() };
-		hideOwnedPackets();
+	hideOwnedPackets();
 };
 </script>
 
