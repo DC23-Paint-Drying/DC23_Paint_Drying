@@ -211,7 +211,7 @@ def admin_panel():
 def download_file():
 
     # create report and get its path
-    file_path = 'Poradnik Nowego Prezesa.pdf'
+    file_path = 'Poradnik Nowego Prezesa.pdf'   # at the moment a random file used to test
 
     return_data = io.BytesIO()
     # try opening and reading the report content
