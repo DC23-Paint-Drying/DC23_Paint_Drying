@@ -22,15 +22,15 @@
 						<a class="nav-link text-white" href="{{ url_for('order_packets') }}">Zamów pakiet</a>
 					{% endif %}
 				</li>
-        <li class="nav-item">
+				<li class="nav-item">
 					{% if current_user.is_authenticated and current_user["user_type"] == "admin" %}
-            <a href="{{ url_for('edit_profile') }}">Edytuj profil klienta</a>
-          {% endif %}
+						<a class="nav-link text-white" href="{{ url_for('edit_profile') }}">Edytuj profil klienta</a>
+					{% endif %}
 				</li>
-        <li class="nav-item">
+				<li class="nav-item">
 					{% if current_user.is_authenticated and current_user["user_type"] == "admin" %}
-            <a href="{{ url_for('admin_panel') }}">Panel administratora</a>
-          {% endif %}
+						<a class="nav-link text-white" href="{{ url_for('admin_panel') }}">Panel administratora</a>
+					{% endif %}
 				</li>
 			</ul>
 			<div class="d-flex">
