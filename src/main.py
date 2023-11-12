@@ -52,7 +52,14 @@ def unauthorized_access(error):
 
 @app.route("/")
 def index():
-    return render_template("index.html", the_title="Paint Drying")
+    if current_user.is_authenticated:
+        user = db.get_client_by_email(current_user.email)
+        user_data = json.loads(user.to_json())
+        subscription_level = user_data['subscription']['subscription_level']
+        print(subscription_level)
+    else:
+        subscription_level = None
+    return render_template("index.html", subscription_level=subscription_level, the_title="Paint Drying")
 
 
 @app.route("/user", methods=['GET'])
@@ -116,6 +123,10 @@ def register():
 @login_required
 def order_subscription():
     form = OrderSubscriptionForm()
+    prices = [(manifest.SUBSCRIPTIONS[name]["name"], manifest.SUBSCRIPTIONS[name]["price"])
+              for name in manifest.SUBSCRIPTIONS]
+    prices = dict(prices)
+
     if form.validate_on_submit():
         subscription = SubscriptionInfo(subscription_level=form.subscription_level.data,
                                         subscription_timestamp=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
@@ -123,7 +134,7 @@ def order_subscription():
         user.subscription = subscription
         db.serialize(user)
         return redirect(url_for('index'))
-    return render_template("order_subscription.html", form=form, the_title="Order Subscription - Paint Drying")
+    return render_template("order_subscription.html", form=form, prices=prices, the_title="Order Subscription - Paint Drying")
 
 
 @app.route("/order-packets", methods=['POST', 'GET'])
