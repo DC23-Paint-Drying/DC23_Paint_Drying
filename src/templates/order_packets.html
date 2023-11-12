@@ -40,6 +40,18 @@
 										{{form.email(class="form-control form-control-lg")}}
 									{%endif%}
 									</div>
+								{% else %}
+									<div class="form-group" hidden>
+									{{form.email.label(class="form-control-label")}}
+									{%if form.email.errors%}
+									{{form.email(class="form-control form-control-lg is-invalid")}}
+									{%for error in form.email.errors%}
+										<span>{{error}}</span>
+									{%endfor%}
+									{%else%}
+										{{form.email(class="form-control form-control-lg")}}
+									{%endif%}
+									</div>
 								{% endif %}
 								<div class="form-group">
 								{{form.packets.label(class="form-control-label")}}

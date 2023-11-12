@@ -7,6 +7,7 @@ from selenium.webdriver.common.by import By
 
 class SubscriptionOrderTests(unittest.TestCase):
     def setUp(self):
+        os.environ['BASE_URL'] = 'http://127.0.0.1:5000/'
         self.BASE_URL = os.getenv("BASE_URL", "")
         self.driver = webdriver.Chrome()
 
@@ -31,8 +32,8 @@ class SubscriptionOrderTests(unittest.TestCase):
         self.driver.find_element(by=By.ID, value="email").send_keys("a@a.a")
         self.driver.find_element(by=By.ID, value="submit").click()  # submit form
 
-        self.driver.get(os.path.join(self.BASE_URL, "subscribe"))
-        assert self.driver.title == "Order Subscription - Paint Drying"
+        self.driver.get(os.path.join(self.BASE_URL, "edit-subscription"))
+        assert self.driver.title == "Edit Subscription - Paint Drying"
 
         self.driver.find_element(by=By.ID, value="subscription_level-0").click()    # check bronze subscription
         self.driver.find_element(by=By.ID, value="submit").click()                  # submit form
@@ -58,7 +59,7 @@ class SubscriptionOrderTests(unittest.TestCase):
         self.driver.find_element(by=By.ID, value="email").send_keys("b@b.b")
         self.driver.find_element(by=By.ID, value="submit").click()  # submit form
 
-        self.driver.get(os.path.join(self.BASE_URL, "subscribe"))
+        self.driver.get(os.path.join(self.BASE_URL, "edit-subscription"))
 
         self.driver.find_element(by=By.LINK_TEXT, value="Strona Główna").click()        # click link to return to main page
 
@@ -83,7 +84,7 @@ class SubscriptionOrderTests(unittest.TestCase):
         self.driver.find_element(by=By.ID, value="email").send_keys("c@c.c")
         self.driver.find_element(by=By.ID, value="submit").click()  # submit form
 
-        self.driver.get(os.path.join(self.BASE_URL, "subscribe"))
+        self.driver.get(os.path.join(self.BASE_URL, "edit-subscription"))
 
         self.driver.implicitly_wait(0.5)
 
