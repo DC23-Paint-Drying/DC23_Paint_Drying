@@ -7,7 +7,6 @@ Test by sending mail to self
 """
 
 
-
 @pytest.mark.skip(reason="Shouldn't be run automatically")
 def test_send_mail():
     subject = "Subject abcd"

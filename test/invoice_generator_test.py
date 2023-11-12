@@ -36,7 +36,7 @@ def test_generate_invoice():
     assert tree.find("./client/name").text == user_data.basic.name
     assert tree.find("./client/surname").text == user_data.basic.surname
     assert tree.find("./client/mail").text == user_data.basic.email
-    assert tree.find("./client/subscription/name").text == "Podstawowy"
+    assert tree.find("./client/subscription/name").text == "Podstawowa"
     assert tree.find("./client/subscription/cost").text == str(invoice.client_subscription_cost)
     assert tree.find("./client/packets/packet/name").text == "Miesięczny"
     assert tree.find("./client/packets/packet/cost").text == "9.99"
@@ -71,7 +71,7 @@ def test_generate_invoice_deprecated():
     assert tree.find("./client/name").text == user_data.basic.name
     assert tree.find("./client/surname").text == user_data.basic.surname
     assert tree.find("./client/mail").text == user_data.basic.email
-    assert tree.find("./client/subscription/name").text == "Podstawowy"
+    assert tree.find("./client/subscription/name").text == "Podstawowa"
     assert tree.find("./client/packets/packet/name").text == "Miesięczny"
     assert tree.find("./client/packets/packet/cost").text == "9.99"
 

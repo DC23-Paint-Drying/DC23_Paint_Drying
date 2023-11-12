@@ -12,10 +12,11 @@ class ClientInfo:
     bundles: list[bundle_info.BundleInfo]
 
     def to_json(self, pretty_print: bool = True) -> str:
-        data = {}
-        data['basic'] = json.loads(self.basic.to_json())
-        data['subscription'] = json.loads(self.subscription.to_json())
-        data['bundles'] = [json.loads(bundle.to_json()) for bundle in self.bundles]
+        data = {
+            'basic': json.loads(self.basic.to_json()),
+            'subscription': json.loads(self.subscription.to_json()),
+            'bundles': [json.loads(bundle.to_json()) for bundle in self.bundles]
+        }
         if pretty_print:
             del data['basic']['timestamp']
             del data['basic']['id']
@@ -24,4 +25,3 @@ class ClientInfo:
             for bundle in data['bundles']:
                 bundle['name'] = manifest.PACKETS[bundle['name']]['name']
         return json.dumps(data)
-

@@ -39,25 +39,27 @@ def replace_keywords(text: str, user_id: str, database: Database) -> str:
                     services = ", ".join(not_subscribed_packets[0:3])
                 else:
                     services = ", ".join(not_subscribed_packets)
-                text = text.replace('{$proposeNewService}',
-                                    'Zauważyliśmi, że jest '+('Pan zainteresowany ' if user_is_male else 'Pani zainteresowana ') +
-                                                                                                   'usługą ' +
-                                    subscribed_packets[0] + '. '+('Powinienien Pan' if user_is_male else 'Powinna Pani')+' '
-                                    'sprawdzić także te usługi: ' + services + '!')
+                text = text.replace(
+                    '{$proposeNewService}',
+                    'Zauważyliśmy, że jest ' + ('Pan zainteresowany ' if user_is_male else 'Pani zainteresowana ')
+                    + 'usługą ' + subscribed_packets[0] + '. ' + ('Powinien Pan' if user_is_male else 'Powinna Pani')
+                    + ' sprawdzić także te usługi: ' + services + '!')
             else:
                 if len(not_subscribed_packets) >= 3:
                     text = text.replace('{$proposeNewService}',
-                                        'Szukasz nowych wrażeń? Sprawdź nasze najlepsze usługi: ' + ', '.join(
-                                            not_subscribed_packets[0:3]) + '!')
+                                        'Szukasz nowych wrażeń? Sprawdź nasze najlepsze usługi: '
+                                        + ', '.join(not_subscribed_packets[0:3]) + '!')
                 else:
                     text = text.replace('{$proposeNewService}',
                                         'Szukasz nowych wrażeń? Sprawdź nasze najlepsze usługi: ' +
                                         ', '.join(not_subscribed_packets) + '!')
         else:
             text = text.replace('{$proposeNewService}',
-                                'Ptaki ćwierkają, że jest '+('Pan jednym z naszych najlepszym klientów! Wykupił Pan' if user_is_male else
-                                'Pani jedną z naszych najlepszych klientek! Wykupiła Pani')+' wszystkie nasze usługi! '
-                                'Zachęcamy do oczekiwania na nowe usługi, które pojawią się niedługo!')
+                                'Ptaki ćwierkają, że jest '
+                                + ('Pan jednym z naszych najlepszym klientów! Wykupił Pan' if user_is_male else
+                                   'Pani jedną z naszych najlepszych klientek! Wykupiła Pani')
+                                + ' wszystkie nasze usługi! '
+                                + 'Zachęcamy do oczekiwania na nowe usługi, które pojawią się niedługo!')
 
     if '{$proposeLengtheningSubscription}' in text:
         subscription = database.get_subscription(user_id)
@@ -72,8 +74,9 @@ def replace_keywords(text: str, user_id: str, database: Database) -> str:
 
     if '{$suggestContact}' in text:
         text = text.replace('{$suggestContact}',
-                            'Cieszymy się, że interesuje się '+('Pan' if user_is_male else 'Pani')+' naszymi usługami. W celu uzyskania dodatkowych informacji, zalecamy '
-                            'odwiedzenie naszej strony, by sprawdzić nowe produkty, które oferujemy!')
+                            'Cieszymy się, że interesuje się ' + ('Pan' if user_is_male else 'Pani')
+                            + ' naszymi usługami. W celu uzyskania dodatkowych informacji, zalecamy '
+                            + 'odwiedzenie naszej strony, by sprawdzić nowe produkty, które oferujemy!')
 
     if '{$goodbye}' in text:
         text = text.replace('{$goodbye}',
@@ -128,9 +131,9 @@ def get_invoice_mail_text(user_id: str, invoice: Invoice, database: Database) ->
                  +
                  (
                      ('\nDziękujemy za zamówienie poniższych pakietów:\n'
-                     + products) if len(invoice.client_packets) > 0
+                      + products) if len(invoice.client_packets) > 0
                      else ''
-                 )+
+                 ) +
                  '\n'
                  'Faktura znajduje się w załącznikach.'
                  '\n'

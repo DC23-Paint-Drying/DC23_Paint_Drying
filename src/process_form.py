@@ -9,4 +9,3 @@ def process_form(**kwargs: str) -> dict:
     for (key, value) in kwargs.items():
         record[key] = value
     return record
-

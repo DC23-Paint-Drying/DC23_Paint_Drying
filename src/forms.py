@@ -1,10 +1,9 @@
-from wtforms.fields import choices
 from flask_wtf import FlaskForm
 from wtforms import SelectField, StringField, IntegerField, RadioField, SubmitField
 from wtforms.validators import DataRequired, Length, Email, NumberRange
 
-from src.database_context import DatabaseContext
 from . import manifest
+
 
 class LoginForm(FlaskForm):
     email = StringField(label='Email', validators=[DataRequired(), Email()])

@@ -49,7 +49,7 @@ class CSVDatabase:
 
     def get_entry_by_field(self, key: str, value: str) -> list[dict]:
         """
-        Returns entries that matches provided key-value pair
+        Returns entries that match the provided key-value pair
 
         :param key: name of column to be searched
         :param value: value of client's data field to fetch from the database
