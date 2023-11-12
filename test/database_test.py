@@ -4,6 +4,7 @@ from src.database import Database
 from src.database_context import DatabaseContext
 
 import utils.data_set as data_set
+from src.manifest import SUBSCRIPTIONS
 
 
 class DatabaseTests(unittest.TestCase):
@@ -41,7 +42,7 @@ class DatabaseTests(unittest.TestCase):
     def test_get_subscription(self):
         male_client = data_set.generate_male_client_info()
         self.context.serialize(male_client)
-        assert self.db.get_subscription(male_client.basic.id) == 'Podstawowy'
+        assert self.db.get_subscription(male_client.basic.id) == SUBSCRIPTIONS['basic']['name']
 
     def test_get_user_surname(self):
         male_client = data_set.generate_male_client_info()
