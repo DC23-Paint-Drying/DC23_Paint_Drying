@@ -52,6 +52,16 @@ class DatabaseContext:
             bundle_info = self.bundle_db.get_entry_by_field("email", email)
             return ClientInfo(UserDto(**data), subscription_info, [BundleInfo(**bundle) for bundle in bundle_info])
 
+    def get_all_emails(self) -> list[str]:
+        """
+            Returns email field for each entry in database
+
+            Returns:
+                list[str]:
+                    List of emails
+        """
+        return [client["email"] for client in self.basic_db.get_clients(lambda it: it["email"] is not None)]
+
     def serialize(self, client: ClientInfo) -> None:
         """
             Save client data on disk

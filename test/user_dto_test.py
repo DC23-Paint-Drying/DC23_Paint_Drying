@@ -69,6 +69,7 @@ def test_csv_serialization_deserialization():
 
     assert user == user_from_csv
 
+
 def test_get_id():
     mail = 'mail@example.com'
     user = UserDto(username='username',

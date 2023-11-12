@@ -23,10 +23,14 @@
 		</div>
 	</div>
 	<div class="horizontal-flex">
+
 		<a href="{{ url_for('download_file') }}" target="_blank" class="admin-button">
 			<div class="vertical-flex">
 					Generate report
 			</div>
+		</a>
+		<a href="{{ url_for('list_gdrive_files') }}" target="_self" class="admin-button" id="list-gdrive-files">
+			<div class="vertical-flex">Show Google Drive</div>
 		</a>
 	</div>
 	<div id="notification">
