@@ -6,6 +6,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from pyvirtualdisplay import Display
 
+from src.main import order_subscription
+
 
 class MainPageTestsLoggedOut(unittest.TestCase):
     def setUp(self):
@@ -171,10 +173,9 @@ class MainPageTestsLoggedIn(unittest.TestCase):
     def test_order_subscription_link(self):
         self.driver.get(self.BASE_URL)
 
-        self.driver.find_element(by=By.LINK_TEXT, value="Order subscription").click()
+        order_subscription_link = self.driver.find_elements(by=By.LINK_TEXT, value="Order subscription")
 
-        assert self.driver.title == 'Order Subscription - Paint Drying'
-        assert self.driver.current_url == os.path.join(self.BASE_URL, "subscribe")
+        assert len(order_subscription_link) == 0
 
     def test_edit_user_subscription_link(self):
         self.driver.get(self.BASE_URL)

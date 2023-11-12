@@ -30,13 +30,13 @@ class OrderSubscriptionForm(FlaskForm):
 
 
 class OrderPacketsForm(FlaskForm):
-    email = SelectField(label='Email', choices=([(None, "Current user")]))
+    email = SelectField(label='Email', choices=([("current_user", "Current user")]))
     packets = RadioField(label='Packet', choices=[(name, manifest.PACKETS[name]["name"]) for name in manifest.PACKETS])
     submit = SubmitField(label='Order Packet')
 
 
 class EditProfileForm(FlaskForm):
-    email = SelectField(label='Email', choices=([(None, "Current user")]))
+    email = SelectField(label='Email', choices=([("current_user", "Current user")]))
     username = StringField(label='Username', validators=[DataRequired(), Length(min=3, max=64)])
     name = StringField(label='Name', validators=[DataRequired(), Length(min=3, max=64)])
     surname = StringField(label='Surname', validators=[DataRequired(), Length(min=3, max=64)])
@@ -48,6 +48,6 @@ class EditProfileForm(FlaskForm):
 
 
 class EditSubscriptionForm(FlaskForm):
-    email = SelectField(label='Email', choices=([(None, "Current user")]))
+    email = SelectField(label='Email', choices=([("current_user", "Current user")]))
     subscription_level = RadioField(label='Subscription', choices=[(name, manifest.SUBSCRIPTIONS[name]["name"]) for name in manifest.SUBSCRIPTIONS])
     submit = SubmitField(label='Order Subscription')

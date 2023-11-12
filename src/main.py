@@ -114,7 +114,7 @@ def register():
 
 @app.route("/subscribe", methods=['POST', 'GET'])
 @login_required
-def order_subscription():
+def order_subscription(): #unused
     form = OrderSubscriptionForm()
     if form.validate_on_submit():
         subscription = SubscriptionInfo(subscription_level=form.subscription_level.data,
@@ -137,8 +137,8 @@ def order_packets():
     descriptions = dict(descriptions)
 
     if form.validate_on_submit():
-        user = db.get_client_by_email(form.email.data if form.email.data is not None else current_user.email)
-        user.bundles.append(BundleInfo(email=form.email.data,
+        user = db.get_client_by_email(form.email.data if form.email.data != "current_user" else current_user.email)
+        user.bundles.append(BundleInfo(email=user.basic.email,
                                        name=form.packets.data,
                                        date_from=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                                        date_to=(datetime.datetime.now() + datetime.timedelta(days=manifest.PACKETS[form.packets.data]['duration'])).strftime("%Y-%m-%d %H:%M:%S")
@@ -157,7 +157,7 @@ def edit_profile():
     if current_user.user_type == manifest.USER_TYPES.ADMIN:
         form.email.choices = [(email, email) for email in db.get_all_emails()]
     if form.validate_on_submit():
-        user = db.get_client_by_email(form.email.data if form.email.data is not None else current_user.email)
+        user = db.get_client_by_email(form.email.data if form.email.data != "current_user" else current_user.email)
         if user:
             user.basic.username = form.username.data
             user.basic.name = form.name.data
@@ -176,7 +176,7 @@ def edit_subscription():
     if current_user.user_type == manifest.USER_TYPES.ADMIN:
         form.email.choices = [(email, email) for email in db.get_all_emails()]
     if form.validate_on_submit():
-        user = db.get_client_by_email(form.email.data if form.email.data is not None else current_user.email)
+        user = db.get_client_by_email(form.email.data if form.email.data != "current_user" else current_user.email)
         if user:
             user.subscription = SubscriptionInfo(subscription_level=form.subscription_level.data,
                                                  subscription_timestamp=datetime.datetime.now().strftime(
