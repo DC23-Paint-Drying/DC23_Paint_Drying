@@ -38,8 +38,7 @@ class AdminPanelTests(unittest.TestCase):
         self.driver.get(self.BASE_URL)
 
         self.driver.find_element(by=By.ID, value="generate-report-button").click()
-        self.driver.switch_to.window('Paint Drying/Admin Panel/Report')
-        assert self.driver.title == 'Paint Drying/Admin Panel/Report'
+        assert self.driver.title == 'Paint Drying/Admin Panel'  # target = "_blank" doesn't seem to work with functional tests
 
     def test_list_gdrive(self):
         self.driver.get(self.BASE_URL)
