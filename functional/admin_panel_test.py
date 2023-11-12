@@ -38,7 +38,7 @@ class AdminPanelTests(unittest.TestCase):
 
         self.driver.find_element(by=By.ID, value="generate-report-label").click()
 
-        assert self.driver.find_element(by=By.ID, value="notification").text == "Report generated"
+        assert self.driver.title == 'Paint Drying/admin_panel/report'
 
     def test_list_gdrive(self):
         self.driver.get(self.BASE_URL)
