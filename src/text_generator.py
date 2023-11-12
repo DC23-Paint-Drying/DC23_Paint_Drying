@@ -55,15 +55,15 @@ def replace_keywords(text: str, user_id: str, database: Database) -> str:
                                         ', '.join(not_subscribed_packets) + '!')
         else:
             text = text.replace('{$proposeNewService}',
-                                'Ptaki ćwierkają, że jest '+('Pan jednym z naszych najlepszym klientów! Wykupiłeś' if user_is_male else
-                                'Pani jedną z naszych najlepszych klientek! Wykupiłaś')+' wszystkie nasze usługi! '
-                                'Zachęcamy do oczekiwania na nowe przyszłe usługi, które się pojawią niedługo!')
+                                'Ptaki ćwierkają, że jest '+('Pan jednym z naszych najlepszym klientów! Wykupił Pan' if user_is_male else
+                                'Pani jedną z naszych najlepszych klientek! Wykupiła Pani')+' wszystkie nasze usługi! '
+                                'Zachęcamy do oczekiwania na nowe usługi, które pojawią się niedługo!')
 
     if '{$proposeLengtheningSubscription}' in text:
         subscription = database.get_subscription(user_id)
         if subscription != '':
             text = text.replace('{$proposeLengtheningSubscription}',
-                                'Uwaga! Subskrypcja na ' + subscription +
+                                'Uwaga! Subskrypcja ' + subscription +
                                 ' wkrótce wygaśnie! Szybko! Odnów subskrypcję!')
         else:
             # delete mark, because there is nothing to propose
@@ -72,8 +72,8 @@ def replace_keywords(text: str, user_id: str, database: Database) -> str:
 
     if '{$suggestContact}' in text:
         text = text.replace('{$suggestContact}',
-                            'Cieszymy się, że interesuje się '+('Pan' if user_is_male else 'Pani')+' naszymi usługami. W celu uzyskania więcej informacji, zalecamy '
-                            'odwiedzenie naszej strony,by sprawdzić nowe produkty, które oferujemy!')
+                            'Cieszymy się, że interesuje się '+('Pan' if user_is_male else 'Pani')+' naszymi usługami. W celu uzyskania dodatkowych informacji, zalecamy '
+                            'odwiedzenie naszej strony, by sprawdzić nowe produkty, które oferujemy!')
 
     if '{$goodbye}' in text:
         text = text.replace('{$goodbye}',
