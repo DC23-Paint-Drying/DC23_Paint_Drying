@@ -221,8 +221,8 @@ def admin_panel():
     return render_template("admin_panel.html", the_title="Paint Drying/Admin Panel", notification="")
 
 
-@app.route("/invoices", methods=['GET', 'POST'])
-def gdrive_files():
+@app.route("/list_gdrive_files", methods=['GET', 'POST'])
+def list_gdrive_files():
     data = {}
     gdrive_available = False
     if request.method == 'GET':

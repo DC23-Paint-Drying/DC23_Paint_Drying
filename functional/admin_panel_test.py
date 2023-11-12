@@ -42,5 +42,5 @@ class AdminPanelTests(unittest.TestCase):
 
     def test_list_gdrive(self):
         self.driver.get(self.BASE_URL)
-        self.driver.find_element(by=By.ID, value="list_gdrive_files").click()
+        self.driver.find_element(by=By.ID, value="list-gdrive-files").click()
         assert self.driver.title == 'Paint Drying/Google Drive Files'

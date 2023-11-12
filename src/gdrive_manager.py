@@ -122,14 +122,3 @@ class GdriveManager:
         for file in file_list:
             file.Delete()
 
-
-if __name__ == "__main__":
-    gd = GdriveManager()
-    # l = gd.list_files()
-    # print(l)
-    a = gd.list_files('2023-11-11 16:14:08')
-    print(a)
-    # gd.drop_gdrive()
-    #
-
-
