@@ -10,7 +10,7 @@ SUBSCRIPTIONS = {
         "price": 12.99
     },
     "standard": {
-        "name": "Standardowy",
+        "name": "Standardowa",
         "price": 39.99
     },
     "premium": {
