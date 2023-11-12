@@ -36,7 +36,7 @@ class AdminPanelTests(unittest.TestCase):
     def test_send_generate_report(self):
         self.driver.get(self.BASE_URL)
 
-        self.driver.find_element(by=By.ID, value="generate-report-label").click()
+        self.driver.find_element(by=By.ID, value="generate-report-button").click()
 
         assert self.driver.title == 'Paint Drying/admin_panel/report'
 
