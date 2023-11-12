@@ -34,7 +34,6 @@ class SubscriptionOrderTests(unittest.TestCase):
         self.driver.get(os.path.join(self.BASE_URL, "subscribe"))
         assert self.driver.title == "Order Subscription - Paint Drying"
 
-        self.driver.find_element(by=By.ID, value="email").send_keys("a@a.a")        # write email address to email field
         self.driver.find_element(by=By.ID, value="subscription_level-0").click()    # check bronze subscription
         self.driver.find_element(by=By.ID, value="submit").click()                  # submit form
 
@@ -61,7 +60,7 @@ class SubscriptionOrderTests(unittest.TestCase):
 
         self.driver.get(os.path.join(self.BASE_URL, "subscribe"))
 
-        self.driver.find_element(by=By.LINK_TEXT, value="Main Page").click()        # click link to return to main page
+        self.driver.find_element(by=By.LINK_TEXT, value="Strona Główna").click()        # click link to return to main page
 
         assert self.driver.title == "Paint Drying"
         assert self.driver.current_url == self.BASE_URL

@@ -179,6 +179,7 @@ def edit_profile():
 @login_required
 def edit_subscription():
     form = EditSubscriptionForm()
+    print(current_user)
     if current_user.user_type == manifest.USER_TYPES.ADMIN:
         form.email.choices = [(email, email) for email in db.get_all_emails()]
     if form.validate_on_submit():

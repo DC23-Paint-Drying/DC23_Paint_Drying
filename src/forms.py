@@ -24,6 +24,7 @@ class RegisterForm(FlaskForm):
 
 
 class OrderSubscriptionForm(FlaskForm):
+    email = StringField(label='Email', validators=[DataRequired(), Email()])
     subscription_level = RadioField(label='Subscription', choices=[(name, manifest.SUBSCRIPTIONS[name]["name"]) for name in manifest.SUBSCRIPTIONS])
     submit = SubmitField(label='Order Subscription')
 
