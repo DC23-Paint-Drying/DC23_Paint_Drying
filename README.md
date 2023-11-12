@@ -16,7 +16,9 @@ Generating PDF files requires wkhtmltopdf: https://github.com/JazzCore/python-pd
 
 Converting DOCX files to PDF requires LibreOffice: https://www.libreoffice.org/download/download-libreoffice/
 
-LIBREOFFICE environmental variable should be set to LibreOffice soffice/soffice.exe path in order to use PDF conversion.
+LIBREOFFICE environmental variable should be set to LibreOffice soffice/soffice.exe path in order to use PDF convert:
+* Default location for Windows: C:\Program Files\LibreOffice\program\soffice.exe
+* Default location for Linux: /usr/lib/libreoffice/program/soffice (or just "soffice")
 
 
 # Setting mail
