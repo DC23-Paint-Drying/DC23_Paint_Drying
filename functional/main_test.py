@@ -171,8 +171,10 @@ class MainPageTestsLoggedIn(unittest.TestCase):
     def test_order_subscription_link(self):
         self.driver.get(self.BASE_URL)
 
-        self.driver.find_element(by=By.LINK_TEXT, value="Order subscription")
+        self.driver.find_element(by=By.LINK_TEXT, value="Order subscription").click()
 
+        assert self.driver.title == 'Order Subscription - Paint Drying'
+        assert self.driver.current_url == os.path.join(self.BASE_URL, "subscribe")
 
     def test_edit_user_subscription_link(self):
         self.driver.get(self.BASE_URL)
