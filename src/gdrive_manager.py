@@ -78,7 +78,8 @@ class GdriveManager:
         :param filename: name of a file to upload
         :param directory_name: name of a directory where file will be stored
         """
-        dir_id = self.search_for_id(name=directory_name)
+        self.logger.info(f"Uploading file {filename}")
+        dir_id = self.search_for_id(name=directory_name) if directory_name != '' else 'root'
         if dir_id == '':
             self.logger.info(f"Directory {directory_name} doesn't exist. Creating directory")
             dir_id = self.create_directory(directory_name=directory_name)
@@ -92,7 +93,7 @@ class GdriveManager:
         :param filename: name of an updated file
         :param directory_name: name of a directory with a file
         """
-        dir_id = self.search_for_id(name=directory_name)
+        dir_id = self.search_for_id(name=directory_name) if directory_name != '' else 'root'
         if dir_id == '':
             self.logger.info(f"Directory {directory_name} doesn't exist. Saving file at root")
             dir_id = 'root'
@@ -105,3 +106,19 @@ class GdriveManager:
             file = self.drive.CreateFile({'title': filename, 'id': file_id, 'parents': [dir_id]})
             file.SetContentFile(filename)
             file.Upload()
+
+    def list_files(self, directory_name: str = '') -> list[str]:
+        dir_id = self.search_for_id(name=directory_name) if directory_name != '' else 'root'
+        if dir_id != '':
+            file_list = self.drive.ListFile({'q': f"'{dir_id}' in parents and trashed=false"}).GetList()
+            return [file['title'] for file in file_list]
+        else:
+            self.logger.info(f"Directory {directory_name} doesn't exist")
+            return []
+
+    def drop_gdrive(self):
+        file_list = self.drive.ListFile({'q': f"'root' in parents and trashed=false"}).GetList()
+        self.logger.info("Removing all files")
+        for file in file_list:
+            file.Delete()
+
