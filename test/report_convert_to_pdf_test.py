@@ -1,4 +1,4 @@
-from os import remove, listdir
+from os import remove, listdir, environ
 from os.path import exists
 
 import pytest
@@ -17,7 +17,6 @@ def file_cleanup():
             remove(file)
 
 
-@pytest.mark.skip(reason="Shouldn't be run automatically")
 def test_convert_docx_to_pdf():
     document = Document()
     document.save('test.docx')

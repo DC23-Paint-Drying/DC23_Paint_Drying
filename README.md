@@ -16,6 +16,8 @@ Generating PDF files requires wkhtmltopdf: https://github.com/JazzCore/python-pd
 
 Converting DOCX files to PDF requires LibreOffice: https://www.libreoffice.org/download/download-libreoffice/
 
+LIBREOFFICE environmental variable should be set to LibreOffice soffice/soffice.exe path in order to use PDF conversion.
+
 
 # Setting mail
 Mail sending needs to have set the environmental variables: COMPANY_MAIL and PASSWORD.
