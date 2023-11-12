@@ -3,7 +3,7 @@ Module containing utility functions used during report generation.
 """
 
 
-from subprocess import check_call
+from subprocess import Popen
 from os import environ, getcwd
 from os.path import splitext, basename, join
 
@@ -334,7 +334,7 @@ def convert_docx_to_pdf(docx_path: str, pdf_directory: str) -> str:
     if not LIBREOFFICE:
         return ''
 
-    args = [LIBREOFFICE, '--headless', '--convert-to', 'pdf', docx_path, '--outdir', pdf_directory]
-    check_call(args, cwd=getcwd(), shell=True)
+    args = [str(LIBREOFFICE), '--headless', '--convert-to', 'pdf', str(docx_path), '--outdir', str(pdf_directory)]
+    Popen(args, cwd=getcwd(), shell=True).communicate()
 
     return join(pdf_directory, splitext(basename(docx_path))[0] + '.pdf')
