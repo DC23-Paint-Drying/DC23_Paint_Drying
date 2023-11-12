@@ -10,43 +10,74 @@
 	<form method="post">
 		{{form.hidden_tag()}}
 	<fieldset>
-	<legend>
-		Join now
-	</legend>
-	<div class="form-group">
-		{{form.email.label(class="form-control-label")}}
-		{%if form.email.errors%}
-			{{form.email(class="form-control form-control-lg is-invalid")}}
-		{%for error in form.email.errors%}
-			<span>{{error}}</span>
-		{%endfor%}
-		{%else%}
-			{{form.email(class="form-control form-control-lg")}}
-		{%endif%}
-	</div>
-	<div class="form-group">
-		{{form.packets.label(class="form-control-label")}}
-		{%if form.packets.errors%}
-			{{form.packets(class="form-control form-control-lg is-invalid")}}
-		{%for error in form.packets.errors%}
-			<span>{{error}}</span>
-		{%endfor%}
-		{%else%}
-		{% for item in form.packets %}
-			<div class="form-group">
-				{{item(class="radio-input-class")}}
-				{{item.label.text}}
-				<p>{{descriptions[item.label.text]}}</p>
-			</div>
-		{% endfor %}
+		<legend>
+			Join now
+		</legend>
+		<div class="form-group">
+			{{form.email.label(class="form-control-label")}}
+			{%if form.email.errors%}
+				{{form.email(class="form-control form-control-lg is-invalid")}}
+			{%for error in form.email.errors%}
+				<span>{{error}}</span>
+			{%endfor%}
+			{%else%}
+				{{form.email(class="form-control form-control-lg")}}
+			{%endif%}
+		</div>
+		<div class="form-group">
+			{{form.packets.label(class="form-control-label")}}
+			{%if form.packets.errors%}
+				{{form.packets(class="form-control form-control-lg is-invalid")}}
+			{%for error in form.packets.errors%}
+				<span>{{error}}</span>
+			{%endfor%}
+			{%else%}
+			{% for item in form.packets %}
+				<div class="form-group packet-radio">
+					{{item(class="radio-input-class")}}
+					{{item.label.text}}
+					<p>{{descriptions[item.label.text]}}</p>
+				</div>
+			{% endfor %}
 
-		{%endif%}
-	</div>
+			{%endif%}
+		</div>
 	</fieldset>
 	<div class="field-group">
 		{{form.submit(class='btn btn-online-info')}}
 	</div>
+	{%if display_error is defined and display_error == true%}
+		<span>Error: You already own this packet</span>
+	{%endif%}
 	</form>
 </div>
+
+<script>
+window.onload = function(){
+	var userPackets = {{user_packets|tojson}};
+	var emailSelect = document.getElementById("email");
+
+	console.log(userPackets);
+
+	function hideOwnedPackets(){
+		var selectedEmail = emailSelect.options[emailSelect.selectedIndex].text;
+
+		for (packet of document.getElementsByClassName("packet-radio")) {
+			console.log(packet.children[0].value)
+			if (userPackets[selectedEmail].includes(packet.children[0].value)) {
+				packet.hidden = true;
+				console.log("true");
+			}
+			else {
+				packet.hidden = false;
+				console.log("false");
+			}
+		}
+	}
+
+	emailSelect.onchange = function(){ hideOwnedPackets() };
+		hideOwnedPackets();
+};
+</script>
 
 {% endblock %}
