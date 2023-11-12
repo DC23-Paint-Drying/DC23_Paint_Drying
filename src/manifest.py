@@ -23,11 +23,17 @@ PACKETS = {
     "monthly":{
         "name": "Miesięczny",
         "description": "Ten pakiet oferuje rotacyjny wybór comiesięcznych scen schnięcia farby, dzięki czemu zawartość jest świeża i ekscytująca.",
+        "duration": 31,
         "price": 9.99
     },
     "family":{
         "name": "Rodzinny",
         "description": "Ten pakiet, przeznaczona dla rodzin, umożliwia wielu profilom korzystanie z treści związanych z schnięciem farby na jednym koncie.",
+        "duration": 31,
         "price": 12.99
     }
 }
+
+class USER_TYPES:
+    ADMIN = "admin"
+    NORMAL = "normal"

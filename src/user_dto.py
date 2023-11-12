@@ -4,6 +4,7 @@ import uuid
 import xml.etree.ElementTree
 from flask_login import UserMixin
 
+from . import manifest
 
 @dataclass
 class UserDto(UserMixin):
@@ -32,6 +33,7 @@ class UserDto(UserMixin):
     gender: str
     timestamp: str
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    user_type: str = manifest.USER_TYPES.NORMAL
 
     def to_json(self):
         return json.dumps(asdict(self))
@@ -70,4 +72,5 @@ class UserDto(UserMixin):
         for i in range(len(data)):
             if data[i].isdigit():
                 data[i] = int(data[i])
+
         return cls(*data)

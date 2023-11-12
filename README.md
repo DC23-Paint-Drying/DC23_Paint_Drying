@@ -14,8 +14,13 @@ Generating PDF files requires wkhtmltopdf: https://github.com/JazzCore/python-pd
 
 # Setting mail
 Mail sending needs to have set the environmental variables: COMPANY_MAIL and PASSWORD.
-In pycharm they can be set in "Run Configuration".
+Setting them using Bash:
+$Env:COMPANY_MAIL   = "mail"
+$Env:PASSWORD     = "xxxx xxxx xxxx xxxx"
 
+# Google Drive
+Using GdriveManager requires service account secrets file. Path to it should be passed as CONFIG_FILE_PATH environmental 
+variable. If CONFIG_FILE_PATH is not set then app won't use GdriveManager.
 
 
 # Starting the server
