@@ -50,6 +50,7 @@ def unauthorized_access(error):
 
 @app.route("/")
 def index():
+    model_manager.delete_process()
     if current_user.is_authenticated:
         user = db.get_client_by_email(current_user.email)
         user_data = json.loads(user.to_json())
@@ -126,7 +127,6 @@ def order_subscription(): #unused
     prices = dict(prices)
 
     if form.validate_on_submit():
-        model_manager.complete_task()
         subscription = SubscriptionInfo(subscription_level=form.subscription_level.data,
                                         subscription_timestamp=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         client = db.get_client_by_email(current_user.email)
@@ -217,13 +217,22 @@ def edit_subscription():
     prices = dict(prices)
 
     if form.validate_on_submit():
-        model_manager.complete_task()
+        model_manager.complete_user_task()
         client = db.get_client_by_email(form.email.data if form.email.data != "current_user" else current_user.email)
         if client:
             client.subscription = SubscriptionInfo(subscription_level=form.subscription_level.data,
                                                    subscription_timestamp=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        model_manager.lock_service_task("update_database", "update_database")
         db.serialize(client)
-        return redirect(url_for('propose_additional_services'))
+        model_manager.complete_service_task("update_database")
+
+        model_manager.lock_service_task("check_subscription", "check_subscription")
+        if form.subscription_level.data != "premium":
+            model_manager.complete_service_task("check_subscription", {"hasBestSubscription": {"value": False}})
+            return redirect(url_for('propose_additional_services'))
+        else:
+            model_manager.complete_service_task("check_subscription", {"hasBestSubscription": {"value": True}}, True)
+            return redirect(url_for('index'))
     return render_template("edit_subscription.html", form=form, prices=prices, the_title="Edit Subscription - Paint Drying")
 
 
@@ -323,7 +332,7 @@ def wants_additional_services():
                 "userAccepts": {"value": True}
             }
         }
-    model_manager.complete_task(data=variables)
+    model_manager.complete_user_task(data=variables)
     return redirect(url_for('edit_subscription'))
 
 @app.route("/no-additional-services", methods=['POST', 'GET'])
@@ -334,7 +343,7 @@ def no_additional_services():
                 "userAccepts": {"value": False}
             }
         }
-    model_manager.complete_task(data=variables,end=True)
+    model_manager.complete_user_task(data=variables,end=True)
         
     return redirect(url_for('index'))
 
