@@ -109,6 +109,164 @@ def create_stylised_document() -> Document:
     return document
 
 
+def create_users_statistics_table(document, data, company_data):
+    """
+    Adds table containing data regarding users.
+
+    Args:
+        document:
+            Document to add table to.
+        data:
+            Data about users.
+        company_data:
+            Data about company.
+
+    Returns:
+        Reference to created table.
+    """
+    users_table = create_table(document, 1, 3)
+    users_table.autofit = False
+    users_table.cell(0, 0).paragraphs[0].add_run(f'Liczba klientów: ')
+    users_table.cell(0, 0).paragraphs[0].add_run(f'{sum(data["users"]["subscriptions"].values())}\n').bold = True
+    users_table.cell(0, 0).paragraphs[0].add_run(f'Dostępne abonamenty: ')
+    users_table.cell(0, 0).paragraphs[0].add_run(f'{len(company_data.SUBSCRIPTIONS)}\n').bold = True
+    users_table.cell(0, 0).paragraphs[0].add_run(f'Dostępne pakiety: ')
+    users_table.cell(0, 0).paragraphs[0].add_run(f'{len(company_data.PACKETS)}\n').bold = True
+    users_table.cell(0, 0).paragraphs[0].paragraph_format.alignment = text.WD_ALIGN_PARAGRAPH.LEFT
+    users_table.cell(0, 1).merge(users_table.cell(0, 2))
+
+    return users_table
+
+
+def create_sales_table(document, data):
+    """
+    Adds table containing data regarding sales.
+
+    Args:
+        document:
+            Document to add table to.
+        data:
+            Data about sales.
+
+    Returns:
+        Reference to created table.
+    """
+    sales_table = create_table(document, 4, 4)
+    sales_table.style = 'Table Grid'
+    sales_table.cell(1, 0).paragraphs[0].text = f'Liczba abonentów'
+    sales_table.cell(2, 0).paragraphs[0].text = f'Przychód'
+    sales_table.cell(3, 0).paragraphs[0].text = f'Łączny przychód'
+    for index, key in enumerate(data["sales"]):
+        sales_table.cell(0, index + 1).paragraphs[0].text = f'{key.capitalize()}'
+        sales_table.cell(1, index + 1).paragraphs[0].text = f'{data["sales"][key]["users"]}'
+        sales_table.cell(2, index + 1).paragraphs[0].text = f'{data["sales"][key]["profit"]:.2f} zł'
+    sales_table.cell(3, 2).merge(sales_table.cell(3, 3))
+    sales_table.cell(3, 1).merge(sales_table.cell(3, 2))
+    sales_table.cell(3, 1).paragraphs[
+        0].text = f'{sum(map(lambda x: data["sales"][x]["profit"], data["sales"])):.2f} zł'
+    change_cells_text_bold(sales_table.rows[0].cells[1:], True)
+    change_cells_text_bold(sales_table.rows[3].cells, True)
+    change_cells_background_color(sales_table.rows[0].cells, 'B7B7B7')
+    change_cells_background_color(sales_table.rows[1].cells, 'EFEFEF')
+    change_cells_background_color(sales_table.rows[2].cells, 'B7B7B7')
+    change_cells_background_color(sales_table.rows[3].cells, 'EFEFEF')
+
+    return sales_table
+
+
+def create_packet_summary_table(document, data):
+    """
+    Adds table containing data regarding packets.
+
+    Args:
+        document:
+            Document to add table to.
+        data:
+            Data about packets.
+
+    Returns:
+        Reference to created table.
+    """
+    summary_packets = create_table(document, 2, 1 + len(data["recent"]["packets"]))
+    summary_packets.style = 'Table Grid'
+    summary_packets.cell(1, 0).paragraphs[0].text = f'Zakupione pakiety'
+    for index, key in enumerate(data["recent"]["packets"]):
+        summary_packets.cell(0, index + 1).paragraphs[0].text = f'{key.capitalize()}'
+        summary_packets.cell(1, index + 1).paragraphs[0].text = f'{data["recent"]["packets"][key]}'
+    change_cells_text_bold(summary_packets.rows[0].cells[1:], True)
+    change_cells_background_color(summary_packets.rows[0].cells, 'B7B7B7')
+    change_cells_background_color(summary_packets.rows[1].cells, 'EFEFEF')
+
+    return summary_packets
+
+
+def create_subscriptions_summary_table(document, data):
+    """
+    Adds table containing data regarding subscriptions sales.
+
+    Args:
+        document:
+            Document to add table to.
+        data:
+            Data about subscriptions sales.
+
+    Returns:
+        Reference to created table.
+    """
+    summary_subscriptions = create_table(document, 2, 1 + len(data["recent"]["subscribed"]))
+    summary_subscriptions.style = 'Table Grid'
+    summary_subscriptions.cell(1, 0).paragraphs[0].text = f'Zakupione abonamenty'
+    for index, key in enumerate(data["recent"]["subscribed"]):
+        summary_subscriptions.cell(0, index + 1).paragraphs[0].text = f'{key.capitalize()}'
+        summary_subscriptions.cell(1, index + 1).paragraphs[0].text = f'{data["recent"]["subscribed"][key]}'
+    change_cells_text_bold(summary_subscriptions.rows[0].cells[1:], True)
+    change_cells_background_color(summary_subscriptions.rows[0].cells, 'B7B7B7')
+    change_cells_background_color(summary_subscriptions.rows[1].cells, 'EFEFEF')
+
+    return summary_subscriptions
+
+
+def create_summary_table(document, data):
+    """
+    Adds table containing data regarding recent trends.
+
+    Args:
+        document:
+            Document to add table to.
+        data:
+            Data about recent trends.
+
+    Returns:
+        Reference to created table.
+    """
+    summary = create_table(document, 2, 3)
+    summary.cell(1, 1).merge(summary.cell(1, 2))
+    summary.cell(1, 0).merge(summary.cell(1, 1))
+
+    summary_left = summary.cell(0, 0).paragraphs[0]
+    summary_left.text = f'Nowi użytkownicy: '
+    sl = summary_left.add_run(f'{data["recent"]["users"]}')
+    sl.bold = True
+    sl.font.color.rgb = RGBColor(0x38, 0x76, 0x1D)
+    summary_left.paragraph_format.alignment = text.WD_ALIGN_PARAGRAPH.RIGHT
+
+    summary_center = summary.cell(0, 1).paragraphs[0]
+    summary_center.text = f'Nowe abonamenty: '
+    sc = summary_center.add_run(f'{sum(map(lambda x: data["recent"]["subscribed"][x], data["recent"]["subscribed"]))}')
+    sc.bold = True
+    sc.font.color.rgb = RGBColor(0x38, 0x76, 0x1D)
+    summary_center.paragraph_format.alignment = text.WD_ALIGN_PARAGRAPH.CENTER
+
+    summary_right = summary.cell(0, 2).paragraphs[0]
+    summary_right.text = f'Nowe pakiety: '
+    sr = summary_right.add_run(f'{sum(map(lambda x: data["recent"]["packets"][x], data["recent"]["packets"]))}')
+    sr.bold = True
+    sr.font.color.rgb = RGBColor(0x38, 0x76, 0x1D)
+    summary_right.paragraph_format.alignment = text.WD_ALIGN_PARAGRAPH.LEFT
+
+    return summary
+
+
 def create_company_header(document: Document, left: [str], right: [str]) -> Table:
     """
     Adds table containing company information in 2 column layout.

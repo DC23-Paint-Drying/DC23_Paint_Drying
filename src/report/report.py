@@ -5,8 +5,7 @@ Module containing report generation.
 from sys import argv
 from os import remove
 from os.path import join, normpath
-from docx.enum import section, text
-from docx.shared import RGBColor
+from docx.enum import section
 
 import report_utils as utils
 import report_charts as charts
@@ -41,7 +40,6 @@ def generate(directory: str = '') -> str:
     try:
         # creates blank document with styles
         document = utils.create_stylised_document()
-
         utils.set_footer(document, '1')
 
         # set first page header
@@ -57,21 +55,13 @@ def generate(directory: str = '') -> str:
         document.add_section(section.WD_SECTION.NEW_PAGE)
         utils.set_footer(document, '2')
 
-        # add table containing users data and graphs
+        # add table containing users data
         document.add_heading(f'Użytkownicy', 3)
-        users_table = utils.create_table(document, 1, 3)
-        users_table.autofit = False
-        users_table.cell(0, 0).paragraphs[0].add_run(f'Liczba klientów: ')
-        users_table.cell(0, 0).paragraphs[0].add_run(f'{sum(data["users"]["subscriptions"].values())}\n').bold = True
-        users_table.cell(0, 0).paragraphs[0].add_run(f'Dostępne abonamenty: ')
-        users_table.cell(0, 0).paragraphs[0].add_run(f'{len(company.SUBSCRIPTIONS)}\n').bold = True
-        users_table.cell(0, 0).paragraphs[0].add_run(f'Dostępne pakiety: ')
-        users_table.cell(0, 0).paragraphs[0].add_run(f'{len(company.PACKETS)}\n').bold = True
-        users_table.cell(0, 0).paragraphs[0].paragraph_format.alignment = text.WD_ALIGN_PARAGRAPH.LEFT
-        users_table.cell(0, 1).merge(users_table.cell(0, 2))
+        users_table = utils.create_users_statistics_table(document, data, company)
         utils.add_image_to_cell(users_table.cell(0, 1), users_chart)
         document.add_heading(f'', 2)
 
+        # add table containing graphs about users
         users_specs_table = utils.create_table(document, 2, 2)
         utils.add_image_to_cell(users_specs_table.cell(0, 0), users_age_chart)
         utils.add_image_to_cell(users_specs_table.cell(0, 1), users_gender_chart)
@@ -81,77 +71,21 @@ def generate(directory: str = '') -> str:
         document.add_section(section.WD_SECTION.NEW_PAGE)
         utils.set_footer(document, '3')
 
-        # add sales table
+        # add sales section and sales table
         document.add_heading(f'Sprzedaż', 3)
-        sales_table = utils.create_table(document, 4, 4)
-        sales_table.style = 'Table Grid'
-        sales_table.cell(1, 0).paragraphs[0].text = f'Liczba abonentów'
-        sales_table.cell(2, 0).paragraphs[0].text = f'Przychód'
-        sales_table.cell(3, 0).paragraphs[0].text = f'Łączny przychód'
-        for index, key in enumerate(data["sales"]):
-            sales_table.cell(0, index + 1).paragraphs[0].text = f'{key.capitalize()}'
-            sales_table.cell(1, index + 1).paragraphs[0].text = f'{data["sales"][key]["users"]}'
-            sales_table.cell(2, index + 1).paragraphs[0].text = f'{data["sales"][key]["profit"]:.2f} zł'
-        sales_table.cell(3, 2).merge(sales_table.cell(3, 3))
-        sales_table.cell(3, 1).merge(sales_table.cell(3, 2))
-        sales_table.cell(3, 1).paragraphs[0].text = f'{sum(map(lambda x: data["sales"][x]["profit"], data["sales"])):.2f} zł'
-        utils.change_cells_text_bold(sales_table.rows[0].cells[1:], True)
-        utils.change_cells_text_bold(sales_table.rows[3].cells, True)
-        utils.change_cells_background_color(sales_table.rows[0].cells, 'B7B7B7')
-        utils.change_cells_background_color(sales_table.rows[1].cells, 'EFEFEF')
-        utils.change_cells_background_color(sales_table.rows[2].cells, 'B7B7B7')
-        utils.change_cells_background_color(sales_table.rows[3].cells, 'EFEFEF')
+        utils.create_sales_table()
         document.add_heading(f'', 4)
 
+        # add recent section
         document.add_heading(f'Ostatni miesiąc', 3)
-        summary = utils.create_table(document, 2, 3)
-
-        # add recent statistics table
-        summary_left = summary.cell(0, 0).paragraphs[0]
-        summary_left.text = f'Nowi użytkownicy: '
-        sl = summary_left.add_run(f'{data["recent"]["users"]}')
-        sl.bold = True
-        sl.font.color.rgb = RGBColor(0x38, 0x76, 0x1D)
-        summary_left.paragraph_format.alignment = text.WD_ALIGN_PARAGRAPH.RIGHT
-
-        summary_center = summary.cell(0, 1).paragraphs[0]
-        summary_center.text = f'Nowe abonamenty: '
-        sc = summary_center.add_run(f'{sum(map(lambda x: data["recent"]["subscribed"][x], data["recent"]["subscribed"]))}')
-        sc.bold = True
-        sc.font.color.rgb = RGBColor(0x38, 0x76, 0x1D)
-        summary_center.paragraph_format.alignment = text.WD_ALIGN_PARAGRAPH.CENTER
-
-        summary_right = summary.cell(0, 2).paragraphs[0]
-        summary_right.text = f'Nowe pakiety: '
-        sr = summary_right.add_run(f'{sum(map(lambda x: data["recent"]["packets"][x], data["recent"]["packets"]))}')
-        sr.bold = True
-        sr.font.color.rgb = RGBColor(0x38, 0x76, 0x1D)
-        summary_right.paragraph_format.alignment = text.WD_ALIGN_PARAGRAPH.LEFT
+        summary = utils.create_summary_table()
 
         # add recent subscriptions table
-        summary.cell(1, 1).merge(summary.cell(1, 2))
-        summary.cell(1, 0).merge(summary.cell(1, 1))
         utils.delete_paragraph(summary.cell(1, 0).paragraphs[0])
-        summary_subscriptions = utils.create_table(summary.cell(1, 0), 2, 1 + len(data["recent"]["subscribed"]))
-        summary_subscriptions.style = 'Table Grid'
-        summary_subscriptions.cell(1, 0).paragraphs[0].text = f'Zakupione abonamenty'
-        for index, key in enumerate(data["recent"]["subscribed"]):
-            summary_subscriptions.cell(0, index + 1).paragraphs[0].text = f'{key.capitalize()}'
-            summary_subscriptions.cell(1, index + 1).paragraphs[0].text = f'{data["recent"]["subscribed"][key]}'
-        utils.change_cells_text_bold(summary_subscriptions.rows[0].cells[1:], True)
-        utils.change_cells_background_color(summary_subscriptions.rows[0].cells, 'B7B7B7')
-        utils.change_cells_background_color(summary_subscriptions.rows[1].cells, 'EFEFEF')
+        utils.create_subscriptions_summary_table(summary.cell(1, 0), data)
 
         # add recent packets table
-        summary_packets = utils.create_table(summary.cell(1, 0), 2, 1 + len(data["recent"]["packets"]))
-        summary_packets.style = 'Table Grid'
-        summary_packets.cell(1, 0).paragraphs[0].text = f'Zakupione pakiety'
-        for index, key in enumerate(data["recent"]["packets"]):
-            summary_packets.cell(0, index + 1).paragraphs[0].text = f'{key.capitalize()}'
-            summary_packets.cell(1, index + 1).paragraphs[0].text = f'{data["recent"]["packets"][key]}'
-        utils.change_cells_text_bold(summary_packets.rows[0].cells[1:], True)
-        utils.change_cells_background_color(summary_packets.rows[0].cells, 'B7B7B7')
-        utils.change_cells_background_color(summary_packets.rows[1].cells, 'EFEFEF')
+        utils.create_packet_summary_table(summary.cell(1, 0), data)
 
         document.save(filepath)
 

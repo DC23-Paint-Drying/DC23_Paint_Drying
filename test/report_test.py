@@ -6,6 +6,27 @@ from docx.oxml.shared import qn
 import src.report.report_utils as utils
 
 
+data = {
+    'timestamp': '2023-11-13',
+    'date': '2023-11',
+    'users': {
+        'subscriptions': {'Podstawowy': 0, 'Standardowy': 0, 'Premium': 0},
+        'gender': {'Mężczyźni': 0, 'Kobiety': 0, 'Inne': 0},
+        'age': {'<18': 0, '18-25': 0, '26-35': 0, '36-50': 0, '>50': 0}
+    },
+    'sales': {
+        'Podstawowy': {'users': 0, 'profit': 0.0},
+        'Standardowy': {'users': 0, 'profit': 0.0},
+        'Premium': {'users': 0, 'profit': 0.0}
+    },
+    'recent': {
+        'users': 0,
+        'subscribed': {'Podstawowy': 0, 'Standardowy': 0, 'Premium': 0},
+        'packets': {'Miesięczny': 0, 'Rodzinny': 0}
+    }
+}
+
+
 def test_set_footer():
     document = Document()
     text = '1'
@@ -73,6 +94,26 @@ def test_change_cells_background_color():
 
 def test_create_stylised_document():
     assert utils.create_stylised_document() is not None
+
+
+def test_create_sales_table():
+    document = Document()
+    assert utils.create_sales_table(document, data) is not None
+
+
+def test_create_packet_summary_table():
+    document = Document()
+    assert utils.create_packet_summary_table(document, data) is not None
+
+
+def test_create_subscriptions_summary_table():
+    document = Document()
+    assert utils.create_subscriptions_summary_table(document, data) is not None
+
+
+def test_create_summary_table():
+    document = Document()
+    assert utils.create_summary_table(document, data) is not None
 
 
 def test_create_company_header():

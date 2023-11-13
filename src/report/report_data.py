@@ -70,6 +70,6 @@ def get_report_data() -> dict:
     for packet in manifest.PACKETS:
         name = manifest.PACKETS[packet]['name']
         data['recent']['packets'][name] = len(packets_df[(packets_df['name'] == packet) &
-                                                           (packets_df['date_from'] > date)])
+                                                         (packets_df['date_from'] > date)])
 
     return data
