@@ -51,11 +51,9 @@ def index():
         user = db.get_client_by_email(current_user.email)
         user_data = json.loads(user.to_json())
         subscription_level = user_data['subscription']['subscription_level']
-        print(subscription_level)
     else:
         subscription_level = None
     return render_template("index.html", subscription_level=subscription_level, the_title="Paint Drying")
-
 
 
 @app.route("/user", methods=['GET'])
