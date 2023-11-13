@@ -33,3 +33,7 @@ PACKETS = {
         "price": 12.99
     }
 }
+
+class USER_TYPES:
+    ADMIN = "admin"
+    NORMAL = "normal"
