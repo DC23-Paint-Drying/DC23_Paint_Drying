@@ -63,7 +63,12 @@
 									<span>{{error}}</span>
 								{%endfor%}
 								{%else%}
-									{{form.subscription_level(class="form-control form-control-lg")}}
+									{% for item in form.subscription_level %}
+									<div class="form-group subscription-radio">
+										{{item(class="radio-input-class")}} {{item.label.text}}
+										<p>Cena: {{prices[item.label.text]}}PLN / miesiąc</p>
+									</div>
+									{% endfor %}
 								{%endif%}
 							</div>
 						</fieldset>
