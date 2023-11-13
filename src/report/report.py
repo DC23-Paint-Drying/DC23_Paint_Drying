@@ -39,14 +39,17 @@ def generate(directory: str = '') -> str:
                                                    list(data["users"]["gender"].keys()))
 
     try:
+        # creates blank document with styles
         document = utils.create_stylised_document()
 
         utils.set_footer(document, '1')
 
+        # set first page header
         company_header_left = [f'{company.COMPANY_NAME}', f'{company.COMPANY_ADDRESS}', f'NIP {company.COMPANY_NIP}']
         company_header_right = [f'{data["timestamp"]}']
         utils.create_company_header(document, company_header_left, company_header_right)
 
+        # set title and toc
         document.add_heading(f'Raport miesięczny', 1)
         document.add_heading(f'Okres {data["date"]}', 2)
         utils.create_table_of_contents(document, ['Użytkownicy', 'Sprzedaż', 'Ostatni miesiąc'], ['2', '3', '3'])
@@ -54,6 +57,7 @@ def generate(directory: str = '') -> str:
         document.add_section(section.WD_SECTION.NEW_PAGE)
         utils.set_footer(document, '2')
 
+        # add table containing users data and graphs
         document.add_heading(f'Użytkownicy', 3)
         users_table = utils.create_table(document, 1, 3)
         users_table.autofit = False
@@ -77,6 +81,7 @@ def generate(directory: str = '') -> str:
         document.add_section(section.WD_SECTION.NEW_PAGE)
         utils.set_footer(document, '3')
 
+        # add sales table
         document.add_heading(f'Sprzedaż', 3)
         sales_table = utils.create_table(document, 4, 4)
         sales_table.style = 'Table Grid'
@@ -101,6 +106,7 @@ def generate(directory: str = '') -> str:
         document.add_heading(f'Ostatni miesiąc', 3)
         summary = utils.create_table(document, 2, 3)
 
+        # add recent statistics table
         summary_left = summary.cell(0, 0).paragraphs[0]
         summary_left.text = f'Nowi użytkownicy: '
         sl = summary_left.add_run(f'{data["recent"]["users"]}')
@@ -122,6 +128,7 @@ def generate(directory: str = '') -> str:
         sr.font.color.rgb = RGBColor(0x38, 0x76, 0x1D)
         summary_right.paragraph_format.alignment = text.WD_ALIGN_PARAGRAPH.LEFT
 
+        # add recent subscriptions table
         summary.cell(1, 1).merge(summary.cell(1, 2))
         summary.cell(1, 0).merge(summary.cell(1, 1))
         utils.delete_paragraph(summary.cell(1, 0).paragraphs[0])
@@ -135,6 +142,7 @@ def generate(directory: str = '') -> str:
         utils.change_cells_background_color(summary_subscriptions.rows[0].cells, 'B7B7B7')
         utils.change_cells_background_color(summary_subscriptions.rows[1].cells, 'EFEFEF')
 
+        # add recent packets table
         summary_packets = utils.create_table(summary.cell(1, 0), 2, 1 + len(data["recent"]["packets"]))
         summary_packets.style = 'Table Grid'
         summary_packets.cell(1, 0).paragraphs[0].text = f'Zakupione pakiety'
