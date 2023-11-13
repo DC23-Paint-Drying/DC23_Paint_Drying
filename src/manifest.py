@@ -4,7 +4,7 @@ COMPANY_ADDRESS = "Paintburg, Paint Street 54/6"
 COMPANY_NIP = "123-456-78-90"
 COMPANY_BANK_ACCOUNT = "12 3456 7890 0000 0000 1234 5678"
 
-# name should be in female form
+# subscription name must be in female form
 SUBSCRIPTIONS = {
     "basic":{
         "name": "Podstawowa",
@@ -20,6 +20,7 @@ SUBSCRIPTIONS = {
     }
 }
 
+# packet name must be in male form
 PACKETS = {
     "monthly":{
         "name": "Miesięczny",
