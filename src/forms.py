@@ -1,6 +1,9 @@
+from wtforms.fields import choices
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, RadioField, SubmitField
+from wtforms import SelectField, StringField, IntegerField, RadioField, SubmitField
 from wtforms.validators import DataRequired, Length, Email, NumberRange
+
+from src.database_context import DatabaseContext
 from . import manifest
 
 class LoginForm(FlaskForm):
@@ -27,12 +30,13 @@ class OrderSubscriptionForm(FlaskForm):
 
 
 class OrderPacketsForm(FlaskForm):
-    email = StringField(label='Email', validators=[DataRequired(), Email()])
+    email = SelectField(label='Email', choices=([("current_user", "Current user")]))
     packets = RadioField(label='Packet', choices=[(name, manifest.PACKETS[name]["name"]) for name in manifest.PACKETS])
     submit = SubmitField(label='Order Packet')
 
 
 class EditProfileForm(FlaskForm):
+    email = SelectField(label='Email', choices=([("current_user", "Current user")]))
     username = StringField(label='Username', validators=[DataRequired(), Length(min=3, max=64)])
     name = StringField(label='Name', validators=[DataRequired(), Length(min=3, max=64)])
     surname = StringField(label='Surname', validators=[DataRequired(), Length(min=3, max=64)])
@@ -44,5 +48,6 @@ class EditProfileForm(FlaskForm):
 
 
 class EditSubscriptionForm(FlaskForm):
+    email = SelectField(label='Email', choices=([("current_user", "Current user")]))
     subscription_level = RadioField(label='Subscription', choices=[(name, manifest.SUBSCRIPTIONS[name]["name"]) for name in manifest.SUBSCRIPTIONS])
     submit = SubmitField(label='Order Subscription')
