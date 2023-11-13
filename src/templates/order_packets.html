@@ -70,13 +70,13 @@
 								{% endfor %}
 								</div>
 							</fieldset>
-              <div class="field-group text-center">
-                <span id="no-packets-span" hidden>No packets available</span>
-                {{form.submit(class='btn btn-primary btn-block mb-4')}}
-              </div>
-              {%if display_error is defined and display_error == true%}
-                <span>Error: You already own this packet</span>
-              {%endif%}
+							<div class="field-group text-center">
+								<span id="no-packets-span" hidden>No packets available</span>
+								{{form.submit(class='btn btn-primary btn-block mb-4')}}
+							</div>
+							{%if display_error is defined and display_error == true%}
+								<span>Error: You already own this packet</span>
+							{%endif%}
 						</form>
 					</div>
 			</div>
