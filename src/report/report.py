@@ -73,12 +73,12 @@ def generate(directory: str = '') -> str:
 
         # add sales section and sales table
         document.add_heading(f'Sprzedaż', 3)
-        utils.create_sales_table()
+        utils.create_sales_table(document, data)
         document.add_heading(f'', 4)
 
         # add recent section
         document.add_heading(f'Ostatni miesiąc', 3)
-        summary = utils.create_summary_table()
+        summary = utils.create_summary_table(document, data)
 
         # add recent subscriptions table
         utils.delete_paragraph(summary.cell(1, 0).paragraphs[0])
