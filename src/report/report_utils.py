@@ -478,7 +478,7 @@ def convert_docx_to_pdf(docx_path: str, pdf_directory: str) -> str:
     """
     Calls LibreOffice to convert provided docx_file to pdf.
     Converted pdf file is saved in pdf_directory.
-    LibreOffice soffice utility is provided via environmental variable LIBREOFFICE.
+    LibreOffice soffice utility is provided via environmental variable LIBREOFFICE (if not set, will throw error).
 
     Args:
         docx_path:

@@ -18,6 +18,7 @@ import src.manifest as company
 def generate(db: DatabaseContext, directory: str = '') -> str:
     """
     Generates .docx report using data from report_data.py get_report_data.
+    Will throw error if anything fails during report generation.
 
     Args:
         db:
@@ -27,7 +28,7 @@ def generate(db: DatabaseContext, directory: str = '') -> str:
             If empty, creates file in working directory.
 
     Returns:
-        Filepath to generated .docx report or empty string if it fails.
+        Filepath to generated .docx report.
     """
     data = get_report_data(db)
     directory = normpath(join(directory, ''))
@@ -101,6 +102,9 @@ def generate(db: DatabaseContext, directory: str = '') -> str:
         remove(users_chart)
         remove(users_age_chart)
         remove(users_gender_chart)
+
+    if not filepath:
+        raise Exception('Failed to generate report.')
 
     return filepath
 
