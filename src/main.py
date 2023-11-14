@@ -209,6 +209,7 @@ def edit_subscription():
     prices = dict(prices)
 
     if form.validate_on_submit():
+        user = db.get_client_by_email(form.email.data if form.email.data != "current_user" else current_user.email)
         if user:
             user.subscription = SubscriptionInfo(subscription_level=form.subscription_level.data,
                                                  subscription_timestamp=datetime.datetime.now().strftime(
