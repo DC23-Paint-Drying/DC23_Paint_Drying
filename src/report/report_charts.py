@@ -8,7 +8,7 @@ import uuid
 import matplotlib.pyplot as plt
 
 
-def create_donut_chart(values: [int], labels: [str]) -> str:
+def create_donut_chart(values: list[int], labels: list[str]) -> str:
     """
     Creates donut chart image and returns path to it.
     Zero values will be not be included in the chart.
@@ -30,6 +30,7 @@ def create_donut_chart(values: [int], labels: [str]) -> str:
     if len(values) != len(labels):
         raise ValueError('Each value must have exactly one label')
 
+    # remove zero values from values list and its corresponding label in labels list
     filtered = dict(filter(lambda x: x[1] > 0, dict(zip(labels, values)).items()))
 
     fig, ax = plt.subplots()

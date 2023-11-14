@@ -2,22 +2,26 @@
 Module containing report generation.
 """
 
-from sys import argv
 from os import remove
 from os.path import join, normpath
+from sys import argv
+
 from docx.enum import section
 
-import report_utils as utils
 import report_charts as charts
 from report_data import get_report_data
+import report_utils as utils
+from src.database_context import DatabaseContext
 import src.manifest as company
 
 
-def generate(directory: str = '') -> str:
+def generate(db: DatabaseContext, directory: str = '') -> str:
     """
     Generates .docx report using data from report_data.py get_report_data.
 
     Args:
+        db:
+            Database to get data from.
         directory:
             Directory to create report file to.
             If empty, creates file in working directory.
@@ -25,7 +29,7 @@ def generate(directory: str = '') -> str:
     Returns:
         Filepath to generated .docx report or empty string if it fails.
     """
-    data = get_report_data()
+    data = get_report_data(db)
     directory = normpath(join(directory, ''))
     filepath = normpath(join(directory, f'report-{data["date"]}.docx'))
 
@@ -103,4 +107,5 @@ def generate(directory: str = '') -> str:
 
 # for development and command line generation
 if __name__ == '__main__':
-    globals()[argv[1]](argv[2] if 2 < len(argv) else './')
+    db = DatabaseContext('db')
+    globals()[argv[1]](db, argv[2] if 2 < len(argv) else './')

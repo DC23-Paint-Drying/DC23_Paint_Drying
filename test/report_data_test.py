@@ -13,7 +13,7 @@ from src.subscription_info import SubscriptionInfo
 
 class ReportDataTests(unittest.TestCase):
     def setUp(self) -> None:
-        self.db = DatabaseContext('db')
+        self.db = DatabaseContext('db_test')
         self.now = datetime(2023, 11, 11, 0, 0, 0)
         self.later = datetime(2023, 12, 11, 0, 0, 0)
         self.db.serialize(ClientInfo(
@@ -33,7 +33,7 @@ class ReportDataTests(unittest.TestCase):
         self.db.destroy()
 
     def test_get_report_data(self) -> None:
-        data = report_data.get_report_data()
+        data = report_data.get_report_data(self.db)
 
         assert data['users']['subscriptions'][list(company.SUBSCRIPTIONS.values())[0]['name']] == 1
         assert data['users']['subscriptions'][list(company.SUBSCRIPTIONS.values())[1]['name']] == 1
@@ -51,10 +51,9 @@ class ReportDataTests(unittest.TestCase):
 
         assert data['sales'][list(company.SUBSCRIPTIONS.values())[0]['name']]['users'] == 1
         assert data['sales'][list(company.SUBSCRIPTIONS.values())[0]['name']]['profit'] == \
-               1 * list(company.SUBSCRIPTIONS.values())[0]['price']
+               list(company.SUBSCRIPTIONS.values())[0]['price']
         assert data['sales'][list(company.SUBSCRIPTIONS.values())[1]['name']]['users'] == 1
         assert data['sales'][list(company.SUBSCRIPTIONS.values())[1]['name']]['profit'] == \
-               1 * list(company.SUBSCRIPTIONS.values())[1]['price']
+               list(company.SUBSCRIPTIONS.values())[1]['price']
         assert data['sales'][list(company.SUBSCRIPTIONS.values())[2]['name']]['users'] == 0
-        assert data['sales'][list(company.SUBSCRIPTIONS.values())[2]['name']]['profit'] == \
-               0 * list(company.SUBSCRIPTIONS.values())[2]['price']
+        assert data['sales'][list(company.SUBSCRIPTIONS.values())[2]['name']]['profit'] == 0.0

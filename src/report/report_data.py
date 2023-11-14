@@ -10,12 +10,12 @@ from src.database_context import DatabaseContext
 import src.manifest as manifest
 
 
-db = DatabaseContext("db")
-
-
-def get_report_data() -> dict:
+def get_report_data(db: DatabaseContext) -> dict:
     """
     Collects all required data for report and transforms it to dictionary.
+
+    Args:
+        db: Database to get data from.
 
     Returns:
         Dictionary containing data for report.

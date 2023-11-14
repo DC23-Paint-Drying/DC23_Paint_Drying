@@ -26,7 +26,7 @@ def create_stylised_document() -> Document:
     Creates document and sets all styles for headings and tables.
 
     Returns:
-        Reference to created document.
+        Created document.
     """
     document = Document()
 
@@ -122,7 +122,7 @@ def create_users_statistics_table(document, data, company_data):
             Data about company.
 
     Returns:
-        Reference to created table.
+        Created table.
     """
     users_table = create_table(document, 1, 3)
     users_table.autofit = False
@@ -149,7 +149,7 @@ def create_sales_table(document, data):
             Data about sales.
 
     Returns:
-        Reference to created table.
+        Created table.
     """
     sales_table = create_table(document, 4, 4)
     sales_table.style = 'Table Grid'
@@ -185,7 +185,7 @@ def create_packet_summary_table(document, data):
             Data about packets.
 
     Returns:
-        Reference to created table.
+        Created table.
     """
     summary_packets = create_table(document, 2, 1 + len(data["recent"]["packets"]))
     summary_packets.style = 'Table Grid'
@@ -211,7 +211,7 @@ def create_subscriptions_summary_table(document, data):
             Data about subscriptions sales.
 
     Returns:
-        Reference to created table.
+        Created table.
     """
     summary_subscriptions = create_table(document, 2, 1 + len(data["recent"]["subscribed"]))
     summary_subscriptions.style = 'Table Grid'
@@ -237,7 +237,7 @@ def create_summary_table(document, data):
             Data about recent trends.
 
     Returns:
-        Reference to created table.
+        Created table.
     """
     summary = create_table(document, 2, 3)
     summary.cell(1, 1).merge(summary.cell(1, 2))
@@ -280,7 +280,7 @@ def create_company_header(document: Document, left: [str], right: [str]) -> Tabl
             List of information to be displayed on the right of the page.
 
     Returns:
-        Reference to created table.
+        Created table.
     """
 
     company_table = create_table(document, 1, 2)
@@ -309,7 +309,7 @@ def create_table_of_contents(document: Document, headers: [str], page_numbers: [
             List of page numbers for each header.
 
     Returns:
-        Reference to created table.
+        Created table.
     """
 
     if not headers or not page_numbers:
@@ -362,7 +362,7 @@ def create_table(document: Document, rows: int, cols: int) -> Table:
             Amount of columns in table.
 
     Returns:
-        Reference to created table.
+        Created table.
     """
 
     if rows < 1 or cols < 1:
@@ -392,7 +392,8 @@ def delete_paragraph(paragraph: Paragraph) -> None:
     """
     p = paragraph._element
     p.getparent().remove(p)
-    p._p = p._element = None
+    p._p = None
+    p._element = None
 
 
 def add_image_to_cell(cell: _Cell, image: str) -> None:
@@ -486,11 +487,11 @@ def convert_docx_to_pdf(docx_path: str, pdf_directory: str) -> str:
             Directory to save pdf file in.
 
     Returns:
-        Path to pdf file or empty if LIBREOFFICE is not set.
+        Path to pdf file.
     """
 
     if not LIBREOFFICE:
-        return ''
+        raise RuntimeError('LIBREOFFICE environmental variable is not set, which is required to convert to pdf.')
 
     args = [str(LIBREOFFICE), '--headless', '--convert-to', 'pdf', str(docx_path), '--outdir', str(pdf_directory)]
     check_output(args, cwd=getcwd(), timeout=20)
