@@ -63,9 +63,15 @@
 								{%endif%}
 								{% for item in form.packets %}
 									<div class="form-group packet-radio">
-									{{item(class="radio-input-class")}}
-									{{item.label.text}}
-									<p>{{descriptions[item.label.text]}}</p>
+										{{item(class="radio-input-class")}}
+										{{item.label.text}}
+										<p>
+											{{descriptions[item.label.text]}}
+											<br/>
+											Cena: {{prices[item.label.text]}}PLN
+											<br/>
+											Okres trwania: {{durations[item.label.text]}} dni
+										</p>
 									</div>
 								{% endfor %}
 								</div>
