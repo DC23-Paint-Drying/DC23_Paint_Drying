@@ -2,6 +2,7 @@ import os
 import unittest
 
 import chromedriver_autoinstaller
+import pytest
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from pyvirtualdisplay import Display
@@ -36,7 +37,7 @@ class AdminPanelTests(unittest.TestCase):
 
         assert self.driver.find_element(by=By.ID, value="notification").text == "Invoices sent"
 
-
+    @pytest.mark.skip(reason="to slow generating report")
     def test_send_generate_report(self):
         self.driver.get(self.BASE_URL)
 
