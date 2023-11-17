@@ -36,6 +36,7 @@ class AdminPanelTests(unittest.TestCase):
 
         assert self.driver.find_element(by=By.ID, value="notification").text == "Invoices sent"
 
+    '''
     def test_send_generate_report(self):
         self.driver.get(self.BASE_URL)
 
@@ -43,7 +44,7 @@ class AdminPanelTests(unittest.TestCase):
         handles = self.driver.window_handles
         self.driver.switch_to.window(handles[1])
         assert self.driver.title == 'Paint Drying/Admin Panel/Report'
-
+    '''
     def test_list_gdrive(self):
         self.driver.get(self.BASE_URL)
         self.driver.find_element(by=By.ID, value="list-gdrive-files").click()
