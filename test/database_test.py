@@ -25,19 +25,17 @@ class DatabaseTests(unittest.TestCase):
         assert self.db.get_user_sex(male_client.basic.id) == 'M'
         assert self.db.get_user_sex(female_client.basic.id) == 'F'
 
-
     def test_get_subscribed_packets(self):
         male_client = data_set.generate_male_client_info()
         self.context.serialize(male_client)
 
-        assert self.db.get_subscribed_packets(male_client.basic.id) == ['Miesięczny','Rodzinny']
-
+        assert self.db.get_subscribed_packets(male_client.basic.id) == ['Miesięczny', 'Rodzinny']
 
     def test_get_not_subscribed_packets(self):
         female_client = data_set.generate_female_client_info()
         self.context.serialize(female_client)
 
-        assert self.db.get_not_subscribed_packets(female_client.basic.id) == ['Miesięczny','Rodzinny']
+        assert self.db.get_not_subscribed_packets(female_client.basic.id) == ['Miesięczny', 'Rodzinny']
 
     def test_get_subscription(self):
         male_client = data_set.generate_male_client_info()

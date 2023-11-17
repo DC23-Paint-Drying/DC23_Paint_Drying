@@ -37,7 +37,7 @@ class AdminPanelTests(unittest.TestCase):
 
         assert self.driver.find_element(by=By.ID, value="notification").text == "Invoices sent"
 
-    @pytest.mark.skip(reason="to slow generating report")
+    @pytest.mark.skip(reason="too slow generating report")
     def test_send_generate_report(self):
         self.driver.get(self.BASE_URL)
 

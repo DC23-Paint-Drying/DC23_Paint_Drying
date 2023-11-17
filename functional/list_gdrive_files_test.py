@@ -24,4 +24,3 @@ class ListGdriveFilesTests(unittest.TestCase):
     def test_main_page_link(self):
         self.driver.find_element(by=By.LINK_TEXT, value="Main Page").click()
         assert self.driver.title == 'Paint Drying'
-

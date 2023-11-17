@@ -121,4 +121,3 @@ class GdriveManager:
         self.logger.info("Removing all files")
         for file in file_list:
             file.Delete()
-

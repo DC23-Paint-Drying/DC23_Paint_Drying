@@ -1,5 +1,5 @@
 """
-    Module used for quering stored user data
+    Module used for querying stored user data
 """
 import os
 import inspect
@@ -14,7 +14,7 @@ from . import csvDatabase
 
 class DatabaseContext:
     """
-        Instance of this class is used for quering stored user data
+        Instance of this class is used for querying stored user data
     """
     def __init__(self, db_path: str) -> None:
         """
@@ -27,12 +27,15 @@ class DatabaseContext:
         self.db_path = db_path
         if not os.path.isdir(db_path):
             os.mkdir(db_path)
-        self.basic_db = csvDatabase.CSVDatabase(self.db_path + "/basic.txt", list(inspect.signature(UserDto).parameters) + list(inspect.signature(SubscriptionInfo).parameters))
-        self.bundle_db = csvDatabase.CSVDatabase(self.db_path + "/bundles.txt", list(inspect.signature(BundleInfo).parameters))
+        self.basic_db = csvDatabase.CSVDatabase(self.db_path + "/basic.txt",
+                                                list(inspect.signature(UserDto).parameters)
+                                                + list(inspect.signature(SubscriptionInfo).parameters))
+        self.bundle_db = csvDatabase.CSVDatabase(self.db_path + "/bundles.txt",
+                                                 list(inspect.signature(BundleInfo).parameters))
 
     def get_client_by_email(self, email: str) -> ClientInfo:
         """
-            Get client data class which coresponds to specified email address
+            Get client data class which corresponds to specified email address
 
             Arguments:
                 email: str
@@ -87,7 +90,7 @@ class DatabaseContext:
 
     def destroy(self):
         """
-            Removes all data on disk (unreversable action)
+            Removes all data on disk (irreversible action)
         """
         self.basic_db.drop_database()
         self.bundle_db.drop_database()

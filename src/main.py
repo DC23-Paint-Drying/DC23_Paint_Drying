@@ -1,7 +1,6 @@
 import datetime
 import io
 import json
-import logging
 import os
 
 from flask_wtf import CSRFProtect
@@ -36,11 +35,12 @@ db = DatabaseContext("db")
 
 gdriveManager = GdriveManager() if "CONFIG_FILE_PATH" in os.environ else None
 
+
 @login_manager.user_loader
 def load_user(user_email):
-    user = db.get_client_by_email(user_email)
-    if user:
-        return user.basic
+    client = db.get_client_by_email(user_email)
+    if client:
+        return client.basic
 
 
 @app.errorhandler(401)
@@ -62,8 +62,8 @@ def index():
 @app.route("/user", methods=['GET'])
 @login_required
 def user():
-    user = db.get_client_by_email(current_user.email)
-    return render_template("user.html", data=json.loads(user.to_json()), the_title="Paint Drying")
+    client = db.get_client_by_email(current_user.email)
+    return render_template("user.html", data=json.loads(client.to_json()), the_title="Paint Drying")
 
 @app.route("/logout", methods=['POST', 'GET'])
 @login_required
@@ -76,13 +76,13 @@ def logout():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = db.get_client_by_email(form.email.data)
-        if not user:
+        client = db.get_client_by_email(form.email.data)
+        if not client:
             err_msg = "There is no account with the provided email. " \
                       "Please choose a different email to log in if you have an existing account."
             return render_template("login.html", form=form, err_msg=err_msg,
                                    the_title="Login - Paint Drying"), 409
-        login_user(user.basic)
+        login_user(client.basic)
         return redirect(url_for('index'))
     return render_template("login.html", form=form, err_msg=None, the_title="Login - Paint Drying")
 
@@ -91,33 +91,34 @@ def login():
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
-        user = db.get_client_by_email(form.email.data)
-        if user:
+        client = db.get_client_by_email(form.email.data)
+        if client:
             err_msg = "An account with the provided email already exists. " \
                       "Please choose a different email or log in if you have an existing account."
             return render_template("register.html", form=form, err_msg=err_msg,
                                    the_title="Register - Paint Drying"), 409
 
-        user = ClientInfo(UserDto(form.username.data,
-                                  form.name.data,
-                                  form.surname.data,
-                                  form.age.data,
-                                  form.email.data,
-                                  form.gender.data,
-                                  datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
-                          SubscriptionInfo(subscription_level='basic',
-                                           subscription_timestamp=datetime.datetime.now().strftime(
-                                               "%Y-%m-%d %H:%M:%S")),
-                          [])
-        db.serialize(user)
-        login_user(user.basic)
+        client = ClientInfo(
+            UserDto(form.username.data,
+                    form.name.data,
+                    form.surname.data,
+                    form.age.data,
+                    form.email.data,
+                    form.gender.data,
+                    datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+            SubscriptionInfo(subscription_level='basic',
+                             subscription_timestamp=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+            [])
+
+        db.serialize(client)
+        login_user(client.basic)
         return redirect(url_for('index'))
     return render_template("register.html", form=form, err_msg=None, the_title="Register - Paint Drying")
 
 
 @app.route("/subscribe", methods=['POST', 'GET'])
 @login_required
-def order_subscription(): #unused
+def order_subscription():  # unused
     form = OrderSubscriptionForm()
     prices = [(manifest.SUBSCRIPTIONS[name]["name"], manifest.SUBSCRIPTIONS[name]["price"])
               for name in manifest.SUBSCRIPTIONS]
@@ -126,9 +127,9 @@ def order_subscription(): #unused
     if form.validate_on_submit():
         subscription = SubscriptionInfo(subscription_level=form.subscription_level.data,
                                         subscription_timestamp=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-        user = db.get_client_by_email(current_user.email)
-        user.subscription = subscription
-        db.serialize(user)
+        client = db.get_client_by_email(current_user.email)
+        client.subscription = subscription
+        db.serialize(client)
         return redirect(url_for('index'))
     return render_template("order_subscription.html", form=form, prices=prices, the_title="Order Subscription - Paint Drying")
 
@@ -156,10 +157,10 @@ def order_packets():
     durations = dict(durations)
 
     if form.validate_on_submit():
-        user = db.get_client_by_email(form.email.data if form.email.data != "current_user" else current_user.email)
+        client = db.get_client_by_email(form.email.data if form.email.data != "current_user" else current_user.email)
 
         bundle_already_bought = False
-        for bundle in user.bundles:
+        for bundle in client.bundles:
             if bundle.name == form.packets.data:
                 bundle_already_bought = True
                 break
@@ -168,12 +169,12 @@ def order_packets():
             return render_template("order_packets.html", form=form, descriptions=descriptions, display_error=True,
                                    user_packets=user_bundles, the_title="Order Packets - Paint Drying")
         else:
-            user.bundles.append(BundleInfo(email=user.basic.email,
-                                           name=form.packets.data,
-                                           date_from=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                                           date_to=(datetime.datetime.now() + datetime.timedelta(days=manifest.PACKETS[form.packets.data]['duration'])).strftime("%Y-%m-%d %H:%M:%S")
-                                           ))
-            db.serialize(user)
+            client.bundles.append(BundleInfo(email=client.basic.email,
+                                             name=form.packets.data,
+                                             date_from=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                                             date_to=(datetime.datetime.now() + datetime.timedelta(days=manifest.PACKETS[form.packets.data]['duration'])).strftime("%Y-%m-%d %H:%M:%S")
+                                             ))
+            db.serialize(client)
 
             return redirect(url_for('index'))
 
@@ -188,14 +189,14 @@ def edit_profile():
     if current_user.user_type == manifest.USER_TYPES.ADMIN:
         form.email.choices = [(email, email) for email in db.get_all_emails()]
     if form.validate_on_submit():
-        user = db.get_client_by_email(form.email.data if form.email.data != "current_user" else current_user.email)
-        if user:
-            user.basic.username = form.username.data
-            user.basic.name = form.name.data
-            user.basic.surname = form.surname.data
-            user.basic.age = form.age.data
-            user.basic.gender = form.gender.data
-        db.serialize(user)
+        client = db.get_client_by_email(form.email.data if form.email.data != "current_user" else current_user.email)
+        if client:
+            client.basic.username = form.username.data
+            client.basic.name = form.name.data
+            client.basic.surname = form.surname.data
+            client.basic.age = form.age.data
+            client.basic.gender = form.gender.data
+        db.serialize(client)
         return redirect(url_for('index'))
     return render_template("edit_profile.html", form=form, the_title="Edit Profile - Paint Drying")
 
@@ -212,12 +213,11 @@ def edit_subscription():
     prices = dict(prices)
 
     if form.validate_on_submit():
-        user = db.get_client_by_email(form.email.data if form.email.data != "current_user" else current_user.email)
-        if user:
-            user.subscription = SubscriptionInfo(subscription_level=form.subscription_level.data,
-                                                 subscription_timestamp=datetime.datetime.now().strftime(
-                                                     "%Y-%m-%d %H:%M:%S"))
-        db.serialize(user)
+        client = db.get_client_by_email(form.email.data if form.email.data != "current_user" else current_user.email)
+        if client:
+            client.subscription = SubscriptionInfo(subscription_level=form.subscription_level.data,
+                                                   subscription_timestamp=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        db.serialize(client)
         return redirect(url_for('index'))
     return render_template("edit_subscription.html", form=form, prices=prices, the_title="Edit Subscription - Paint Drying")
 
@@ -304,5 +304,3 @@ def list_gdrive_files():
                            the_title="Paint Drying/Google Drive Files",
                            data=data,
                            gdrive_available=gdrive_available)
-
-

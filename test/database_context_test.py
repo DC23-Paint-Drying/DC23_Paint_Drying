@@ -1,7 +1,6 @@
-from re import L
-import uuid
-import unittest
 import json
+import unittest
+import uuid
 
 from src.bundle_info import BundleInfo
 from src.client_info import ClientInfo
@@ -28,7 +27,6 @@ class DataBaseContextTests(unittest.TestCase):
         assert data["basic"]["name"] == "testFirstName"
         assert data["subscription"]["subscription_level"] == manifest.SUBSCRIPTIONS["basic"]["name"]
         assert data["bundles"][0]["name"] == manifest.PACKETS["monthly"]["name"]
-
 
     def test_get_all_emails(self):
         user = UserDto("testName", "testFirstName", "testSurname", 99, "test@email.com", "other", "2023-01-01 00:00:00")
