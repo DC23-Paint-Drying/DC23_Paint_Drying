@@ -24,3 +24,4 @@ selenium==4.15.0
 typing-extensions==4.8.0
 Werkzeug==3.0.0
 wtforms==3.1.0
+requests==2.31.0

@@ -37,8 +37,8 @@ class SubscriptionOrderTests(unittest.TestCase):
         self.driver.find_element(by=By.ID, value="subscription_level-0").click()    # check bronze subscription
         self.driver.find_element(by=By.ID, value="submit").click()                  # submit form
 
-        assert self.driver.title == "Paint Drying"
-        assert self.driver.current_url == self.BASE_URL                             # check if redirected to main
+        assert self.driver.title == "Additional Services - Paint Drying"
+        assert self.driver.current_url == os.path.join(self.BASE_URL, "propose-additional-services")                             # check if redirected to propose additional services
 
     def test_subscription_order_return_to_main(self):
         self.driver.get(os.path.join(self.BASE_URL, "register"))
