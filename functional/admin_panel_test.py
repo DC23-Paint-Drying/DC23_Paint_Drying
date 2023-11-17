@@ -36,7 +36,7 @@ class AdminPanelTests(unittest.TestCase):
 
         assert self.driver.find_element(by=By.ID, value="notification").text == "Invoices sent"
 
-    
+
     def test_send_generate_report(self):
         self.driver.get(self.BASE_URL)
 

@@ -267,7 +267,7 @@ def admin_panel():
 def download_file():
 
     #create report docx
-    report_docs_path  = report.generate(db)
+    report_docs_path = report.generate(db)
 
     # create report pdf
     report_pdf_path = report_utils.convert_docx_to_pdf(report_docs_path, "")

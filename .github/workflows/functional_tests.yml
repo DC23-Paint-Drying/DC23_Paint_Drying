@@ -18,7 +18,7 @@ jobs:
           python -m pip install --upgrade pip  
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Run Flask app locally
-        run: flask --app src/main run &
+        run: source .envrc && flask --app src/main run &
       - name: Removing previous chrome instances on runner
         run: sudo apt purge google-chrome-stable
       - name: Installing all necessary packages
