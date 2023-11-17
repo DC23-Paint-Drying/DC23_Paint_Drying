@@ -29,4 +29,10 @@
     & > input{
         display: none;
     }
+
+    & > label, >div{
+        height: 100%;
+    }
+
+    text-decoration: none;
 }

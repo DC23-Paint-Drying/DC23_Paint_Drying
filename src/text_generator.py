@@ -42,24 +42,24 @@ def replace_keywords(text: str, user_id: str, database: Database) -> str:
                 text = text.replace(
                     '{$proposeNewService}',
                     'Zauważyliśmy, że jest ' + ('Pan zainteresowany ' if user_is_male else 'Pani zainteresowana ')
-                    + 'usługą ' + subscribed_packets[0] + '. ' + ('Powinien Pan' if user_is_male else 'Powinna Pani')
-                    + ' sprawdzić także te usługi: ' + services + '!')
+                    + 'pakietem o nazwie: ' + subscribed_packets[0] + '. ' + ('Powinien Pan' if user_is_male else 'Powinna Pani')
+                    + ' sprawdzić także te pakiety: ' + services + '!')
             else:
                 if len(not_subscribed_packets) >= 3:
                     text = text.replace('{$proposeNewService}',
-                                        'Szukasz nowych wrażeń? Sprawdź nasze najlepsze usługi: '
+                                        'Szukasz nowych wrażeń? Sprawdź nasze najlepsze pakiety: '
                                         + ', '.join(not_subscribed_packets[0:3]) + '!')
                 else:
                     text = text.replace('{$proposeNewService}',
-                                        'Szukasz nowych wrażeń? Sprawdź nasze najlepsze usługi: ' +
+                                        'Szukasz nowych wrażeń? Sprawdź nasze najlepsze pakiety: ' +
                                         ', '.join(not_subscribed_packets) + '!')
         else:
             text = text.replace('{$proposeNewService}',
                                 'Ptaki ćwierkają, że jest '
                                 + ('Pan jednym z naszych najlepszym klientów! Wykupił Pan' if user_is_male else
                                    'Pani jedną z naszych najlepszych klientek! Wykupiła Pani')
-                                + ' wszystkie nasze usługi! '
-                                + 'Zachęcamy do oczekiwania na nowe usługi, które pojawią się niedługo!')
+                                + ' wszystkie nasze pakiety! '
+                                + 'Zachęcamy do oczekiwania na nowe pakiety, które pojawią się niedługo!')
 
     if '{$proposeLengtheningSubscription}' in text:
         subscription = database.get_subscription(user_id)

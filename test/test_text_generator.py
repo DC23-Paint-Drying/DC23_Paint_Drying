@@ -31,33 +31,33 @@ class TestReplaceKeywords(unittest.TestCase):
         self.db.get_not_subscribed_packets = MagicMock(return_value=[])
         assert text_gen.replace_keywords('{$proposeNewService}', '1',
                                          self.db) == ('Ptaki ćwierkają, że jest Pani jedną z naszych najlepszych klientek! '
-                                                      'Wykupiła Pani wszystkie nasze usługi! Zachęcamy do oczekiwania na '
-                                                      'nowe usługi, które pojawią się niedługo!')
+                                                      'Wykupiła Pani wszystkie nasze pakiety! Zachęcamy do oczekiwania na '
+                                                      'nowe pakiety, które pojawią się niedługo!')
 
         # test when there is anything to suggest, but something is bought
         self.db.get_subscribed_packets = MagicMock(return_value=['a', 'b', 'c'])
         self.db.get_not_subscribed_packets = MagicMock(return_value=['d', 'e'])
         assert text_gen.replace_keywords('{$proposeNewService}', '1',
-                                         self.db) == ('Zauważyliśmy, że jest Pani zainteresowana usługą a. Powinna Pani '
-                                                      'sprawdzić także te usługi: d, e!')
+                                         self.db) == ('Zauważyliśmy, że jest Pani zainteresowana pakietem o nazwie: a. Powinna Pani '
+                                                      'sprawdzić także te pakiety: d, e!')
 
         # test when nothing is bought, but there are more than 2 services in total
         self.db.get_subscribed_packets = MagicMock(return_value=[])
         self.db.get_not_subscribed_packets = MagicMock(return_value=['a', 'b', 'c'])
         assert text_gen.replace_keywords('{$proposeNewService}', '1',
-                                         self.db) == 'Szukasz nowych wrażeń? Sprawdź nasze najlepsze usługi: a, b, c!'
+                                         self.db) == 'Szukasz nowych wrażeń? Sprawdź nasze najlepsze pakiety: a, b, c!'
 
         # test when nothing is bought, but there are less than 3 services in total
         self.db.get_subscribed_packets = MagicMock(return_value=[])
         self.db.get_not_subscribed_packets = MagicMock(return_value=['a', 'b'])
         assert text_gen.replace_keywords('{$proposeNewService}', '1',
-                                         self.db) == 'Szukasz nowych wrażeń? Sprawdź nasze najlepsze usługi: a, b!'
+                                         self.db) == 'Szukasz nowych wrażeń? Sprawdź nasze najlepsze pakiety: a, b!'
 
         # test when something is bought, but there are more than 3 services in total
         self.db.get_subscribed_packets = MagicMock(return_value=['d'])
         self.db.get_not_subscribed_packets = MagicMock(return_value=['a', 'b', 'c', 'e'])
         assert text_gen.replace_keywords('{$proposeNewService}', '1',
-                                         self.db) == 'Zauważyliśmy, że jest Pani zainteresowana usługą d. Powinna Pani sprawdzić także te usługi: a, b, c!'
+                                         self.db) == 'Zauważyliśmy, że jest Pani zainteresowana pakietem o nazwie: d. Powinna Pani sprawdzić także te pakiety: a, b, c!'
 
     def test_proposeLengtheningSubscription(self):
         self.db.get_user_sex = MagicMock(return_value='M')
@@ -111,8 +111,8 @@ class TestProposeMailText(unittest.TestCase):
         assert text_gen.get_propose_mail_text('1', self.db) == (
             'Szanowny Panie Wierzba\n'
             '\n'
-            'Zauważyliśmy, że jest Pan zainteresowany usługą aaaa. Powinien Pan sprawdzić '
-            'także te usługi: d, e!\n'
+            'Zauważyliśmy, że jest Pan zainteresowany pakietem o nazwie: aaaa. Powinien Pan sprawdzić '
+            'także te pakiety: d, e!\n'
             '\n'
             'Uwaga! Subskrypcja abba wkrótce wygaśnie! Szybko! Odnów subskrypcję!\n'
             '\n'
@@ -132,7 +132,7 @@ class TestProposeMailText(unittest.TestCase):
         assert text_gen.get_propose_mail_text('1', self.db) == (
             'Szanowna Pani Kowalska\n'
             '\n'
-            'Szukasz nowych wrażeń? Sprawdź nasze najlepsze usługi: debohra, esda!\n'
+            'Szukasz nowych wrażeń? Sprawdź nasze najlepsze pakiety: debohra, esda!\n'
             '\n'
             '\n'
             '\n'
@@ -153,7 +153,7 @@ class TestProposeMailText(unittest.TestCase):
             'Szanowny Panie Wierzba\n'
             '\n'
             'Ptaki ćwierkają, że jest Pan jednym z naszych najlepszym klientów! Wykupił Pan '
-            'wszystkie nasze usługi! Zachęcamy do oczekiwania na nowe usługi, '
+            'wszystkie nasze pakiety! Zachęcamy do oczekiwania na nowe pakiety, '
             'które pojawią się niedługo!\n'
             '\n'
             'Uwaga! Subskrypcja abba wkrótce wygaśnie! Szybko! Odnów subskrypcję!\n'

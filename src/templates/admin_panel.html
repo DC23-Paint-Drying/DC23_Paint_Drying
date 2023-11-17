@@ -10,25 +10,25 @@
 	<div class="horizontal-flex">
 		<div class="admin-button">
 			<input type="submit" value="suggest" name="suggest-services" id="suggest-services">
-			<label for="suggest-services" class="vertical-flex" style="height: 100%;" id="suggest-services-label">
+			<label for="suggest-services" class="vertical-flex" id="suggest-services-label">
 				Suggest new services
 			</label>
 
 		</div>
 		<div class="admin-button">
 			<input type="submit" value="send" name="send-invoice" id="send-invoice">
-			<label for="send-invoice" class="vertical-flex" style="height: 100%;" id="send-invoice-label">
+			<label for="send-invoice" class="vertical-flex" id="send-invoice-label">
 				Send invoice
 			</label>
 		</div>
 	</div>
 	<div class="horizontal-flex">
-		<div class="admin-button">
-			<input type="submit" value="generate" name="generate-report" id="generate-report">
-			<label for="generate-report" class="vertical-flex" style="height: 100%;" id="generate-report-label">
-				Generate report
-			</label>
-		</div>
+
+		<a href="{{ url_for('download_file') }}" target="_blank" class="admin-button" id="generate-report-button">
+			<div class="vertical-flex">
+					Generate report
+			</div>
+		</a>
 		<a href="{{ url_for('list_gdrive_files') }}" target="_self" class="admin-button" id="list-gdrive-files">
 			<div class="vertical-flex">Show Google Drive</div>
 		</a>

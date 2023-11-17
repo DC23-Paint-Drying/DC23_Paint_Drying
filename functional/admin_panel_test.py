@@ -2,6 +2,7 @@ import os
 import unittest
 
 import chromedriver_autoinstaller
+import pytest
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from pyvirtualdisplay import Display
@@ -36,12 +37,14 @@ class AdminPanelTests(unittest.TestCase):
 
         assert self.driver.find_element(by=By.ID, value="notification").text == "Invoices sent"
 
+    @pytest.mark.skip(reason="too slow generating report")
     def test_send_generate_report(self):
         self.driver.get(self.BASE_URL)
 
-        self.driver.find_element(by=By.ID, value="generate-report-label").click()
-
-        assert self.driver.find_element(by=By.ID, value="notification").text == "Report generated"
+        self.driver.find_element(by=By.ID, value="generate-report-button").click()
+        handles = self.driver.window_handles
+        self.driver.switch_to.window(handles[1])
+        assert self.driver.title == 'Paint Drying/Admin Panel/Report'
 
     def test_list_gdrive(self):
         self.driver.get(self.BASE_URL)

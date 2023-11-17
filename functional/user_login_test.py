@@ -60,4 +60,4 @@ class UserLoginTests(unittest.TestCase):
         assert self.driver.title == "Paint Drying"
         assert self.driver.current_url == self.BASE_URL  # check if redirected
 
-        self.driver.find_element(by=By.LINK_TEXT, value="Logout").click()
+        self.driver.find_element(by=By.LINK_TEXT, value="Wyloguj się").click()

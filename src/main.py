@@ -1,9 +1,10 @@
 import datetime
+import io
 import json
 import os
 
 from flask_wtf import CSRFProtect
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, render_template, redirect, url_for, request, after_this_request, send_file
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 
 from . import manifest
@@ -16,9 +17,11 @@ from .forms import LoginForm, RegisterForm, OrderSubscriptionForm, OrderPacketsF
 from .gdrive_manager import GdriveManager
 from .invoice_generator import Invoice
 from .mail import send_mail
+from .report import report,report_utils
 from .subscription_info import SubscriptionInfo
 from .text_generator import get_propose_mail_text, get_invoice_mail_text
 from .user_dto import UserDto
+
 
 
 app = Flask(__name__)
@@ -47,7 +50,13 @@ def unauthorized_access(error):
 
 @app.route("/")
 def index():
-    return render_template("index.html", the_title="Paint Drying")
+    if current_user.is_authenticated:
+        user = db.get_client_by_email(current_user.email)
+        user_data = json.loads(user.to_json())
+        subscription_level = user_data['subscription']['subscription_level']
+    else:
+        subscription_level = None
+    return render_template("index.html", subscription_level=subscription_level, the_title="Paint Drying")
 
 
 @app.route("/user", methods=['GET'])
@@ -55,7 +64,6 @@ def index():
 def user():
     client = db.get_client_by_email(current_user.email)
     return render_template("user.html", data=json.loads(client.to_json()), the_title="Paint Drying")
-
 
 @app.route("/logout", methods=['POST', 'GET'])
 @login_required
@@ -112,14 +120,18 @@ def register():
 @login_required
 def order_subscription():  # unused
     form = OrderSubscriptionForm()
+    prices = [(manifest.SUBSCRIPTIONS[name]["name"], manifest.SUBSCRIPTIONS[name]["price"])
+              for name in manifest.SUBSCRIPTIONS]
+    prices = dict(prices)
+
     if form.validate_on_submit():
         subscription = SubscriptionInfo(subscription_level=form.subscription_level.data,
                                         subscription_timestamp=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-        client = db.get_client_by_email(form.email.data)
+        client = db.get_client_by_email(current_user.email)
         client.subscription = subscription
         db.serialize(client)
         return redirect(url_for('index'))
-    return render_template("order_subscription.html", form=form, the_title="Order Subscription - Paint Drying")
+    return render_template("order_subscription.html", form=form, prices=prices, the_title="Order Subscription - Paint Drying")
 
 
 @app.route("/order-packets", methods=['POST', 'GET'])
@@ -139,6 +151,10 @@ def order_packets():
 
     descriptions = [(manifest.PACKETS[name]["name"], manifest.PACKETS[name]["description"]) for name in manifest.PACKETS]
     descriptions = dict(descriptions)
+    prices = [(manifest.PACKETS[name]["name"], manifest.PACKETS[name]["price"]) for name in manifest.PACKETS]
+    prices = dict(prices)
+    durations = [(manifest.PACKETS[name]["name"], manifest.PACKETS[name]["duration"]) for name in manifest.PACKETS]
+    durations = dict(durations)
 
     if form.validate_on_submit():
         client = db.get_client_by_email(form.email.data if form.email.data != "current_user" else current_user.email)
@@ -162,7 +178,7 @@ def order_packets():
 
             return redirect(url_for('index'))
 
-    return render_template("order_packets.html", form=form, descriptions=descriptions, user_packets=user_bundles,
+    return render_template("order_packets.html", form=form, descriptions=descriptions, prices=prices, durations=durations, user_packets=user_bundles,
                            the_title="Order Packets - Paint Drying")
 
 
@@ -191,6 +207,11 @@ def edit_subscription():
     form = EditSubscriptionForm()
     if current_user.user_type == manifest.USER_TYPES.ADMIN:
         form.email.choices = [(email, email) for email in db.get_all_emails()]
+    else:
+        form.email.choices = [(current_user.email, current_user.email)]
+    prices = [(manifest.SUBSCRIPTIONS[name]["name"], manifest.SUBSCRIPTIONS[name]["price"]) for name in manifest.SUBSCRIPTIONS]
+    prices = dict(prices)
+
     if form.validate_on_submit():
         client = db.get_client_by_email(form.email.data if form.email.data != "current_user" else current_user.email)
         if client:
@@ -198,7 +219,7 @@ def edit_subscription():
                                                    subscription_timestamp=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         db.serialize(client)
         return redirect(url_for('index'))
-    return render_template("edit_subscription.html", form=form, the_title="Edit Subscription - Paint Drying")
+    return render_template("edit_subscription.html", form=form, prices=prices, the_title="Edit Subscription - Paint Drying")
 
 
 @app.route("/admin_panel", methods=['GET', 'POST'])
@@ -240,6 +261,33 @@ def admin_panel():
 
     return render_template("admin_panel.html", the_title="Paint Drying/Admin Panel", notification="")
 
+
+
+@app.route("/admin_panel/report")
+def download_file():
+
+    #create report docx
+    report_docs_path = report.generate(db)
+
+    # create report pdf
+    report_pdf_path = report_utils.convert_docx_to_pdf(report_docs_path, "")
+
+    return_data = io.BytesIO()
+    # try opening and reading the report content
+    try:
+        with open(report_pdf_path, 'rb') as fo:
+            return_data.write(fo.read())
+    except EnvironmentError:
+        # user refreshed page
+        return render_template("empty_report.html", the_title="Paint Drying/Admin Panel/Report")
+    # (after writing, cursor will be at last byte, so move it to start)
+    return_data.seek(0)
+
+    # delete both files
+    os.remove(report_docs_path)
+    os.remove(report_pdf_path)
+
+    return send_file(return_data, mimetype='application/pdf')
 
 @app.route("/list_gdrive_files", methods=['GET', 'POST'])
 def list_gdrive_files():
