@@ -25,7 +25,7 @@ class MainPageTestsLoggedOut(unittest.TestCase):
     def test_login_link(self):
         self.driver.get(self.BASE_URL)
 
-        self.driver.find_element(by=By.LINK_TEXT, value="Login").click()  # click link to go to login form
+        self.driver.find_element(by=By.LINK_TEXT, value="Zaloguj się").click()  # click link to go to login form
 
         assert self.driver.title == 'Login - Paint Drying'
         assert self.driver.current_url == os.path.join(self.BASE_URL, "login")  # check if redirected to login
@@ -33,7 +33,8 @@ class MainPageTestsLoggedOut(unittest.TestCase):
     def test_register_link(self):
         self.driver.get(self.BASE_URL)
 
-        self.driver.find_element(by=By.LINK_TEXT, value="Register").click()  # click link to go to register form
+        self.driver.find_element(by=By.LINK_TEXT, value="Zaloguj się").click()
+        self.driver.find_element(by=By.LINK_TEXT, value="Zarejestruj się").click()  # click link to go to register form
 
         assert self.driver.title == 'Register - Paint Drying'
         assert self.driver.current_url == os.path.join(self.BASE_URL, "register")  # check if redirected to register
@@ -178,7 +179,8 @@ class MainPageTestsLoggedIn(unittest.TestCase):
     def test_edit_user_subscription_link(self):
         self.driver.get(self.BASE_URL)
 
-        self.driver.find_element(by=By.LINK_TEXT, value="Edit User Subscription").click()
+        self.driver.find_element(by=By.LINK_TEXT, value="Moje konto").click()
+        self.driver.find_element(by=By.LINK_TEXT, value="Edytuj subskrypcje").click()
 
         assert self.driver.title == 'Edit Subscription - Paint Drying'
         assert self.driver.current_url == os.path.join(self.BASE_URL, "edit-subscription")
@@ -186,14 +188,14 @@ class MainPageTestsLoggedIn(unittest.TestCase):
     def test_edit_user_data_link(self):
         self.driver.get(self.BASE_URL)
 
-        edit_user_data_link = self.driver.find_elements(by=By.LINK_TEXT, value="Edit User Data")
+        edit_user_data_link = self.driver.find_elements(by=By.LINK_TEXT, value="Edytuj profil klienta")
 
         assert len(edit_user_data_link) == 0
 
     def test_order_packets_link(self):
         self.driver.get(self.BASE_URL)
 
-        self.driver.find_element(by=By.LINK_TEXT, value="Order packets").click()
+        self.driver.find_element(by=By.LINK_TEXT, value="Zamów pakiet").click()
 
         assert self.driver.title == 'Order Packets - Paint Drying'
         assert self.driver.current_url == os.path.join(self.BASE_URL, "order-packets")
@@ -201,7 +203,7 @@ class MainPageTestsLoggedIn(unittest.TestCase):
     def test_logout_link(self):
         self.driver.get(self.BASE_URL)
 
-        self.driver.find_element(by=By.LINK_TEXT, value="Logout").click()
+        self.driver.find_element(by=By.LINK_TEXT, value="Wyloguj się").click()
 
         assert self.driver.title == 'Paint Drying'
         assert self.driver.current_url == os.path.join(self.BASE_URL, "logout")

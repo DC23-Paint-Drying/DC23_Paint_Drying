@@ -48,7 +48,13 @@ def unauthorized_access(error):
 
 @app.route("/")
 def index():
-    return render_template("index.html", the_title="Paint Drying")
+    if current_user.is_authenticated:
+        user = db.get_client_by_email(current_user.email)
+        user_data = json.loads(user.to_json())
+        subscription_level = user_data['subscription']['subscription_level']
+    else:
+        subscription_level = None
+    return render_template("index.html", subscription_level=subscription_level, the_title="Paint Drying")
 
 
 @app.route("/user", methods=['GET'])
@@ -56,7 +62,6 @@ def index():
 def user():
     user = db.get_client_by_email(current_user.email)
     return render_template("user.html", data=json.loads(user.to_json()), the_title="Paint Drying")
-
 
 @app.route("/logout", methods=['POST', 'GET'])
 @login_required
@@ -112,14 +117,18 @@ def register():
 @login_required
 def order_subscription(): #unused
     form = OrderSubscriptionForm()
+    prices = [(manifest.SUBSCRIPTIONS[name]["name"], manifest.SUBSCRIPTIONS[name]["price"])
+              for name in manifest.SUBSCRIPTIONS]
+    prices = dict(prices)
+
     if form.validate_on_submit():
         subscription = SubscriptionInfo(subscription_level=form.subscription_level.data,
                                         subscription_timestamp=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-        user = db.get_client_by_email(form.email.data)
+        user = db.get_client_by_email(current_user.email)
         user.subscription = subscription
         db.serialize(user)
         return redirect(url_for('index'))
-    return render_template("order_subscription.html", form=form, the_title="Order Subscription - Paint Drying")
+    return render_template("order_subscription.html", form=form, prices=prices, the_title="Order Subscription - Paint Drying")
 
 
 @app.route("/order-packets", methods=['POST', 'GET'])
@@ -139,6 +148,10 @@ def order_packets():
 
     descriptions = [(manifest.PACKETS[name]["name"], manifest.PACKETS[name]["description"]) for name in manifest.PACKETS]
     descriptions = dict(descriptions)
+    prices = [(manifest.PACKETS[name]["name"], manifest.PACKETS[name]["price"]) for name in manifest.PACKETS]
+    prices = dict(prices)
+    durations = [(manifest.PACKETS[name]["name"], manifest.PACKETS[name]["duration"]) for name in manifest.PACKETS]
+    durations = dict(durations)
 
     if form.validate_on_submit():
         user = db.get_client_by_email(form.email.data if form.email.data != "current_user" else current_user.email)
@@ -162,7 +175,7 @@ def order_packets():
 
             return redirect(url_for('index'))
 
-    return render_template("order_packets.html", form=form, descriptions=descriptions, user_packets=user_bundles,
+    return render_template("order_packets.html", form=form, descriptions=descriptions, prices=prices, durations=durations, user_packets=user_bundles,
                            the_title="Order Packets - Paint Drying")
 
 
@@ -191,6 +204,11 @@ def edit_subscription():
     form = EditSubscriptionForm()
     if current_user.user_type == manifest.USER_TYPES.ADMIN:
         form.email.choices = [(email, email) for email in db.get_all_emails()]
+    else:
+        form.email.choices = [(current_user.email, current_user.email)]
+    prices = [(manifest.SUBSCRIPTIONS[name]["name"], manifest.SUBSCRIPTIONS[name]["price"]) for name in manifest.SUBSCRIPTIONS]
+    prices = dict(prices)
+
     if form.validate_on_submit():
         user = db.get_client_by_email(form.email.data if form.email.data != "current_user" else current_user.email)
         if user:
@@ -199,7 +217,7 @@ def edit_subscription():
                                                      "%Y-%m-%d %H:%M:%S"))
         db.serialize(user)
         return redirect(url_for('index'))
-    return render_template("edit_subscription.html", form=form, the_title="Edit Subscription - Paint Drying")
+    return render_template("edit_subscription.html", form=form, prices=prices, the_title="Edit Subscription - Paint Drying")
 
 
 @app.route("/admin_panel", methods=['GET', 'POST'])

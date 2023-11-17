@@ -21,12 +21,14 @@ class AdminPanelTests(unittest.TestCase):
     def test_main(self):
         self.driver.get(self.BASE_URL)
         assert self.driver.title == 'Paint Drying/Admin Panel'
+
     def test_send_mail(self):
         self.driver.get(self.BASE_URL)
 
         self.driver.find_element(by=By.ID, value="suggest-services-label").click()
 
         assert self.driver.find_element(by=By.ID, value="notification").text == "Mails sent"
+
     def test_send_invoice(self):
         self.driver.get(self.BASE_URL)
 

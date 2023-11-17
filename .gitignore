@@ -153,6 +153,10 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+# Ignore generated .docx and .pdf documents
+*.docx
+*.pdf
+
 # Database folder
 db/
 
