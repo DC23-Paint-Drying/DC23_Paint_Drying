@@ -33,40 +33,40 @@ class TestReplaceKeywords(unittest.TestCase):
         self.db.get_not_subscribed_packets = MagicMock(return_value=[])
         assert text_gen.replace_keywords('{$proposeNewService}', '1',
                                          self.db) == ('Ptaki ćwierkają, że jest Pani jedną z naszych najlepszych klientek! '
-                                                       'Wykupiłaś wszystkie nasze usługi! Zachęcamy do oczekiwania na '
-                                                       'nowe przyszłe usługi, które się pojawią niedługo!')
+                                                       'Wykupiłaś wszystkie nasze pakiety! Zachęcamy do oczekiwania na '
+                                                       'nowe przyszłe pakiety, które się pojawią niedługo!')
 
         # test when there is anything to suggest, but something is bought
         self.db.get_subscribed_packets = MagicMock(return_value=['a', 'b', 'c'])
         self.db.get_not_subscribed_packets = MagicMock(return_value=['d', 'e'])
         assert text_gen.replace_keywords('{$proposeNewService}', '1',
-                                         self.db) == ('Zauważyliśmi, że jest Pani zainteresowana usługą a. Powinna Pani '
-                                                       'sprawdzić także te usługi: d, e!')
+                                         self.db) == ('Zauważyliśmi, że jest Pani zainteresowana pakietem o nazwie: a. Powinna Pani '
+                                                       'sprawdzić także te pakiety: d, e!')
 
         # test when nothing is bought, but there are more than 2 services in total
         self.db.get_subscribed_packets = MagicMock(return_value=[])
         self.db.get_not_subscribed_packets = MagicMock(return_value=['a', 'b', 'c'])
         assert text_gen.replace_keywords('{$proposeNewService}', '1',
-                                         self.db) == 'Szukasz nowych wrażeń? Sprawdź nasze najlepsze usługi: a, b, c!'
+                                         self.db) == 'Szukasz nowych wrażeń? Sprawdź nasze najlepsze pakiety: a, b, c!'
 
         # test when nothing is bought, but there are less than 3 services in total
         self.db.get_subscribed_packets = MagicMock(return_value=[])
         self.db.get_not_subscribed_packets = MagicMock(return_value=['a', 'b'])
         assert text_gen.replace_keywords('{$proposeNewService}', '1',
-                                         self.db) == 'Szukasz nowych wrażeń? Sprawdź nasze najlepsze usługi: a, b!'
+                                         self.db) == 'Szukasz nowych wrażeń? Sprawdź nasze najlepsze pakiety: a, b!'
 
         # test when something is bought, but there are more than 3 services in total
         self.db.get_subscribed_packets = MagicMock(return_value=['d'])
         self.db.get_not_subscribed_packets = MagicMock(return_value=['a', 'b', 'c','e'])
         assert text_gen.replace_keywords('{$proposeNewService}', '1',
-                                         self.db) == 'Zauważyliśmi, że jest Pani zainteresowana usługą d. Powinna Pani sprawdzić także te usługi: a, b, c!'
+                                         self.db) == 'Zauważyliśmi, że jest Pani zainteresowana pakietem o nazwie: d. Powinna Pani sprawdzić także te pakiety: a, b, c!'
 
     def test_proposeLengtheningSubscription(self):
         self.db.get_user_sex = MagicMock(return_value='M')
         self.db.get_subscription = MagicMock(return_value='abb')
 
         assert text_gen.replace_keywords('{$proposeLengtheningSubscription}', '1',
-                                         self.db) == ('Uwaga! Subskrypcja na abb wkrótce wygaśnie! Szybko! Odnów '
+                                         self.db) == ('Uwaga! Subskrypcja abb wkrótce wygaśnie! Szybko! Odnów '
                                                        'subskrypcję!')
 
     def test_suggestContact(self):
@@ -112,10 +112,10 @@ class TestProposeMailText(unittest.TestCase):
         assert text_gen.get_propose_mail_text('1', self.db) == (''
                                         'Szanowny Panie Wierzba\n'
                                         '\n'
-                                        'Zauważyliśmi, że jest Pan zainteresowany usługą aaaa. Powinienien Pan sprawdzić '
-                                        'także te usługi: d, e!\n'
+                                        'Zauważyliśmi, że jest Pan zainteresowany pakietem o nazwie: aaaa. Powinienien Pan sprawdzić '
+                                        'także te pakiety: d, e!\n'
                                         '\n'
-                                        'Uwaga! Subskrypcja na abba wkrótce wygaśnie! Szybko! Odnów subskrypcję!\n'
+                                        'Uwaga! Subskrypcja abba wkrótce wygaśnie! Szybko! Odnów subskrypcję!\n'
                                         '\n'
                                         'Cieszymy się, że interesuje się Pan naszymi usługami. W celu uzyskania '
                                         'więcej informacji, zalecamy odwiedzenie naszej strony,by sprawdzić nowe '
@@ -133,7 +133,7 @@ class TestProposeMailText(unittest.TestCase):
         assert text_gen.get_propose_mail_text('1', self.db) == (''
                                             'Szanowna Pani Kowalska\n'
                                             '\n'
-                                            'Szukasz nowych wrażeń? Sprawdź nasze najlepsze usługi: debohra, esda!\n'
+                                            'Szukasz nowych wrażeń? Sprawdź nasze najlepsze pakiety: debohra, esda!\n'
                                             '\n'
                                             '\n'
                                             '\n'
@@ -154,10 +154,10 @@ class TestProposeMailText(unittest.TestCase):
                                         'Szanowny Panie Wierzba\n'
                                         '\n'
                                         'Ptaki ćwierkają, że jest Pan jednym z naszych najlepszym klientów! Wykupiłeś '
-                                        'wszystkie nasze usługi! Zachęcamy do oczekiwania na nowe przyszłe usługi, '
+                                        'wszystkie nasze pakiety! Zachęcamy do oczekiwania na nowe przyszłe pakiety, '
                                         'które się pojawią niedługo!\n'
                                         '\n'
-                                        'Uwaga! Subskrypcja na abba wkrótce wygaśnie! Szybko! Odnów subskrypcję!\n'
+                                        'Uwaga! Subskrypcja abba wkrótce wygaśnie! Szybko! Odnów subskrypcję!\n'
                                         '\n'
                                         'Cieszymy się, że interesuje się Pan naszymi usługami. W celu uzyskania '
                                         'więcej informacji, zalecamy odwiedzenie naszej strony,by sprawdzić nowe '
@@ -187,7 +187,7 @@ class TestInvoice(unittest.TestCase):
         assert (text_gen.get_invoice_mail_text(male_client.basic.id, invoice, self.db) ==
                 ('Szanowny Panie Wierzba\n'
                  '\n'
-                 'Aktualna subskrypcja: Podstawowy\n'
+                 'Aktualna subskrypcja: Podstawowa\n'
                  'Kwota: 12.99 PLN\n'                 
                  '\n'
                  'Dziękujemy za zamówienie poniższych pakietów:\n'
@@ -223,7 +223,7 @@ class TestInvoice(unittest.TestCase):
         assert (text_gen.get_invoice_mail_text(male_client.basic.id, invoice, self.db) ==
                 ('Szanowna Pani Wierzba\n'
                  '\n'
-                 'Aktualna subskrypcja: Podstawowy\n'
+                 'Aktualna subskrypcja: Podstawowa\n'
                  'Kwota: 12.99 PLN\n'
                  '\n'
                  'Dziękujemy za zamówienie poniższych pakietów:\n'

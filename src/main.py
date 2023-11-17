@@ -1,10 +1,11 @@
 import datetime
+import io
 import json
 import logging
 import os
 
 from flask_wtf import CSRFProtect
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, render_template, redirect, url_for, request, after_this_request, send_file
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 
 from . import manifest
@@ -17,9 +18,11 @@ from .forms import LoginForm, RegisterForm, OrderSubscriptionForm, OrderPacketsF
 from .gdrive_manager import GdriveManager
 from .invoice_generator import Invoice
 from .mail import send_mail
+from .report import report,report_utils
 from .subscription_info import SubscriptionInfo
 from .text_generator import get_propose_mail_text, get_invoice_mail_text
 from .user_dto import UserDto
+
 
 
 app = Flask(__name__)
@@ -259,6 +262,33 @@ def admin_panel():
     return render_template("admin_panel.html", the_title="Paint Drying/Admin Panel", notification="")
 
 
+
+@app.route("/admin_panel/report")
+def download_file():
+
+    #create report docx
+    report_docs_path = report.generate(db)
+
+    # create report pdf
+    report_pdf_path = report_utils.convert_docx_to_pdf(report_docs_path, "")
+
+    return_data = io.BytesIO()
+    # try opening and reading the report content
+    try:
+        with open(report_pdf_path, 'rb') as fo:
+            return_data.write(fo.read())
+    except EnvironmentError:
+        # user refreshed page
+        return render_template("empty_report.html", the_title="Paint Drying/Admin Panel/Report")
+    # (after writing, cursor will be at last byte, so move it to start)
+    return_data.seek(0)
+
+    # delete both files
+    os.remove(report_docs_path)
+    os.remove(report_pdf_path)
+
+    return send_file(return_data, mimetype='application/pdf')
+
 @app.route("/list_gdrive_files", methods=['GET', 'POST'])
 def list_gdrive_files():
     data = {}
@@ -274,4 +304,5 @@ def list_gdrive_files():
                            the_title="Paint Drying/Google Drive Files",
                            data=data,
                            gdrive_available=gdrive_available)
+
 

@@ -41,29 +41,29 @@ def replace_keywords(text: str, user_id: str, database: Database) -> str:
                     services = ", ".join(not_subscribed_packets)
                 text = text.replace('{$proposeNewService}',
                                     'Zauważyliśmi, że jest '+('Pan zainteresowany ' if user_is_male else 'Pani zainteresowana ') +
-                                                                                                   'usługą ' +
+                                                                                                   'pakietem o nazwie: ' +
                                     subscribed_packets[0] + '. '+('Powinienien Pan' if user_is_male else 'Powinna Pani')+' '
-                                    'sprawdzić także te usługi: ' + services + '!')
+                                    'sprawdzić także te pakiety: ' + services + '!')
             else:
                 if len(not_subscribed_packets) >= 3:
                     text = text.replace('{$proposeNewService}',
-                                        'Szukasz nowych wrażeń? Sprawdź nasze najlepsze usługi: ' + ', '.join(
+                                        'Szukasz nowych wrażeń? Sprawdź nasze najlepsze pakiety: ' + ', '.join(
                                             not_subscribed_packets[0:3]) + '!')
                 else:
                     text = text.replace('{$proposeNewService}',
-                                        'Szukasz nowych wrażeń? Sprawdź nasze najlepsze usługi: ' +
+                                        'Szukasz nowych wrażeń? Sprawdź nasze najlepsze pakiety: ' +
                                         ', '.join(not_subscribed_packets) + '!')
         else:
             text = text.replace('{$proposeNewService}',
                                 'Ptaki ćwierkają, że jest '+('Pan jednym z naszych najlepszym klientów! Wykupiłeś' if user_is_male else
-                                'Pani jedną z naszych najlepszych klientek! Wykupiłaś')+' wszystkie nasze usługi! '
-                                'Zachęcamy do oczekiwania na nowe przyszłe usługi, które się pojawią niedługo!')
+                                'Pani jedną z naszych najlepszych klientek! Wykupiłaś')+' wszystkie nasze pakiety! '
+                                'Zachęcamy do oczekiwania na nowe przyszłe pakiety, które się pojawią niedługo!')
 
     if '{$proposeLengtheningSubscription}' in text:
         subscription = database.get_subscription(user_id)
         if subscription != '':
             text = text.replace('{$proposeLengtheningSubscription}',
-                                'Uwaga! Subskrypcja na ' + subscription +
+                                'Uwaga! Subskrypcja ' + subscription +
                                 ' wkrótce wygaśnie! Szybko! Odnów subskrypcję!')
         else:
             # delete mark, because there is nothing to propose

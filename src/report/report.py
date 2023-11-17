@@ -8,9 +8,9 @@ from sys import argv
 
 from docx.enum import section
 
-import report_charts as charts
-from report_data import get_report_data
-import report_utils as utils
+import src.report.report_charts as charts
+from src.report.report_data import get_report_data
+import src.report.report_utils as utils
 from src.database_context import DatabaseContext
 import src.manifest as company
 
