@@ -18,9 +18,11 @@ from .forms import LoginForm, RegisterForm, OrderSubscriptionForm, OrderPacketsF
 from .gdrive_manager import GdriveManager
 from .invoice_generator import Invoice
 from .mail import send_mail
+from .report import report,report_utils
 from .subscription_info import SubscriptionInfo
 from .text_generator import get_propose_mail_text, get_invoice_mail_text
 from .user_dto import UserDto
+
 
 
 app = Flask(__name__)
@@ -264,13 +266,16 @@ def admin_panel():
 @app.route("/admin_panel/report")
 def download_file():
 
-    # create report and get its path
-    file_path = 'Poradnik Nowego Prezesa.pdf'   # at the moment a random file used to test
+    #create report docx
+    report_docs_path  = report.generate(db)
+
+    # create report pdf
+    report_pdf_path = report_utils.convert_docx_to_pdf(report_docs_path, "")
 
     return_data = io.BytesIO()
     # try opening and reading the report content
     try:
-        with open(file_path, 'rb') as fo:
+        with open(report_pdf_path, 'rb') as fo:
             return_data.write(fo.read())
     except EnvironmentError:
         # user refreshed page
@@ -278,8 +283,9 @@ def download_file():
     # (after writing, cursor will be at last byte, so move it to start)
     return_data.seek(0)
 
-    # delete the file
-    os.remove(file_path)
+    # delete both files
+    os.remove(report_docs_path)
+    os.remove(report_pdf_path)
 
     return send_file(return_data, mimetype='application/pdf')
 
