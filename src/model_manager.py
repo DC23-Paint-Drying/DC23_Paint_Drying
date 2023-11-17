@@ -8,7 +8,7 @@ class ModelManager:
 
         If you are not eunning camunda server set self.useModel to False
         """
-        self.useModel = True
+        self.useModel = False
         self.modelURL = "http://localhost:8080/engine-rest"
         self.process_instance_id = None
 
