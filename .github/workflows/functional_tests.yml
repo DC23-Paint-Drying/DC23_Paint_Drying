@@ -25,6 +25,8 @@ jobs:
         run: pip install chromedriver-autoinstaller pyvirtualdisplay
       - name: Install xvfb
         run: sudo apt-get install xvfb
+      - name: Install LibreOffice
+        run: sudo apt-get install libreoffice
       - name: Run functional tests
         run: source .envrc && python -m pytest functional/
       - name: Close Python
